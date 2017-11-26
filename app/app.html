@@ -1,0 +1,212 @@
+<!--
+ * @fileoverview アプリケーション UI
+ * @author       Ryoji Morita
+ * @version      0.0.1
+-->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="./style.css" type="text/css" />
+  <title>Bridge Terminal</title>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/canvasjs/1.7.0/canvasjs.min.js"></script>
+  <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+  <script type="text/javascript" src="/jQueryRotate.js"></script>
+  <script type="text/javascript" src="/app.js"></script>
+</head>
+<body>
+<h1>SENSOR ver 1.0</h1>
+
+<!-- Scrreen -->
+<section>
+  <div id="cam_screen">
+    <img alt="" width="60%" height="100%" src="http://192.168.91.118:8080/?action=stream">
+  </div>
+</section>
+
+<!-- Screen Controller -->
+<section>
+  <h1>Screen Controller</h1>
+  <span id="val_rotate">0</span> °
+  <input type="range" name="num" min="0" max="360" step="10" value="0" onchange="rotateScreen( this.value )">
+  <br/>
+  <input type="submit" class="button" onclick="sendGetCmd( 'wget -O /home/pi/Share/node/data/picture.jpg http://192.168.91.118:8080/?action=snapshot' );" value="スナップショット" />
+  <br/>
+  <a href="data/picture.jpg" download="picture.jpg">撮ったスナップショット ( jpg ファイル ) をダウンロード</a>
+</section>
+
+<!--SERVO Motor Controller -->
+<section>
+  <h1>SERVO Motor Controller</h1>
+  <span id="val_servo">50</span> %
+  <input type="range" name="num" min="20" max="70" step="5" value="50" onchange="sendSetCmdServo( 'sudo ./board.out motorsv ' + (90 - this.value) )" id="val_range">
+  <br/>
+  <!-- <input type="submit" class="button" onclick="sendSetCmdServo( 'sudo ./board.out motorsv auto' );" value="AUTO" /> -->
+</section>
+
+<!-- Music Controller -->
+<section>
+  <h1>Music Controller</h1>
+  <input type="submit" class="button" onclick="sendMusicCmd( 'GET PID' );" value="GET PID" />
+  <input type="submit" class="button" onclick="sendMusicCmd( 'PLAY'    );" value="PLAY" />
+  <input type="submit" class="button" onclick="sendMusicCmd( 'STOP'    );" value="STOP" />
+  <input type="submit" class="button" onclick="sendMusicCmd( 'PAUSE'   );" value="PAUSE" />
+  <input type="submit" class="button" onclick="sendMusicCmd( 'RESUME'  );" value="RESUME" />
+</section>
+
+<!--Mic Controller -->
+<section>
+  <h1>Mic Controller</h1>
+  <textarea name="cmnt" cols="80" rows="1" id="val_cmnt" placeholder=""></textarea>
+  <br/>
+  <input type="submit" class="button" onclick="submitMicStart();" value="マイク ON" />
+  <input type="submit" class="button" onclick="submitMicStop();" value="マイク OFF" />
+  <input type="submit" class="button" onclick="sendCmnt();" value="投稿" />
+  <input type="submit" class="button" onclick="clearCmnt();" value="クリア" />
+</section>
+
+<!-- Lighting Controller -->
+<section>
+  <h1>Lighting Controller</h1>
+  <p>ON したままだと、まぶしいので基本的に OFF にしましょう。</p>
+  <input type="submit" class="button" onclick="sendSetCmd( 'sudo ./board.out relay on' );" value="ON" />
+  <input type="submit" class="button" onclick="sendSetCmd( 'sudo ./board.out relay off' );" value="OFF" />
+</section>
+
+<!-- Sensor -->
+<section>
+  <h1>Sensor</h1>
+  <span id="val_sensor">--</span>
+  <br/>
+
+  <article>
+    <!-- 加速度(x) -->
+    <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out acc x' );" value="加速度(x) []" />
+    <!-- 加速度(y) -->
+    <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out acc y' );" value="加速度(y) []" />
+    <!-- 加速度(z) -->
+    <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out acc z' );" value="加速度(z) []" />
+    <!-- ジャイロ(g1) -->
+    <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out gyro g1' );" value="ジャイロ(g1) []" />
+    <!-- ジャイロ(g2) -->
+    <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out gyro g2' );" value="ジャイロ(g2) []" />
+    <!-- 距離(GP2Y0E03) -->
+    <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out dist' );" value="距離 [cm]" />
+    <!-- 気圧(LPS25H) -->
+    <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out atmos' );" value="気圧 [mbar]" />
+    <!-- 照度(TSL2561) -->
+    <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out lux' );" value="照度 [ルクス]" />
+    <!-- 温度(LPS25H) -->
+    <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out temp' );" value="温度 [℃]" />
+  </article>
+</section>
+
+<!-- Get Data -->
+<section>
+  <h2>10秒ごとにセンサ値を表示</h2>
+  <article>
+    <span class="fix" id="val_sensor_acc_x">--</span>
+    <span class="fix" id="val_sensor_acc_y">--</span>
+    <span class="fix" id="val_sensor_acc_z">--</span>
+    <span class="fix" id="val_sensor_gyro_g1">--</span>
+    <span class="fix" id="val_sensor_gyro_g2">--</span>
+    <span class="fix" id="val_sensor_dist">--</span>
+    <span class="fix" id="val_sensor_atmos">--</span>
+    <span class="fix" id="val_sensor_lux">--</span>
+    <span class="fix" id="val_sensor_temp">--</span>
+  </article>
+</section>
+
+<!-- Graph -->
+<section style="height:600px;">
+  <h2>Chart</h2>
+  <article>
+    <div class="chart" id="chart_sensor_acc_x"></div>
+    <div class="chart" id="chart_sensor_acc_y"></div>
+    <div class="chart" id="chart_sensor_acc_z"></div>
+  </article>
+  <br/>
+  <article>
+    <div class="chart" id="chart_sensor_gyro_g1"></div>
+    <div class="chart" id="chart_sensor_gyro_g2"></div>
+    <div class="chart" id="chart_sensor_dist"></div>
+  </article>
+  <br/>
+  <article>
+    <div class="chart" id="chart_sensor_atmos"></div>
+    <div class="chart" id="chart_sensor_lux"></div>
+    <div class="chart" id="chart_sensor_temp"></div>
+  </article>
+</section>
+
+<!-- Daily Graph -->
+<section style="height:350px;">
+  <script src="http://cdn.jsdelivr.net/webshim/1.12.4/extras/modernizr-custom.js"></script>
+  <!-- polyfiller file to detect and load polyfills -->
+  <script src="http://cdn.jsdelivr.net/webshim/1.12.4/polyfiller.js"></script>
+  <script>
+    webshims.setOptions('waitReady', false);
+    webshims.setOptions('forms-ext', {types: 'date'});
+    webshims.polyfill('forms forms-ext');
+  </script>
+
+  <h2>Daily Chart</h2>
+  <article>
+    <ul>
+    <li>2017/July/12 から計測開始。</li>
+    </ul>
+
+    <input type="date" name="日時指定" oninput="sendGetCmdSensorOneDay();" id="val_date">
+    <select name="センサ" oninput="sendGetCmdSensorOneDay();" id="val_which">
+      <option value="acc_x">加速度 X方向</option>
+      <option value="acc_y">加速度 Y方向</option>
+      <option value="acc_z">加速度 Z方向</option>
+      <option value="gyro_g1">ジャイロ G1 方向</option>
+      <option value="gyro_g2">ジャイロ G2 方向</option>
+      <option value="dist">距離</option>
+      <option value="atmos">気圧</option>
+      <option value="lux">照度</option>
+      <option value="temp">温度</option>
+    </select>
+    <div class="chartDaily" id="chart_sensor_daily"></div>
+  </article>
+</section>
+
+
+<!--===========================================================================
+■ COMMAND INPUT
+============================================================================-->
+<!--
+<section>
+  <h1>COMMAND INPUT</h1>
+
+  <p>※ コマンドを入力してください。</p>
+
+  <form action="" method="post" onsubmit="return false;">
+    <input type="text" class="text" style="width:30%; padding:10px" id="data"/>
+    <input type="submit" class="button" style="padding:10px" onclick="sendCmd_Input();" value="送信" />
+    <br/>
+  </form>
+</section>
+-->
+
+
+<!--===========================================================================
+■ LINKS
+============================================================================-->
+<!--
+<section>
+  <h1>Links</h1>
+</section>
+-->
+
+
+<!--===========================================================================
+■ footer :
+============================================================================-->
+<footer>
+  <address></address>
+</footer>
+</body>
+</html>
