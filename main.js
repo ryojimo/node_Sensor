@@ -335,7 +335,27 @@ function getSensorDataLast30s( cmd ){
       data.temp    = temp.dataLast30s;
       console.log( "[main.js] data = " + JSON.stringify(data) );
 
-      io.sockets.emit( 'S_to_C_DATA_LAST30S', {value:JSON.stringify(data)} );
+      // 加速度センサとジャイロセンサの "10秒前" と" 今" の値に大きな差があるか？をチェック
+      var diff_acc_x   = false;
+      var diff_acc_y   = false;
+      var diff_acc_z   = false;
+      var diff_gyro_g1 = false;
+      var diff_gyro_g2 = false;
+
+      diff_acc_x   = acc_x.IsLargeDiff();
+      diff_acc_y   = acc_y.IsLargeDiff();
+      diff_acc_z   = acc_z.IsLargeDiff();
+      diff_gyro_g1 = gyro_g1.IsLargeDiff();
+      diff_gyro_g2 = gyro_g2.IsLargeDiff();
+
+      var diff_all = false;
+      if( diff_acc_x   == true || diff_acc_y   == true || diff_acc_z == true ||
+          diff_gyro_g1 == true || diff_gyro_g2 == true ){
+        diff_all = true;
+      }
+
+      console.log( "[main.js] diff_all = " + diff_all );
+      io.sockets.emit( 'S_to_C_DATA_LAST30S', {diff:diff_all, value:JSON.stringify(data)} );
   });
 }
 

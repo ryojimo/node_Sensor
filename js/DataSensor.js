@@ -100,4 +100,30 @@ DataSensor.prototype.UpdateDataOneDay = function( file ){
 };
 
 
+/**
+ * dataLast30s プロパティで "10秒前" と "今" の値に大きな差があるか？チェックする。
+ * @param {void}
+ * @return {bool} ret - 100 以上の差があれば true を返す
+ * @example
+ * IsLargeDiff();
+*/
+DataSensor.prototype.IsLargeDiff = function(){
+  console.log( "[DataSensor.js] IsLargeDiff()" );
+
+  console.log( "[DataSensor.js] 10秒前 = " + this.dataLast30s["10秒前"] );
+  console.log( "[DataSensor.js] 今     = " + this.dataLast30s["今"] );
+
+  var diff = this.dataLast30s["10秒前"] - this.dataLast30s["今"];
+  var ret = false;
+
+  if( this.dataLast30s["10秒前"] != 0 && ( diff < -100 || 100 < diff ) ){
+    ret = true;
+  } else {
+    ret = false;
+  }
+
+  return ret;
+}
+
+
 module.exports = DataSensor;

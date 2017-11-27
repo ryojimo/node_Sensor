@@ -3,7 +3,7 @@
  * @author       Ryoji Morita
  * @version      0.0.1
 */
-var sv_ip   = "192.168.91.118";               // node.js server の IP アドレス
+var sv_ip   = "192.168.91.103";               // node.js server の IP アドレス
 var sv_port = 3000;                           // node.js server の port 番号
 
 var server = io.connect( "http://" + sv_ip + ":" + sv_port ); //ローカル
@@ -108,7 +108,8 @@ server.on( 'S_to_C_DATA', function( data ){
 
 server.on( 'S_to_C_DATA_LAST30S', function( data ){
   console.log( "[app.js] " + 'S_to_C_DATA_LAST30S' );
-//  console.log( "[app.js] data = " + data.value );
+//  console.log( "[app.js] data.diff  = " + data.diff );
+//  console.log( "[app.js] data.value = " + data.value );
 
   var obj = (new Function( "return " + data.value ))();
   document.getElementById( "val_sensor_acc_x"   ).innerHTML = obj.acc_x["今"];    // 数値を表示
@@ -132,6 +133,11 @@ server.on( 'S_to_C_DATA_LAST30S', function( data ){
   updateChartLast30s( "chart_gyro_g2", obj.gyro_g2);
   updateChartLast30s( "chart_lux",     obj.lux    );
   updateChartLast30s( "chart_temp",    obj.temp   );
+
+  if( data.diff == true ){
+    var hi = "10秒以上の揺れを検出しました";
+    sendTalkData( hi );
+  }
 });
 
 
@@ -364,19 +370,17 @@ function sendMusicCmd( cmd ){
 
 /**
  * しゃべる文字データを送る。
- * @param {void}
+ * @param {string} cmnt - しゃべる文字列
  * @return {void}
  * @example
- * sendTalkData();
+ * sendTalkData( cmnt );
 */
-function sendTalkData(){
+function sendTalkData( cmnt ){
   console.log( "[app.js] sendTalkData()" );
-
-  var hi1 = "ご用件をどうぞ";
-  var hi2 = "ご主人様";
+  console.log( "[app.js] cmnt = " + cmnt );
 
   console.log( "[app.js] server.emit(" + 'C_to_S_TALK' + ")" );
-  server.emit( 'C_to_S_TALK', hi1 + hi2 );
+  server.emit( 'C_to_S_TALK', cmnt );
 }
 
 
@@ -402,7 +406,10 @@ recognition.addEventListener( 'result', function(event){
 
 function submitMicStart(){
   console.log( "[app.js] submitMicStart()" );
-  sendTalkData();
+
+  var hi = "ご用件をどうぞ";
+
+  sendTalkData( hi );
 //  recognition.start();
 }
 
