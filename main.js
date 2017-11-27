@@ -349,7 +349,7 @@ function getSensorDataLast30s( cmd ){
       diff_gyro_g2 = gyro_g2.IsLargeDiff();
 
       var diff_all = false;
-      if( diff_acc_x   == true || diff_acc_y   == true || diff_acc_z == true ||
+      if( diff_acc_x   == true || diff_acc_z   == true ||
           diff_gyro_g1 == true || diff_gyro_g2 == true ){
         diff_all = true;
       }
