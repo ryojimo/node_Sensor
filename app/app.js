@@ -79,8 +79,8 @@ function makeChart( chart, name, title, data ){
   // makeChart( "chart_acc_x", .... ) のように変数を文字列で渡す必要がある
   window[chart] = new CanvasJS.Chart(name, {
     title:{text: title},
-    data: [{type: 'column',         // グラフの種類 (column, stackedColumn, area )
-            dataPoints: data        //グラフに描画するデータ
+    data: [{type: 'area',           // グラフの種類 (area, bar, bubble, column, stackedColumn )
+            dataPoints: data        // グラフに描画するデータ
     }]
   });
   window[chart].render();
@@ -265,8 +265,8 @@ function sendGetCmdSensorOneDay(){
   console.log( "[app.js] date   = " + date );
   console.log( "[app.js] sensor = " + sensor );
 
-  if( date < "2017-12-01" ){
-    alert( "2017/12/01 以降を指定してください。" );
+  if( date < "2017-11-30" ){
+    alert( "2017/11/30 以降を指定してください。" );
   }
 
   var obj = { date:date, sensor:sensor };
