@@ -72,7 +72,7 @@ DataSensor.prototype.UpdateDataOneDay = function( file ){
   console.log( "[DataSensor.js] UpdateDataOneDay()" );
   console.log( "[DataSensor.js] file = " + file );
 
-  var date = file.replace( 'data/', '' );
+  var date = file.replace( '/media/pi/USBDATA/', '' );
   date = date.replace( '_sensor.txt', '' );
 
   this.date = date;

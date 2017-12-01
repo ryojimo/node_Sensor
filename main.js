@@ -206,7 +206,7 @@ io.sockets.on( 'connection', function( socket ){
     console.log( "[main.js] data.date   = " + data.date );
     console.log( "[main.js] data.sensor = " + data.sensor );
 
-    var file = 'data/' + data.date + '_sensor.txt';
+    var file = '/media/pi/USBDATA/' + data.date + '_sensor.txt';
 
     var ret = false;
     switch( data.sensor )
@@ -251,7 +251,7 @@ io.sockets.on( 'connection', function( socket ){
     console.log( "[main.js] data = " + data );
 
     var data = { time: hhmmss(), cmnt: data }
-    var file = 'data/' + yyyymmdd() + '_cmnt.txt';
+    var file = '/media/pi/USBDATA/' + yyyymmdd() + '_cmnt.txt';
     console.log( "[main.js] data.time = " + data.time );
     console.log( "[main.js] data.cmnt = " + data.cmnt );
     console.log( "[main.js] file = " + file );

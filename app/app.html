@@ -31,9 +31,9 @@
   <span id="val_rotate">0</span> °
   <input type="range" name="num" min="0" max="360" step="10" value="0" onchange="rotateScreen( this.value )">
   <br/>
-  <input type="submit" class="button" onclick="sendGetCmd( 'wget -O /home/pi/Share/node/data/picture.jpg http://192.168.91.103:8080/?action=snapshot' );" value="スナップショット" />
+  <input type="submit" class="button" onclick="sendGetCmd( 'wget -O /media/pi/USBDATA/picture.jpg http://192.168.91.103:8080/?action=snapshot' );" value="スナップショット" />
   <br/>
-  <a href="data/picture.jpg" download="picture.jpg">撮ったスナップショット ( jpg ファイル ) をダウンロード</a>
+  <a href="/media/pi/USBDATA/picture.jpg" download="picture.jpg">撮ったスナップショット ( jpg ファイル ) をダウンロード</a>
 </section>
 
 <!--SERVO Motor Controller -->
@@ -154,7 +154,7 @@
   <h2>Daily Chart</h2>
   <article>
     <ul>
-    <li>2017/July/12 から計測開始。</li>
+    <li>2017/11/30 から計測開始。</li>
     </ul>
 
     <input type="date" name="日時指定" oninput="sendGetCmdSensorOneDay();" id="val_date">
