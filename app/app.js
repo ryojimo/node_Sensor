@@ -19,15 +19,18 @@ window.onload = function(){
   makeChart( "chart_acc_x",   "chart_sensor_acc_x",   "acc_x",   dataPointsLast30s );
   makeChart( "chart_acc_y",   "chart_sensor_acc_y",   "acc_y",   dataPointsLast30s );
   makeChart( "chart_acc_z",   "chart_sensor_acc_z",   "acc_z",   dataPointsLast30s );
-  makeChart( "chart_atmos",   "chart_sensor_atmos",   "atmos",   dataPointsLast30s );
-  makeChart( "chart_dist",    "chart_sensor_dist",    "dist",    dataPointsLast30s );
   makeChart( "chart_gyro_g1", "chart_sensor_gyro_g1", "gyro_g1", dataPointsLast30s );
   makeChart( "chart_gyro_g2", "chart_sensor_gyro_g2", "gyro_g2", dataPointsLast30s );
+
+  makeChart( "chart_dist",    "chart_sensor_dist",    "dist",    dataPointsLast30s );
   makeChart( "chart_lux",     "chart_sensor_lux",     "lux",     dataPointsLast30s );
-  makeChart( "chart_temp",    "chart_sensor_temp",    "temp",    dataPointsLast30s );
+
   makeChart( "chart_b_atmos", "chart_sensor_b_atmos", "b_atmos", dataPointsLast30s );
   makeChart( "chart_b_humi",  "chart_sensor_b_humi",  "b_humi",  dataPointsLast30s );
   makeChart( "chart_b_temp",  "chart_sensor_b_temp",  "b_temp",  dataPointsLast30s );
+
+  makeChart( "chart_l_atmos", "chart_sensor_l_atmos", "l_atmos", dataPointsLast30s );
+  makeChart( "chart_l_temp",  "chart_sensor_l_temp",  "l_temp",  dataPointsLast30s );
 
   makeChart( "chart_daily",   "chart_sensor_daily",   "",        dataPointsDaily );
 };
@@ -42,12 +45,18 @@ window.onunload = function(){
 var chart_acc_x;
 var chart_acc_y;
 var chart_acc_z;
-var chart_atmos;
-var chart_dist;
 var chart_gyro_g1;
 var chart_gyro_g2;
+
+var chart_dist;
 var chart_lux;
-var chart_temp;
+
+var chart_b_atmos;
+var chart_b_humi;
+var chart_b_temp;
+
+var chart_l_atmos;
+var chart_l_temp;
 
 var chart_daily;
 
@@ -120,31 +129,34 @@ server.on( 'S_to_C_DATA_LAST30S', function( data ){
   document.getElementById( "val_sensor_acc_x"   ).innerHTML = obj.acc_x["今"];    // 数値を表示
   document.getElementById( "val_sensor_acc_y"   ).innerHTML = obj.acc_y["今"];    // 数値を表示
   document.getElementById( "val_sensor_acc_z"   ).innerHTML = obj.acc_z["今"];    // 数値を表示
-
   document.getElementById( "val_sensor_gyro_g1" ).innerHTML = obj.gyro_g1["今"];  // 数値を表示
   document.getElementById( "val_sensor_gyro_g2" ).innerHTML = obj.gyro_g2["今"];  // 数値を表示
-  document.getElementById( "val_sensor_dist"    ).innerHTML = obj.dist["今"];     // 数値を表示
 
-  document.getElementById( "val_sensor_atmos"   ).innerHTML = obj.atmos["今"];    // 数値を表示
+  document.getElementById( "val_sensor_dist"    ).innerHTML = obj.dist["今"];     // 数値を表示
   document.getElementById( "val_sensor_lux"     ).innerHTML = obj.lux["今"];      // 数値を表示
-  document.getElementById( "val_sensor_temp"    ).innerHTML = obj.temp["今"];     // 数値を表示
 
   document.getElementById( "val_sensor_b_atmos" ).innerHTML = obj.b_atmos["今"];  // 数値を表示
   document.getElementById( "val_sensor_b_humi"  ).innerHTML = obj.b_humi["今"];   // 数値を表示
   document.getElementById( "val_sensor_b_temp"  ).innerHTML = obj.b_temp["今"];   // 数値を表示
 
+  document.getElementById( "val_sensor_l_atmos" ).innerHTML = obj.l_atmos["今"];  // 数値を表示
+  document.getElementById( "val_sensor_l_temp"  ).innerHTML = obj.l_temp["今"];   // 数値を表示
+
   updateChartLast30s( "chart_acc_x",   obj.acc_x  );
   updateChartLast30s( "chart_acc_y",   obj.acc_y  );
   updateChartLast30s( "chart_acc_z",   obj.acc_z  );
-  updateChartLast30s( "chart_atmos",   obj.atmos  );
-  updateChartLast30s( "chart_dist",    obj.dist   );
   updateChartLast30s( "chart_gyro_g1", obj.gyro_g1);
   updateChartLast30s( "chart_gyro_g2", obj.gyro_g2);
+
+  updateChartLast30s( "chart_dist",    obj.dist   );
   updateChartLast30s( "chart_lux",     obj.lux    );
-  updateChartLast30s( "chart_temp",    obj.temp   );
+
   updateChartLast30s( "chart_b_atmos", obj.b_atmos);
   updateChartLast30s( "chart_b_humi",  obj.b_humi );
   updateChartLast30s( "chart_b_temp",  obj.b_temp );
+
+  updateChartLast30s( "chart_l_atmos", obj.l_atmos);
+  updateChartLast30s( "chart_l_temp",  obj.l_temp );
 
   if( data.diff == true ){
     var hi = "10秒以上の揺れを検出しました";
@@ -168,15 +180,18 @@ server.on( 'S_to_C_SENSOR_ONE_DAY', function( data ){
     case 'acc_x'  : updateChartDaily( "acc_x",   obj ); break;
     case 'acc_y'  : updateChartDaily( "acc_y",   obj ); break;
     case 'acc_z'  : updateChartDaily( "acc_z",   obj ); break;
-    case 'atmos'  : updateChartDaily( "atmos",   obj ); break;
-    case 'dist'   : updateChartDaily( "dist",    obj ); break;
     case 'gyro_g1': updateChartDaily( "gyro_g1", obj ); break;
     case 'gyro_g2': updateChartDaily( "gyro_g2", obj ); break;
+
+    case 'dist'   : updateChartDaily( "dist",    obj ); break;
     case 'lux'    : updateChartDaily( "lux",     obj ); break;
-    case 'temp'   : updateChartDaily( "temp",    obj ); break;
+
     case 'b_atmos': updateChartDaily( "b_atmos", obj ); break;
     case 'b_humi' : updateChartDaily( "b_humi",  obj ); break;
     case 'b_temp' : updateChartDaily( "b_temp",  obj ); break;
+
+    case 'l_atmos': updateChartDaily( "l_atmos", obj ); break;
+    case 'l_temp' : updateChartDaily( "l_temp",  obj ); break;
     default       : alert( "unknown sensor." ); break;
   }
 });

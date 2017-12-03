@@ -129,15 +129,18 @@ var cmnt    = new DataCmnt();
 var acc_x   = new DataSensor( 'acc_x'   );
 var acc_y   = new DataSensor( 'acc_y'   );
 var acc_z   = new DataSensor( 'acc_z'   );
-var atmos   = new DataSensor( 'atmos'   );
-var dist    = new DataSensor( 'dist'    );
 var gyro_g1 = new DataSensor( 'gyro_g1' );
 var gyro_g2 = new DataSensor( 'gyro_g2' );
+
+var dist    = new DataSensor( 'dist'    );
 var lux     = new DataSensor( 'lux'     );
-var temp    = new DataSensor( 'temp'    );
+
 var b_atmos = new DataSensor( 'b_atmos' );
 var b_humi  = new DataSensor( 'b_humi'  );
 var b_temp  = new DataSensor( 'b_temp'  );
+
+var l_atmos = new DataSensor( 'l_atmos' );
+var l_temp  = new DataSensor( 'l_temp'  );
 
 var docomo  = new Docomo();
 var music   = new PlayMusic();
@@ -217,15 +220,18 @@ io.sockets.on( 'connection', function( socket ){
     case acc_x.name   : ret = acc_x.UpdateDataOneDay( file );   obj = acc_x.dataOneDay;   break;
     case acc_y.name   : ret = acc_y.UpdateDataOneDay( file );   obj = acc_y.dataOneDay;   break;
     case acc_z.name   : ret = acc_z.UpdateDataOneDay( file );   obj = acc_z.dataOneDay;   break;
-    case atmos.name   : ret = atmos.UpdateDataOneDay( file );   obj = atmos.dataOneDay;   break;
-    case dist.name    : ret = dist.UpdateDataOneDay( file );    obj = dist.dataOneDay;    break;
     case gyro_g1.name : ret = gyro_g1.UpdateDataOneDay( file ); obj = gyro_g1.dataOneDay; break;
     case gyro_g2.name : ret = gyro_g2.UpdateDataOneDay( file ); obj = gyro_g2.dataOneDay; break;
+
+    case dist.name    : ret = dist.UpdateDataOneDay( file );    obj = dist.dataOneDay;    break;
     case lux.name     : ret = lux.UpdateDataOneDay( file );     obj = lux.dataOneDay;     break;
-    case temp.name    : ret = temp.UpdateDataOneDay( file );    obj = temp.dataOneDay;    break;
+
     case b_atmos.name : ret = b_atmos.UpdateDataOneDay( file ); obj = b_atmos.dataOneDay; break;
     case b_humi.name  : ret = b_humi.UpdateDataOneDay( file );  obj = b_humi.dataOneDay;  break;
     case b_temp.name  : ret = b_temp.UpdateDataOneDay( file );  obj = b_temp.dataOneDay;  break;
+
+    case l_atmos.name : ret = l_atmos.UpdateDataOneDay( file ); obj = l_atmos.dataOneDay; break;
+    case l_temp.name  : ret = l_temp.UpdateDataOneDay( file );  obj = l_temp.dataOneDay;  break;
     }
 
     if( ret == false ){
@@ -322,29 +328,35 @@ function getSensorDataLast30s( cmd ){
       acc_x.UpdateDataLast30s( obj.acc_x );
       acc_y.UpdateDataLast30s( obj.acc_y );
       acc_z.UpdateDataLast30s( obj.acc_z );
-      atmos.UpdateDataLast30s( obj.atmos );
-      dist.UpdateDataLast30s( obj.dist );
       gyro_g1.UpdateDataLast30s( obj.gyro_g1 );
       gyro_g2.UpdateDataLast30s( obj.gyro_g2 );
+
+      dist.UpdateDataLast30s( obj.dist );
       lux.UpdateDataLast30s( obj.lux );
-      temp.UpdateDataLast30s( obj.temp );
+
       b_atmos.UpdateDataLast30s( obj.b_atmos );
       b_humi.UpdateDataLast30s( obj.b_humi );
       b_temp.UpdateDataLast30s( obj.b_temp );
 
-      var data = { acc_x:0, acc_y:0, acc_z:0, atmos:0, dist:0, gyro_g1:0, gyro_g2:0, lux:0, temp:0, b_atmos:0, b_humi:0, b_temp:0 };
+      l_atmos.UpdateDataLast30s( obj.l_atmos );
+      l_temp.UpdateDataLast30s( obj.l_temp );
+
+      var data = { acc_x:0, acc_y:0, acc_z:0, gyro_g1:0, gyro_g2:0, dist:0, lux:0, b_atmos:0, b_humi:0, b_temp:0, l_atmos:0, l_temp:0 };
       data.acc_x   = acc_x.dataLast30s;
       data.acc_y   = acc_y.dataLast30s;
       data.acc_z   = acc_z.dataLast30s;
-      data.atmos   = atmos.dataLast30s;
-      data.dist    = dist.dataLast30s;
       data.gyro_g1 = gyro_g1.dataLast30s;
       data.gyro_g2 = gyro_g2.dataLast30s;
+
+      data.dist    = dist.dataLast30s;
       data.lux     = lux.dataLast30s;
-      data.temp    = temp.dataLast30s;
+
       data.b_atmos = b_atmos.dataLast30s;
       data.b_humi  = b_humi.dataLast30s;
       data.b_temp  = b_temp.dataLast30s;
+
+      data.l_atmos = l_atmos.dataLast30s;
+      data.l_temp  = l_temp.dataLast30s;
       console.log( "[main.js] data = " + JSON.stringify(data) );
 
       // 加速度センサとジャイロセンサの "10秒前" と" 今" の値に大きな差があるか？をチェック

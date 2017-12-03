@@ -91,20 +91,24 @@
     <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out gyro g1' );" value="ジャイロ(g1) []" />
     <!-- ジャイロ(g2) -->
     <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out gyro g2' );" value="ジャイロ(g2) []" />
+    <br>
+
     <!-- 距離(GP2Y0E03) -->
     <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out dist' );" value="距離 [cm]" />
-    <!-- 気圧(LPS25H) -->
-    <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out atmos' );" value="気圧 [mbar]" />
     <!-- 照度(TSL2561) -->
     <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out lux' );" value="照度 [ルクス]" />
-    <!-- 温度(LPS25H) -->
-    <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out temp' );" value="温度 [℃]" />
+    <br>
+
     <!-- 気圧(BME280) -->
-    <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out b_atmos' );" value="気圧 [hPa]" />
+    <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out b_atmos' );" value="気圧(BME280) [hPa]" />
     <!-- 湿度(BME280) -->
-    <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out b_humi' );" value="湿度 [%]" />
+    <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out b_humi' );" value="湿度(BME280) [%]" />
     <!-- 温度(BME280) -->
-    <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out b_temp' );" value="温度 [℃]" />
+    <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out b_temp' );" value="温度(BME280) [℃]" />
+    <!-- 気圧(LPS25H) -->
+    <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out l_atmos' );" value="気圧(LPS25H) [hPa]" />
+    <!-- 温度(LPS25H) -->
+    <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out l_temp' );" value="温度(LPS25H) [℃]" />
   </article>
 </section>
 
@@ -117,40 +121,40 @@
     <span class="fix" id="val_sensor_acc_z">--</span>
     <span class="fix" id="val_sensor_gyro_g1">--</span>
     <span class="fix" id="val_sensor_gyro_g2">--</span>
+    <br>
     <span class="fix" id="val_sensor_dist">--</span>
-    <span class="fix" id="val_sensor_atmos">--</span>
     <span class="fix" id="val_sensor_lux">--</span>
-    <span class="fix" id="val_sensor_temp">--</span>
+    <br>
     <span class="fix" id="val_sensor_b_atmos">--</span>
     <span class="fix" id="val_sensor_b_humi">--</span>
     <span class="fix" id="val_sensor_b_temp">--</span>
+    <span class="fix" id="val_sensor_l_atmos">--</span>
+    <span class="fix" id="val_sensor_l_temp">--</span>
   </article>
 </section>
 
 <!-- Graph -->
-<section style="height:900px;">
+<section style="height:620px;">
   <h2>Chart</h2>
   <article>
     <div class="chart" id="chart_sensor_acc_x"></div>
     <div class="chart" id="chart_sensor_acc_y"></div>
     <div class="chart" id="chart_sensor_acc_z"></div>
-  </article>
-  <br/>
-  <article>
     <div class="chart" id="chart_sensor_gyro_g1"></div>
     <div class="chart" id="chart_sensor_gyro_g2"></div>
-    <div class="chart" id="chart_sensor_dist"></div>
   </article>
   <br/>
   <article>
-    <div class="chart" id="chart_sensor_atmos"></div>
+    <div class="chart" id="chart_sensor_dist"></div>
     <div class="chart" id="chart_sensor_lux"></div>
-    <div class="chart" id="chart_sensor_temp"></div>
   </article>
+  <br/>
   <article>
     <div class="chart" id="chart_sensor_b_atmos"></div>
     <div class="chart" id="chart_sensor_b_humi"></div>
     <div class="chart" id="chart_sensor_b_temp"></div>
+    <div class="chart" id="chart_sensor_l_atmos"></div>
+    <div class="chart" id="chart_sensor_l_temp"></div>
   </article>
 </section>
 
@@ -179,12 +183,12 @@
       <option value="gyro_g1">ジャイロ G1 方向</option>
       <option value="gyro_g2">ジャイロ G2 方向</option>
       <option value="dist">距離</option>
-      <option value="atmos">気圧</option>
       <option value="lux">照度</option>
-      <option value="temp">温度</option>
       <option value="b_atmos">気圧(BME280)</option>
       <option value="b_humi">湿度(BME280)</option>
       <option value="b_temp">温度(BME280)</option>
+      <option value="l_atmos">気圧(LPS25H)</option>
+      <option value="l_temp">温度(LPS25H)</option>
     </select>
     <div class="chartDaily" id="chart_sensor_daily"></div>
   </article>

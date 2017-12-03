@@ -134,6 +134,7 @@ span{
 
 span.fix{
   background-color: #E7CF00;
+  width: 140px;
 }
 
 /*-----------------------------------------------------------------------------
@@ -162,7 +163,7 @@ input{
 input.button{
   background-color: #d42426;
 
-  width: 100px;
+  width: 150px;
 
   text-align: center;
   font-size: 0.8em;
