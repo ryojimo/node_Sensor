@@ -25,6 +25,9 @@ window.onload = function(){
   makeChart( "chart_gyro_g2", "chart_sensor_gyro_g2", "gyro_g2", dataPointsLast30s );
   makeChart( "chart_lux",     "chart_sensor_lux",     "lux",     dataPointsLast30s );
   makeChart( "chart_temp",    "chart_sensor_temp",    "temp",    dataPointsLast30s );
+  makeChart( "chart_b_atmos", "chart_sensor_b_atmos", "b_atmos", dataPointsLast30s );
+  makeChart( "chart_b_humi",  "chart_sensor_b_humi",  "b_humi",  dataPointsLast30s );
+  makeChart( "chart_b_temp",  "chart_sensor_b_temp",  "b_temp",  dataPointsLast30s );
 
   makeChart( "chart_daily",   "chart_sensor_daily",   "",        dataPointsDaily );
 };
@@ -126,6 +129,10 @@ server.on( 'S_to_C_DATA_LAST30S', function( data ){
   document.getElementById( "val_sensor_lux"     ).innerHTML = obj.lux["今"];      // 数値を表示
   document.getElementById( "val_sensor_temp"    ).innerHTML = obj.temp["今"];     // 数値を表示
 
+  document.getElementById( "val_sensor_b_atmos" ).innerHTML = obj.b_atmos["今"];  // 数値を表示
+  document.getElementById( "val_sensor_b_humi"  ).innerHTML = obj.b_humi["今"];   // 数値を表示
+  document.getElementById( "val_sensor_b_temp"  ).innerHTML = obj.b_temp["今"];   // 数値を表示
+
   updateChartLast30s( "chart_acc_x",   obj.acc_x  );
   updateChartLast30s( "chart_acc_y",   obj.acc_y  );
   updateChartLast30s( "chart_acc_z",   obj.acc_z  );
@@ -135,6 +142,9 @@ server.on( 'S_to_C_DATA_LAST30S', function( data ){
   updateChartLast30s( "chart_gyro_g2", obj.gyro_g2);
   updateChartLast30s( "chart_lux",     obj.lux    );
   updateChartLast30s( "chart_temp",    obj.temp   );
+  updateChartLast30s( "chart_b_atmos", obj.b_atmos);
+  updateChartLast30s( "chart_b_humi",  obj.b_humi );
+  updateChartLast30s( "chart_b_temp",  obj.b_temp );
 
   if( data.diff == true ){
     var hi = "10秒以上の揺れを検出しました";
@@ -164,6 +174,9 @@ server.on( 'S_to_C_SENSOR_ONE_DAY', function( data ){
     case 'gyro_g2': updateChartDaily( "gyro_g2", obj ); break;
     case 'lux'    : updateChartDaily( "lux",     obj ); break;
     case 'temp'   : updateChartDaily( "temp",    obj ); break;
+    case 'b_atmos': updateChartDaily( "b_atmos", obj ); break;
+    case 'b_humi' : updateChartDaily( "b_humi",  obj ); break;
+    case 'b_temp' : updateChartDaily( "b_temp",  obj ); break;
     default       : alert( "unknown sensor." ); break;
   }
 });

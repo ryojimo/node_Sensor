@@ -99,6 +99,12 @@
     <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out lux' );" value="照度 [ルクス]" />
     <!-- 温度(LPS25H) -->
     <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out temp' );" value="温度 [℃]" />
+    <!-- 気圧(BME280) -->
+    <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out b_atmos' );" value="気圧 [hPa]" />
+    <!-- 湿度(BME280) -->
+    <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out b_humi' );" value="湿度 [%]" />
+    <!-- 温度(BME280) -->
+    <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out b_temp' );" value="温度 [℃]" />
   </article>
 </section>
 
@@ -115,11 +121,14 @@
     <span class="fix" id="val_sensor_atmos">--</span>
     <span class="fix" id="val_sensor_lux">--</span>
     <span class="fix" id="val_sensor_temp">--</span>
+    <span class="fix" id="val_sensor_b_atmos">--</span>
+    <span class="fix" id="val_sensor_b_humi">--</span>
+    <span class="fix" id="val_sensor_b_temp">--</span>
   </article>
 </section>
 
 <!-- Graph -->
-<section style="height:600px;">
+<section style="height:900px;">
   <h2>Chart</h2>
   <article>
     <div class="chart" id="chart_sensor_acc_x"></div>
@@ -137,6 +146,11 @@
     <div class="chart" id="chart_sensor_atmos"></div>
     <div class="chart" id="chart_sensor_lux"></div>
     <div class="chart" id="chart_sensor_temp"></div>
+  </article>
+  <article>
+    <div class="chart" id="chart_sensor_b_atmos"></div>
+    <div class="chart" id="chart_sensor_b_humi"></div>
+    <div class="chart" id="chart_sensor_b_temp"></div>
   </article>
 </section>
 
@@ -168,6 +182,9 @@
       <option value="atmos">気圧</option>
       <option value="lux">照度</option>
       <option value="temp">温度</option>
+      <option value="b_atmos">気圧(BME280)</option>
+      <option value="b_humi">湿度(BME280)</option>
+      <option value="b_temp">温度(BME280)</option>
     </select>
     <div class="chartDaily" id="chart_sensor_daily"></div>
   </article>
