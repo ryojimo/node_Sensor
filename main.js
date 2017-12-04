@@ -126,21 +126,23 @@ var timerFlg;
 
 var cmnt    = new DataCmnt();
 
-var acc_x   = new DataSensor( 'acc_x'   );
-var acc_y   = new DataSensor( 'acc_y'   );
-var acc_z   = new DataSensor( 'acc_z'   );
-var gyro_g1 = new DataSensor( 'gyro_g1' );
-var gyro_g2 = new DataSensor( 'gyro_g2' );
+var sa_acc_x   = new DataSensor( 'sa_acc_x'   );
+var sa_acc_y   = new DataSensor( 'sa_acc_y'   );
+var sa_acc_z   = new DataSensor( 'sa_acc_z'   );
 
-var dist    = new DataSensor( 'dist'    );
-var lux     = new DataSensor( 'lux'     );
+var sa_gyro_g1 = new DataSensor( 'sa_gyro_g1' );
+var sa_gyro_g2 = new DataSensor( 'sa_gyro_g2' );
 
-var b_atmos = new DataSensor( 'b_atmos' );
-var b_humi  = new DataSensor( 'b_humi'  );
-var b_temp  = new DataSensor( 'b_temp'  );
+var si_bme280_atmos = new DataSensor( 'si_bme280_atmos' );
+var si_bme280_humi  = new DataSensor( 'si_bme280_humi'  );
+var si_bme280_temp  = new DataSensor( 'si_bme280_temp'  );
 
-var l_atmos = new DataSensor( 'l_atmos' );
-var l_temp  = new DataSensor( 'l_temp'  );
+var si_gp2y0e03     = new DataSensor( 'si_gp2y0e03'     );
+
+var si_lps25h_atmos = new DataSensor( 'si_lps25h_atmos' );
+var si_lps25h_temp  = new DataSensor( 'si_lps25h_temp'  );
+
+var si_tsl2561_lux  = new DataSensor( 'si_tsl2561_lux'  );
 
 var docomo  = new Docomo();
 var music   = new PlayMusic();
@@ -161,7 +163,7 @@ function startSystem() {
   console.log( "[main.js] startSystem()" );
 
   timerFlg  = setInterval( function(){
-                getSensorDataLast30s( "sudo ./board.out sensor" );
+                getSensorDataLast30s( "sudo ./board.out sensors" );
               }, 10000 );
 };
 
@@ -217,21 +219,21 @@ io.sockets.on( 'connection', function( socket ){
     var ret = false;
     switch( data.sensor )
     {
-    case acc_x.name   : ret = acc_x.UpdateDataOneDay( file );   obj = acc_x.dataOneDay;   break;
-    case acc_y.name   : ret = acc_y.UpdateDataOneDay( file );   obj = acc_y.dataOneDay;   break;
-    case acc_z.name   : ret = acc_z.UpdateDataOneDay( file );   obj = acc_z.dataOneDay;   break;
-    case gyro_g1.name : ret = gyro_g1.UpdateDataOneDay( file ); obj = gyro_g1.dataOneDay; break;
-    case gyro_g2.name : ret = gyro_g2.UpdateDataOneDay( file ); obj = gyro_g2.dataOneDay; break;
+    case sa_acc_x.name   : ret = sa_acc_x.UpdateDataOneDay( file );   obj = sa_acc_x.dataOneDay;   break;
+    case sa_acc_y.name   : ret = sa_acc_y.UpdateDataOneDay( file );   obj = sa_acc_y.dataOneDay;   break;
+    case sa_acc_z.name   : ret = sa_acc_z.UpdateDataOneDay( file );   obj = sa_acc_z.dataOneDay;   break;
+    case sa_gyro_g1.name : ret = sa_gyro_g1.UpdateDataOneDay( file ); obj = sa_gyro_g1.dataOneDay; break;
+    case sa_gyro_g2.name : ret = sa_gyro_g2.UpdateDataOneDay( file ); obj = sa_gyro_g2.dataOneDay; break;
 
-    case dist.name    : ret = dist.UpdateDataOneDay( file );    obj = dist.dataOneDay;    break;
-    case lux.name     : ret = lux.UpdateDataOneDay( file );     obj = lux.dataOneDay;     break;
+    case si_gp2y0e03.name    : ret = si_gp2y0e03.UpdateDataOneDay( file );    obj = si_gp2y0e03.dataOneDay;    break;
+    case si_tsl2561_lux.name     : ret = si_tsl2561_lux.UpdateDataOneDay( file );     obj = si_tsl2561_lux.dataOneDay;     break;
 
-    case b_atmos.name : ret = b_atmos.UpdateDataOneDay( file ); obj = b_atmos.dataOneDay; break;
-    case b_humi.name  : ret = b_humi.UpdateDataOneDay( file );  obj = b_humi.dataOneDay;  break;
-    case b_temp.name  : ret = b_temp.UpdateDataOneDay( file );  obj = b_temp.dataOneDay;  break;
+    case si_bme280_atmos.name : ret = si_bme280_atmos.UpdateDataOneDay( file ); obj = si_bme280_atmos.dataOneDay; break;
+    case si_bme280_humi.name  : ret = si_bme280_humi.UpdateDataOneDay( file );  obj = si_bme280_humi.dataOneDay;  break;
+    case si_bme280_temp.name  : ret = si_bme280_temp.UpdateDataOneDay( file );  obj = si_bme280_temp.dataOneDay;  break;
 
-    case l_atmos.name : ret = l_atmos.UpdateDataOneDay( file ); obj = l_atmos.dataOneDay; break;
-    case l_temp.name  : ret = l_temp.UpdateDataOneDay( file );  obj = l_temp.dataOneDay;  break;
+    case si_lps25h_atmos.name : ret = si_lps25h_atmos.UpdateDataOneDay( file ); obj = si_lps25h_atmos.dataOneDay; break;
+    case si_lps25h_temp.name  : ret = si_lps25h_temp.UpdateDataOneDay( file );  obj = si_lps25h_temp.dataOneDay;  break;
     }
 
     if( ret == false ){
@@ -325,56 +327,71 @@ function getSensorDataLast30s( cmd ){
 
       var obj = (new Function("return " + stdout))();
 
-      acc_x.UpdateDataLast30s( obj.acc_x );
-      acc_y.UpdateDataLast30s( obj.acc_y );
-      acc_z.UpdateDataLast30s( obj.acc_z );
-      gyro_g1.UpdateDataLast30s( obj.gyro_g1 );
-      gyro_g2.UpdateDataLast30s( obj.gyro_g2 );
+      sa_acc_x.UpdateDataLast30s( obj.sa_acc_x );
+      sa_acc_y.UpdateDataLast30s( obj.sa_acc_y );
+      sa_acc_z.UpdateDataLast30s( obj.sa_acc_z );
+      sa_gyro_g1.UpdateDataLast30s( obj.sa_gyro_g1 );
+      sa_gyro_g2.UpdateDataLast30s( obj.sa_gyro_g2 );
 
-      dist.UpdateDataLast30s( obj.dist );
-      lux.UpdateDataLast30s( obj.lux );
+      si_bme280_atmos.UpdateDataLast30s( obj.si_bme280_atmos );
+      si_bme280_humi.UpdateDataLast30s( obj.si_bme280_humi );
+      si_bme280_temp.UpdateDataLast30s( obj.si_bme280_temp );
 
-      b_atmos.UpdateDataLast30s( obj.b_atmos );
-      b_humi.UpdateDataLast30s( obj.b_humi );
-      b_temp.UpdateDataLast30s( obj.b_temp );
+      si_gp2y0e03.UpdateDataLast30s( obj.si_gp2y0e03 );
 
-      l_atmos.UpdateDataLast30s( obj.l_atmos );
-      l_temp.UpdateDataLast30s( obj.l_temp );
+      si_lps25h_atmos.UpdateDataLast30s( obj.si_lps25h_atmos );
+      si_lps25h_temp.UpdateDataLast30s( obj.si_lps25h_temp );
 
-      var data = { acc_x:0, acc_y:0, acc_z:0, gyro_g1:0, gyro_g2:0, dist:0, lux:0, b_atmos:0, b_humi:0, b_temp:0, l_atmos:0, l_temp:0 };
-      data.acc_x   = acc_x.dataLast30s;
-      data.acc_y   = acc_y.dataLast30s;
-      data.acc_z   = acc_z.dataLast30s;
-      data.gyro_g1 = gyro_g1.dataLast30s;
-      data.gyro_g2 = gyro_g2.dataLast30s;
+      si_tsl2561_lux.UpdateDataLast30s( obj.si_tsl2561_lux );
 
-      data.dist    = dist.dataLast30s;
-      data.lux     = lux.dataLast30s;
+      var data = { sa_acc_x:0,
+                   sa_acc_y:0,
+                   sa_acc_z:0,
+                   sa_gyro_g1:0,
+                   sa_gyro_g2:0,
+                   si_bme280_atmos:0,
+                   si_bme280_humi:0,
+                   si_bme280_temp:0,
+                   si_gp2y0e03:0,
+                   si_lps25h_atmos:0,
+                   si_lps25h_temp:0,
+                   si_tsl2561_lux:0
+      };
 
-      data.b_atmos = b_atmos.dataLast30s;
-      data.b_humi  = b_humi.dataLast30s;
-      data.b_temp  = b_temp.dataLast30s;
+      data.sa_acc_x   = sa_acc_x.dataLast30s;
+      data.sa_acc_y   = sa_acc_y.dataLast30s;
+      data.sa_acc_z   = sa_acc_z.dataLast30s;
+      data.sa_gyro_g1 = sa_gyro_g1.dataLast30s;
+      data.sa_gyro_g2 = sa_gyro_g2.dataLast30s;
 
-      data.l_atmos = l_atmos.dataLast30s;
-      data.l_temp  = l_temp.dataLast30s;
+      data.si_bme280_atmos = si_bme280_atmos.dataLast30s;
+      data.si_bme280_humi  = si_bme280_humi.dataLast30s;
+      data.si_bme280_temp  = si_bme280_temp.dataLast30s;
+
+      data.si_gp2y0e03     = si_gp2y0e03.dataLast30s;
+
+      data.si_lps25h_atmos = si_lps25h_atmos.dataLast30s;
+      data.si_lps25h_temp  = si_lps25h_temp.dataLast30s;
+
+      data.si_tsl2561_lux  = si_tsl2561_lux.dataLast30s;
       console.log( "[main.js] data = " + JSON.stringify(data) );
 
       // 加速度センサとジャイロセンサの "10秒前" と" 今" の値に大きな差があるか？をチェック
-      var diff_acc_x   = false;
-      var diff_acc_y   = false;
-      var diff_acc_z   = false;
-      var diff_gyro_g1 = false;
-      var diff_gyro_g2 = false;
+      var diff_sa_acc_x   = false;
+      var diff_sa_acc_y   = false;
+      var diff_sa_acc_z   = false;
+      var diff_sa_gyro_g1 = false;
+      var diff_sa_gyro_g2 = false;
 
-      diff_acc_x   = acc_x.IsLargeDiff();
-      diff_acc_y   = acc_y.IsLargeDiff();
-      diff_acc_z   = acc_z.IsLargeDiff();
-      diff_gyro_g1 = gyro_g1.IsLargeDiff();
-      diff_gyro_g2 = gyro_g2.IsLargeDiff();
+      diff_sa_acc_x   = sa_acc_x.IsLargeDiff();
+      diff_sa_acc_y   = sa_acc_y.IsLargeDiff();
+      diff_sa_acc_z   = sa_acc_z.IsLargeDiff();
+      diff_sa_gyro_g1 = sa_gyro_g1.IsLargeDiff();
+      diff_sa_gyro_g2 = sa_gyro_g2.IsLargeDiff();
 
       var diff_all = false;
-      if( diff_acc_x   == true || diff_acc_z   == true ||
-          diff_gyro_g1 == true || diff_gyro_g2 == true ){
+      if( diff_sa_acc_x   == true || diff_sa_acc_z   == true ||
+          diff_sa_gyro_g1 == true || diff_sa_gyro_g2 == true ){
         diff_all = true;
       }
 
