@@ -93,22 +93,22 @@
     <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out sa_gyro g2' );" value="ジャイロ(g2) []" />
     <br>
 
-    <!-- 距離(GP2Y0E03) -->
-    <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out si_gp2y0e03' );" value="距離 [cm]" />
-    <!-- 照度(TSL2561) -->
-    <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out si_tsl2561 lux' );" value="照度 [ルクス]" />
-    <br>
-
     <!-- 気圧(BME280) -->
     <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out si_bme280 atmos' );" value="気圧(BME280) [hPa]" />
     <!-- 湿度(BME280) -->
     <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out si_bme280 humi' );" value="湿度(BME280) [%]" />
     <!-- 温度(BME280) -->
     <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out si_bme280 temp' );" value="温度(BME280) [℃]" />
+    <br>
+
+    <!-- 距離(GP2Y0E03) -->
+    <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out si_gp2y0e03' );" value="距離 [cm]" />
     <!-- 気圧(LPS25H) -->
     <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out si_lps25h atmos' );" value="気圧(LPS25H) [hPa]" />
     <!-- 温度(LPS25H) -->
     <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out si_lps25h temp' );" value="温度(LPS25H) [℃]" />
+    <!-- 照度(TSL2561) -->
+    <input type="submit" class="button" onclick="sendGetCmd( 'sudo ./board.out si_tsl2561 lux' );" value="照度 [ルクス]" />
   </article>
 </section>
 
@@ -122,14 +122,14 @@
     <span class="fix" id="val_sa_gyro_g1">--</span>
     <span class="fix" id="val_sa_gyro_g2">--</span>
     <br>
-    <span class="fix" id="val_si_gp2y0e03">--</span>
-    <span class="fix" id="val_si_tsl2561_lux">--</span>
-    <br>
     <span class="fix" id="val_si_bme280_atmos">--</span>
     <span class="fix" id="val_si_bme280_humi">--</span>
     <span class="fix" id="val_si_bme280_temp">--</span>
+    <br>
+    <span class="fix" id="val_si_gp2y0e03">--</span>
     <span class="fix" id="val_si_lps25h_atmos">--</span>
     <span class="fix" id="val_si_lps25h_temp">--</span>
+    <span class="fix" id="val_si_tsl2561_lux">--</span>
   </article>
 </section>
 
@@ -145,16 +145,16 @@
   </article>
   <br/>
   <article>
-    <div class="chart" id="cid_si_gp2y0e03"></div>
-    <div class="chart" id="cid_si_tsl2561_lux"></div>
-  </article>
-  <br/>
-  <article>
     <div class="chart" id="cid_si_bme280_atmos"></div>
     <div class="chart" id="cid_si_bme280_humi"></div>
     <div class="chart" id="cid_si_bme280_temp"></div>
+  </article>
+  <br/>
+  <article>
+    <div class="chart" id="cid_si_gp2y0e03"></div>
     <div class="chart" id="cid_si_lps25h_atmos"></div>
     <div class="chart" id="cid_si_lps25h_temp"></div>
+    <div class="chart" id="cid_si_tsl2561_lux"></div>
   </article>
 </section>
 
@@ -182,13 +182,13 @@
       <option value="sa_acc_z">加速度 Z方向</option>
       <option value="sa_gyro_g1">ジャイロ G1 方向</option>
       <option value="sa_gyro_g2">ジャイロ G2 方向</option>
-      <option value="si_gp2y0e03">距離</option>
-      <option value="si_tsl2561_lux">照度</option>
       <option value="si_bme280_atmos">気圧(BME280)</option>
       <option value="si_bme280_humi">湿度(BME280)</option>
       <option value="si_bme280_temp">温度(BME280)</option>
+      <option value="si_gp2y0e03">距離</option>
       <option value="si_lps25h_atmos">気圧(LPS25H)</option>
       <option value="si_lps25h_temp">温度(LPS25H)</option>
+      <option value="si_tsl2561_lux">照度</option>
     </select>
     <div class="chartDaily" id="cid_sensors_daily"></div>
   </article>

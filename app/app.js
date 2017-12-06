@@ -44,15 +44,13 @@ var obj_sa_acc_z;
 var obj_sa_gyro_g1;
 var obj_sa_gyro_g2;
 
-var obj_si_gp2y0e03;
-var obj_si_tsl2561_lux;
-
 var obj_si_bme280_atmos;
 var obj_si_bme280_humi;
 var obj_si_bme280_temp;
-
+var obj_si_gp2y0e03;
 var obj_si_lps25h_atmos;
 var obj_si_lps25h_temp;
+var obj_si_tsl2561_lux;
 
 var obj_sensors_daily;
 

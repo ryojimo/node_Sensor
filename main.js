@@ -225,15 +225,16 @@ io.sockets.on( 'connection', function( socket ){
     case sa_gyro_g1.name : ret = sa_gyro_g1.UpdateDataOneDay( file ); obj = sa_gyro_g1.dataOneDay; break;
     case sa_gyro_g2.name : ret = sa_gyro_g2.UpdateDataOneDay( file ); obj = sa_gyro_g2.dataOneDay; break;
 
-    case si_gp2y0e03.name    : ret = si_gp2y0e03.UpdateDataOneDay( file );    obj = si_gp2y0e03.dataOneDay;    break;
-    case si_tsl2561_lux.name     : ret = si_tsl2561_lux.UpdateDataOneDay( file );     obj = si_tsl2561_lux.dataOneDay;     break;
-
     case si_bme280_atmos.name : ret = si_bme280_atmos.UpdateDataOneDay( file ); obj = si_bme280_atmos.dataOneDay; break;
     case si_bme280_humi.name  : ret = si_bme280_humi.UpdateDataOneDay( file );  obj = si_bme280_humi.dataOneDay;  break;
     case si_bme280_temp.name  : ret = si_bme280_temp.UpdateDataOneDay( file );  obj = si_bme280_temp.dataOneDay;  break;
 
+    case si_gp2y0e03.name     : ret = si_gp2y0e03.UpdateDataOneDay( file );     obj = si_gp2y0e03.dataOneDay;     break;
+
     case si_lps25h_atmos.name : ret = si_lps25h_atmos.UpdateDataOneDay( file ); obj = si_lps25h_atmos.dataOneDay; break;
     case si_lps25h_temp.name  : ret = si_lps25h_temp.UpdateDataOneDay( file );  obj = si_lps25h_temp.dataOneDay;  break;
+
+    case si_tsl2561_lux.name  : ret = si_tsl2561_lux.UpdateDataOneDay( file );  obj = si_tsl2561_lux.dataOneDay;  break;
     }
 
     if( ret == false ){
