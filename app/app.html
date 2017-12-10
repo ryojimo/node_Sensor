@@ -69,6 +69,18 @@
 <!-- Talk Controller -->
 <section>
   <h1>Talk Controller</h1>
+  <select name="話し手" oninput="sendTalk();" id="val_talker">
+    <option value="nozomi">nozomi</option>
+    <option value="maki">maki</option>
+    <option value="kaho">kaho</option>
+    <option value="akari">akari</option>
+    <option value="nanako">nanako</option>
+    <option value="seiji">seiji</option>
+    <option value="osamu">osamu</option>
+    <option value="hiroshi">hiroshi</option>
+    <option value="anzu">anzu</option>
+  </select>
+  <br/>
   <textarea name="cmnt" cols="80" rows="1" id="val_talk" placeholder=""></textarea>
   <input type="submit" class="button" onclick="sendTalk();" value="送信" />
 </section>

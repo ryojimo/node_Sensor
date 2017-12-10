@@ -369,29 +369,6 @@ function clearCmnt(){
 
 
 /**
- * トークのデータを送信する
- * @param {void}
- * @return {void}
- * @example
- * sendTalk();
-*/
-function sendTalk(){
-  console.log( "[app.js] sendTalk()" );
-
-  // データをチェック
-  var cmnt = document.getElementById( "val_talk" );
-//  console.log( "[app.js] cmnt.value =" + cmnt.value );
-
-  // サーバーへデータを送信
-  if( cmnt.value == "" ){
-    alert( "話す内容を記入してください。" );
-  } else{
-    sendTalkData( cmnt.value );
-  }
-}
-
-
-/**
  * Music コマンド ( PLAY, PAUSE, STOP, RESUME ) を送る。
  * @param {string} cmd - 'start'/'stop'
  * @return {void}
@@ -456,6 +433,32 @@ function submitMicStart(){
 function submitMicStop(){
   console.log( "[app.js] submitMicStop()" );
   recognition.stop();
+}
+
+
+/**
+ * トークのデータを送信する
+ * @param {void}
+ * @return {void}
+ * @example
+ * sendTalk();
+*/
+function sendTalk(){
+  console.log( "[app.js] sendTalk()" );
+
+  var talker = $("#val_talker").val();
+  var cmnt   = $("#val_talk").val();
+  console.log( "[app.js] talker = " + talker );
+  console.log( "[app.js] cmnt   = " + cmnt );
+
+  // サーバーへデータを送信
+  if( cmnt == "" ){
+    alert( "話す内容を記入してください。" );
+  } else{
+    var obj = { talker:talker, cmnt:cmnt };
+    console.log( "[app.js] server.emit(" + 'C_to_S_TALK_W_NAME' + ")" );
+    server.emit( 'C_to_S_TALK_W_NAME', obj );
+  }
 }
 
 

@@ -304,6 +304,18 @@ io.sockets.on( 'connection', function( socket ){
   });
 
 
+  socket.on( 'C_to_S_TALK_W_NAME', function( data ){
+    console.log( "[main.js] " + 'C_to_S_TALK_W_NAME' );
+    console.log( "[main.js] data = " + data );
+    console.log( "[main.js] data.talker = " + data.talker );
+    console.log( "[main.js] data.cmnt   = " + data.cmnt );
+
+    docomo.Update( data.talker , "hello" );
+    docomo.Talk( data.cmnt, function(){
+    });
+  });
+
+
 });
 
 
