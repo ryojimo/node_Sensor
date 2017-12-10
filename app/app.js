@@ -5,7 +5,7 @@
 */
 //var sv_ip   = "sensor.rp.lfx.sony.co.jp";   // node.js server の IP アドレス
 //var sv_ip   = "43.31.78.45";                // node.js server の IP アドレス
-var sv_ip   = "192.168.91.103";               // node.js server の IP アドレス
+var sv_ip   = "192.168.91.106";               // node.js server の IP アドレス
 var sv_port = 3000;                           // node.js server の port 番号
 
 var server = io.connect( "http://" + sv_ip + ":" + sv_port ); //ローカル
@@ -339,16 +339,14 @@ function sendCmnt(){
 
   // データをチェック
   var cmnt = document.getElementById( "val_cmnt" );
-
-  var data = cmnt.value;
-//  console.log( "[app.js] data=" + data );
+//  console.log( "[app.js] cmnt.value =" + cmnt.value );
 
   // サーバーへデータを送信
   if( cmnt.value == "" ){
     alert( "ご要望・ご意見を記入してください。" );
   } else{
     console.log( "[app.js] server.emit(" + 'C_to_S_CMNT' + ")" );
-    server.emit( 'C_to_S_CMNT', data );
+    server.emit( 'C_to_S_CMNT', cmnt.value );
   }
 
   // データをクリア
@@ -367,6 +365,29 @@ function clearCmnt(){
   console.log( "[app.js] clearCmnt()" );
   var cmnt = document.getElementById( "val_cmnt" );
   cmnt.value = "";
+}
+
+
+/**
+ * トークのデータを送信する
+ * @param {void}
+ * @return {void}
+ * @example
+ * sendTalk();
+*/
+function sendTalk(){
+  console.log( "[app.js] sendTalk()" );
+
+  // データをチェック
+  var cmnt = document.getElementById( "val_talk" );
+//  console.log( "[app.js] cmnt.value =" + cmnt.value );
+
+  // サーバーへデータを送信
+  if( cmnt.value == "" ){
+    alert( "話す内容を記入してください。" );
+  } else{
+    sendTalkData( cmnt.value );
+  }
 }
 
 
