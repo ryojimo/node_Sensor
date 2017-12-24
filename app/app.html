@@ -21,7 +21,7 @@
 <!-- Scrreen -->
 <section>
   <div id="cam_screen">
-    <img alt="" width="60%" height="100%" src="http://192.168.91.106:8080/?action=stream">
+    <img alt="" width="60%" height="100%" src="http://192.168.91.11:8080/?action=stream">
   </div>
 </section>
 
@@ -31,7 +31,7 @@
   <span id="val_rotate">0</span> °
   <input type="range" name="num" min="0" max="360" step="10" value="0" onchange="rotateScreen( this.value )">
   <br/>
-  <input type="submit" class="button" onclick="sendGetCmd( 'wget -O /media/pi/USBDATA/picture.jpg http://192.168.91.106:8080/?action=snapshot' );" value="スナップショット" />
+  <input type="submit" class="button" onclick="sendGetCmd( 'wget -O /media/pi/USBDATA/picture.jpg http://192.168.91.11:8080/?action=snapshot' );" value="スナップショット" />
   <br/>
   <a href="/media/pi/USBDATA/picture.jpg" download="picture.jpg">撮ったスナップショット ( jpg ファイル ) をダウンロード</a>
 </section>
