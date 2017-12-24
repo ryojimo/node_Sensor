@@ -387,7 +387,7 @@ function getSensorDataLast30s( cmd ){
       data.si_lps25h_temp  = si_lps25h_temp.dataLast30s;
 
       data.si_tsl2561_lux  = si_tsl2561_lux.dataLast30s;
-      console.log( "[main.js] data = " + JSON.stringify(data) );
+//      console.log( "[main.js] data = " + JSON.stringify(data) );
 
       // 加速度センサとジャイロセンサの "10秒前" と" 今" の値に大きな差があるか？をチェック
       var diff_sa_acc_x   = false;
