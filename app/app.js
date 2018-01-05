@@ -12,23 +12,56 @@ var server = io.connect( "http://" + sv_ip + ":" + sv_port ); //ローカル
 
 
 //-----------------------------------------------------------------------------
+//-------------------------------------
+var obj_sa_acc_x   = {chart:null, data:null};
+var obj_sa_acc_y   = {chart:null, data:null};
+var obj_sa_acc_z   = {chart:null, data:null};
+var obj_sa_gyro_g1 = {chart:null, data:null};
+var obj_sa_gyro_g2 = {chart:null, data:null};
+
+var obj_si_bme280_atmos = {chart:null, data:null};
+var obj_si_bme280_humi  = {chart:null, data:null};
+var obj_si_bme280_temp  = {chart:null, data:null};
+var obj_si_gp2y0e03     = {chart:null, data:null};
+var obj_si_lps25h_atmos = {chart:null, data:null};
+var obj_si_lps25h_temp  = {chart:null, data:null};
+var obj_si_tsl2561_lux  = {chart:null, data:null};
+
+var obj_sensors_daily = {chart:null, data:null};
+
+
 // ブラウザオブジェクトから受け取るイベント
 window.onload = function(){
   console.log( "[app.js] window.onloaded" );
 
-  makeChart( "obj_sa_acc_x",        "cid_sa_acc_x",        "sa_acc_x",        dataPointsLast30s );
-  makeChart( "obj_sa_acc_y",        "cid_sa_acc_y",        "sa_acc_y",        dataPointsLast30s );
-  makeChart( "obj_sa_acc_z",        "cid_sa_acc_z",        "sa_acc_z",        dataPointsLast30s );
-  makeChart( "obj_sa_gyro_g1",      "cid_sa_gyro_g1",      "sa_gyro_g1",      dataPointsLast30s );
-  makeChart( "obj_sa_gyro_g2",      "cid_sa_gyro_g2",      "sa_gyro_g2",      dataPointsLast30s );
-  makeChart( "obj_si_bme280_atmos", "cid_si_bme280_atmos", "si_bme280_atmos", dataPointsLast30s );
-  makeChart( "obj_si_bme280_humi",  "cid_si_bme280_humi",  "si_bme280_humi",  dataPointsLast30s );
-  makeChart( "obj_si_bme280_temp",  "cid_si_bme280_temp",  "si_bme280_temp",  dataPointsLast30s );
-  makeChart( "obj_si_gp2y0e03",     "cid_si_gp2y0e03",     "si_gp2y0e03",     dataPointsLast30s );
-  makeChart( "obj_si_lps25h_atmos", "cid_si_lps25h_atmos", "si_lps25h_atmos", dataPointsLast30s );
-  makeChart( "obj_si_lps25h_temp",  "cid_si_lps25h_temp",  "si_lps25h_temp",  dataPointsLast30s );
-  makeChart( "obj_si_tsl2561_lux",  "cid_si_tsl2561_lux",  "si_tsl2561_lux",  dataPointsLast30s );
-  makeChart( "obj_sensors_daily",   "cid_sensors_daily",   "",                dataPointsDaily );
+  obj_sa_acc_x        = makeChart30s( "cid_sa_acc_x",        "sa_acc_x"        );
+  obj_sa_acc_y        = makeChart30s( "cid_sa_acc_y",        "sa_acc_y"        );
+  obj_sa_acc_z        = makeChart30s( "cid_sa_acc_z",        "sa_acc_z"        );
+  obj_sa_gyro_g1      = makeChart30s( "cid_sa_gyro_g1",      "sa_gyro_g1"      );
+  obj_sa_gyro_g2      = makeChart30s( "cid_sa_gyro_g2",      "sa_gyro_g2"      );
+  obj_si_bme280_atmos = makeChart30s( "cid_si_bme280_atmos", "si_bme280_atmos" );
+  obj_si_bme280_humi  = makeChart30s( "cid_si_bme280_humi",  "si_bme280_humi"  );
+  obj_si_bme280_temp  = makeChart30s( "cid_si_bme280_temp",  "si_bme280_temp"  );
+  obj_si_gp2y0e03     = makeChart30s( "cid_si_gp2y0e03",     "si_gp2y0e03"     );
+  obj_si_lps25h_atmos = makeChart30s( "cid_si_lps25h_atmos", "si_lps25h_atmos" );
+  obj_si_lps25h_temp  = makeChart30s( "cid_si_lps25h_temp",  "si_lps25h_temp"  );
+  obj_si_tsl2561_lux  = makeChart30s( "cid_si_tsl2561_lux",  "si_tsl2561_lux"  );
+  obj_sa_acc_x.chart.render();
+  obj_sa_acc_x.chart.render();
+  obj_sa_acc_y.chart.render();
+  obj_sa_acc_z.chart.render();
+  obj_sa_gyro_g1.chart.render();
+  obj_sa_gyro_g2.chart.render();
+  obj_si_bme280_atmos.chart.render();
+  obj_si_bme280_humi.chart.render();
+  obj_si_bme280_temp.chart.render();
+  obj_si_gp2y0e03.chart.render();
+  obj_si_lps25h_atmos.chart.render();
+  obj_si_lps25h_temp.chart.render();
+  obj_si_tsl2561_lux.chart.render();
+
+  obj_sensors_daily   = makeChart1d( "cid_sensors_daily",   "" );
+  obj_sensors_daily.chart.render();
 };
 
 
@@ -37,59 +70,60 @@ window.onunload = function(){
 };
 
 
-//-------------------------------------
-var obj_sa_acc_x;
-var obj_sa_acc_y;
-var obj_sa_acc_z;
-var obj_sa_gyro_g1;
-var obj_sa_gyro_g2;
-
-var obj_si_bme280_atmos;
-var obj_si_bme280_humi;
-var obj_si_bme280_temp;
-var obj_si_gp2y0e03;
-var obj_si_lps25h_atmos;
-var obj_si_lps25h_temp;
-var obj_si_tsl2561_lux;
-
-var obj_sensors_daily;
-
-var dataPointsLast30s = [{ label:"30秒前", y: 0 }, { label:"20秒前", y: 0 }, { label:"10秒前", y: 0 }, { label:"今",     y: 0 }];
-var dataPointsDaily   = [{ label: "00-00", y: 0 }, { label: "01-00", y: 0 }, { label: "02-00", y: 0 }, { label: "03-00", y: 0 },
-                         { label: "04-00", y: 0 }, { label: "05-00", y: 0 }, { label: "06-00", y: 0 }, { label: "07-00", y: 0 },
-                         { label: "08-00", y: 0 }, { label: "09-00", y: 0 }, { label: "10-00", y: 0 }, { label: "11-00", y: 0 },
-                         { label: "12-00", y: 0 }, { label: "13-00", y: 0 }, { label: "14-00", y: 0 }, { label: "15-00", y: 0 },
-                         { label: "16-00", y: 0 }, { label: "17-00", y: 0 }, { label: "18-00", y: 0 }, { label: "19-00", y: 0 },
-                         { label: "20-00", y: 0 }, { label: "21-00", y: 0 }, { label: "22-00", y: 0 }, { label: "23-00", y: 0 }
-                        ];
-
-
 /**
- * グラフ ( チャート ) を作成する。
- * @param {string} chart - 作成するグラフのオブジェクト
+ * 30sec のデータを表示するグラフ ( チャート ) を作成する。
  * @param {string} domid - グラフを表示する DOM の ID 名
  * @param {string} title - グラフに表示するタイトル
- * @param {object} data - グラフに表示するデータ
- * @return {void}
+ * @return {string} chart - 作成するグラフのオブジェクトとデータ
  * @example
- * makeChart( "chart_temp", "chart_sensor_temp", "temp", data );
+ * makeChart30s( "chart_sensor_temp", "temp", data );
 */
-function makeChart( chart, domid, title, data ){
-  console.log( "[app.js] makeChart()" );
-  console.log( "[app.js] chart = " + chart );
+function makeChart30s( domid, title ){
+  console.log( "[app.js] makeChart30s()" );
   console.log( "[app.js] domid = " + domid );
   console.log( "[app.js] title = " + title );
 
-  // グローバル変数は window オブジェクトのプロパティなので window[変数] と記述できる
-  // ただし makeChart() 関数を呼び出し時に
-  // makeChart( "obj_sa_acc_x", .... ) のように変数を文字列で渡す必要がある
-  window[chart] = new CanvasJS.Chart(domid, {
+  var data = new Array({label:"30秒前", y:0}, {label:"20秒前", y:0}, {label:"10秒前", y:0}, {label:"今", y:0});
+
+  var obj = new CanvasJS.Chart(domid, {
     title:{text: title},
     data: [{type: 'area',           // グラフの種類 (area, bar, bubble, column, stackedColumn )
             dataPoints: data        // グラフに描画するデータ
     }]
   });
-  window[chart].render();
+
+  return {chart:obj, data:data};
+};
+
+
+/**
+ * 1 day のデータを表示するグラフ ( チャート ) を作成する。
+ * @param {string} domid - グラフを表示する DOM の ID 名
+ * @param {string} title - グラフに表示するタイトル
+ * @return {string} chart - 作成するグラフのオブジェクトとデータ
+ * @example
+ * makeChart1d( "chart_sensor_temp", "temp", data );
+*/
+function makeChart1d( domid, title ){
+  console.log( "[app.js] makeChart1d()" );
+  console.log( "[app.js] domid = " + domid );
+  console.log( "[app.js] title = " + title );
+
+  var data = new Array({label:"00-00", y:0}, {label:"01-00", y:0}, {label:"02-00", y:0}, {label:"03-00", y:0},
+                       {label:"04-00", y:0}, {label:"05-00", y:0}, {label:"06-00", y:0}, {label:"07-00", y:0},
+                       {label:"08-00", y:0}, {label:"09-00", y:0}, {label:"10-00", y:0}, {label:"11-00", y:0},
+                       {label:"12-00", y:0}, {label:"13-00", y:0}, {label:"14-00", y:0}, {label:"15-00", y:0},
+                       {label:"16-00", y:0}, {label:"17-00", y:0}, {label:"18-00", y:0}, {label:"19-00", y:0},
+                       {label:"20-00", y:0}, {label:"21-00", y:0}, {label:"22-00", y:0}, {label:"23-00", y:0}
+                      );
+
+  var obj = new CanvasJS.Chart(domid, {
+    title:{text: title},
+    data: [{type: 'area',           // グラフの種類 (area, bar, bubble, column, stackedColumn )
+            dataPoints: data        // グラフに描画するデータ
+    }]
+  });
+  return {chart:obj, data:data};
 };
 
 
@@ -194,7 +228,7 @@ server.on( 'S_to_C_TALK_CB', function(){
 
 //-------------------------------------
 /**
- * dataPointsLast30s プロパティの値をグラフ表示する。
+ * 30s 間のセンサ値をグラフ表示する。
  * @param {string} chart - 対象のグラフ
  * @param {object} data - グラフに表示するデータ
  * @return {void}
@@ -209,18 +243,18 @@ function updateChartLast30s( chart, data ){
 
   var i = 0;
   for( var key in data ){
-    dataPointsLast30s[i].label = key;
-    dataPointsLast30s[i].y     = data[key];
+    window[chart].data[i].label = key;
+    window[chart].data[i].y     = data[key];
     i++;
   }
 
-  window[chart].options.data.dataPoints = dataPointsLast30s;
-  window[chart].render();
+  window[chart].chart.options.data.dataPoints = window[chart].data;
+  window[chart].chart.render();
 }
 
 
 /**
- * dataPointsDaily プロパティの値をグラフ表示する。
+ * 1 day のセンサ値をグラフ表示する。
  * @param {string} title - グラフに表示するタイトル
  * @param {object} data - グラフに表示するデータ
  * @return {void}
@@ -235,14 +269,14 @@ function updateChartDaily( title, data ){
 
   var i = 0;
   for( var key in data ){
-    dataPointsDaily[i].label = key;
-    dataPointsDaily[i].y     = data[key];
+    obj_sensors_daily.data[i].label = key;
+    obj_sensors_daily.data[i].y     = data[key];
     i++;
   }
 
-  obj_sensors_daily.options.title.text = title;
-  obj_sensors_daily.options.data.dataPoints = dataPointsDaily;
-  obj_sensors_daily.render();
+  obj_sensors_daily.chart.options.title.text = title;
+  obj_sensors_daily.chart.options.data.dataPoints = obj_sensors_daily.data;
+  obj_sensors_daily.chart.render();
 }
 
 
@@ -281,8 +315,8 @@ function sendGetCmdSensorOneDay(){
   console.log( "[app.js] date   = " + date );
   console.log( "[app.js] sensor = " + sensor );
 
-  if( date < "2017-11-30" ){
-    alert( "2017/11/30 以降を指定してください。" );
+  if( date < "2017-12-24" ){
+    alert( "2017/12/24 以降を指定してください。" );
   }
 
   var obj = { date:date, sensor:sensor };
