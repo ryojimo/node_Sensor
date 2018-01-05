@@ -10,6 +10,12 @@ Author URI:  ---
 /*-----------------------------------------------------------------------------
  * class defines
  *---------------------------------------------------------------------------*/
+.bg-1 {
+  background-image: url("./bg.gif");
+  background-repeat: no-repeat;
+  background-size: 100% auto;
+}
+
 .slider-width
 {
     width: 40% !important;
