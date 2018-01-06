@@ -168,19 +168,19 @@ server.on( 'S_to_C_DATA_LAST30S', function( data ){
   document.getElementById( "val_si_lps25h_temp"  ).innerHTML = obj.si_lps25h_temp["今"];   // 数値を表示
   document.getElementById( "val_si_tsl2561_lux"  ).innerHTML = obj.si_tsl2561_lux["今"];   // 数値を表示
 
-  updateChartLast30s( "obj_sa_acc_x",        obj.sa_acc_x  );
-  updateChartLast30s( "obj_sa_acc_y",        obj.sa_acc_y  );
-  updateChartLast30s( "obj_sa_acc_z",        obj.sa_acc_z  );
-  updateChartLast30s( "obj_sa_gyro_g1",      obj.sa_gyro_g1);
-  updateChartLast30s( "obj_sa_gyro_g2",      obj.sa_gyro_g2);
+  updateChartLast30s( "obj_sa_acc_x",        obj.sa_acc_x   );
+  updateChartLast30s( "obj_sa_acc_y",        obj.sa_acc_y   );
+  updateChartLast30s( "obj_sa_acc_z",        obj.sa_acc_z   );
+  updateChartLast30s( "obj_sa_gyro_g1",      obj.sa_gyro_g1 );
+  updateChartLast30s( "obj_sa_gyro_g2",      obj.sa_gyro_g2 );
 
-  updateChartLast30s( "obj_si_bme280_atmos", obj.si_bme280_atmos);
-  updateChartLast30s( "obj_si_bme280_humi",  obj.si_bme280_humi );
-  updateChartLast30s( "obj_si_bme280_temp",  obj.si_bme280_temp );
-  updateChartLast30s( "obj_si_gp2y0e03",     obj.si_gp2y0e03    );
-  updateChartLast30s( "obj_si_lps25h_atmos", obj.si_lps25h_atmos);
-  updateChartLast30s( "obj_si_lps25h_temp",  obj.si_lps25h_temp );
-  updateChartLast30s( "obj_si_tsl2561_lux",  obj.si_tsl2561_lux );
+  updateChartLast30s( "obj_si_bme280_atmos", obj.si_bme280_atmos );
+  updateChartLast30s( "obj_si_bme280_humi",  obj.si_bme280_humi  );
+  updateChartLast30s( "obj_si_bme280_temp",  obj.si_bme280_temp  );
+  updateChartLast30s( "obj_si_gp2y0e03",     obj.si_gp2y0e03     );
+  updateChartLast30s( "obj_si_lps25h_atmos", obj.si_lps25h_atmos );
+  updateChartLast30s( "obj_si_lps25h_temp",  obj.si_lps25h_temp  );
+  updateChartLast30s( "obj_si_tsl2561_lux",  obj.si_tsl2561_lux  );
 
   if( data.diff == true ){
     var hi = "10秒以上の揺れを検出しました";
