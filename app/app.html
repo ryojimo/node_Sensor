@@ -38,8 +38,7 @@
       position: relative; 
   }
   #section_screen {padding-top:30px;/*height:700px*/;color: #fff; background-color: #B0BEC5;}
-  #section_light  {padding-top:30px;/*height:200px*/;color: #fff; background-color: #FF8A65;}
-  #section_music  {padding-top:30px;/*height:200px*/;color: #fff; background-color: #FFD54F;}
+  #section_music  {padding-top:30px;/*height:200px*/;color: #fff; background-color: #FF8A65;}
   #section_mic    {padding-top:30px;/*height:200px*/;color: #fff; background-color: #DCE775;}
   #section_talk   {padding-top:30px;/*height:200px*/;color: #fff; background-color: #81C784;}
   #section_sensor_now   {padding-top:30px;/*height:200px;*/color: #fff; background-color: #4DD0E1;}
@@ -63,7 +62,6 @@
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav navbar-right">
         <li><a href="#section_screen">Screen</a></li>
-        <li><a href="#section_light" >Light</a></li>
         <li><a href="#section_music" >Music</a></li>
         <li><a href="#section_mic"   >Mic</a></li>
         <li><a href="#section_talk"   >Talk</a></li>
@@ -98,42 +96,43 @@
       </div>
 
       <div class="col-sm-4">
-        <div class="well" style="background:rgba(0,0,0,0.2);">
-          <div class="row">
-            <div class="col-sm-12">
-              ・画面回転：
-              <!-- Monitor Screen Control bar -->
-              <span id="val_rotate">0</span> °
-              <input class="slider-width" type="range" name="num" min="0" max="360" step="10" value="0" onchange="rotateScreen( this.value )">
-            </div>
-          </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="well" style="background:rgba(0,0,0,0.2);">
+              <div class="row">
+                <div class="col-sm-12">
+                  ・画面回転：
+                  <!-- Monitor Screen Control bar -->
+                  <span id="val_rotate">0</span> °
+                  <input class="slider-width" type="range" name="num" min="0" max="360" step="10" value="0" onchange="rotateScreen( this.value )">
+                </div>
+              </div>
 
-          <div class="row">
-            <div class="col-sm-12">
-              ・サーボモータ・コントロール：
-              <!-- SERVO Motor Control bar -->
-              <span id="val_servo">50</span> %
-              <input class="slider-width" type="range" width="40%" name="num" min="20" max="70" step="2" value="50" onchange="sendSetCmdServo( 'sudo ./board.out motorsv ' + (90 - this.value) )" id="val_range">
-              <!-- <input type="submit" class="button" onclick="sendSetCmdServo( 'sudo ./board.out motorsv auto' );" value="AUTO" /> -->
+              <div class="row">
+                <div class="col-sm-12">
+                  ・サーボモータ・コントロール：
+                  <!-- SERVO Motor Control bar -->
+                  <span id="val_servo">50</span> %
+                  <input class="slider-width" type="range" width="40%" name="num" min="20" max="70" step="2" value="50" onchange="sendSetCmdServo( 'sudo ./board.out motorsv ' + (90 - this.value) )" id="val_range">
+                  <!-- <input type="submit" class="button" onclick="sendSetCmdServo( 'sudo ./board.out motorsv auto' );" value="AUTO" /> -->
+                </div>
+              </div>
             </div>
           </div>
         </div>
+
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="well" style="background:rgba(0,0,0,0.2);">
+              Light　　
+              <button type="button" class="btn btn-default btn-lg" onclick="sendSetCmd( 'sudo ./board.out relay on' );">ON</button>　　
+              <button type="button" class="btn btn-default btn-lg" onclick="sendSetCmd( 'sudo ./board.out relay off' );">OFF</button>
+            </div>
+          </div>
       </div>
 
     </div>
   </div>
-</section>
-<br/>
-</div>
-
-
-<!-- Light -->
-<div id="section_light" class="container-fluid">
-<section>
-  <h1>Light</h1>
-  <p>ON したままだと、まぶしいので基本的に OFF にしましょう。</p>
-  <button type="button" class="btn btn-default btn-lg" onclick="sendSetCmd( 'sudo ./board.out relay on' );">ON</button>
-  <button type="button" class="btn btn-default btn-lg" onclick="sendSetCmd( 'sudo ./board.out relay off' );">OFF</button>
 </section>
 <br/>
 </div>
