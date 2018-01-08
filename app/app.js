@@ -227,7 +227,7 @@ server.on( 'S_to_C_SENSOR_ONE_DAY', function( data ){
     case 'si_lps25h_atmos': updateChartDaily( "si_lps25h_atmos", obj ); break;
     case 'si_lps25h_temp' : updateChartDaily( "si_lps25h_temp",  obj ); break;
     case 'si_tsl2561_lux' : updateChartDaily( "si_tsl2561_lux",  obj ); break;
-    default       : alert( "unknown sensor." ); break;
+    default               : alert( "unknown sensor." ); break;
   }
 });
 
@@ -516,12 +516,13 @@ function sendTalk(){
  * @example
  * rotateScreen( 90 );
 */
-function rotateScreen( value ){
+function rotateScreen( which, value ){
   console.log( "[app.js] rotateScreen()" );
+  console.log( "[app.js] which = " + which );
   console.log( "[app.js] value = " + value );
 
   document.getElementById( "val_rotate" ).innerHTML = value.match( /\d+/ );
-  $("#cam_screen img").rotate( {angle:Number(value)} );
+  $( "#" + which + " img").rotate( {angle:Number(value)} );
 }
 
 

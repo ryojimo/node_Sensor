@@ -89,7 +89,7 @@
       <div class="col-sm-8">
         <!-- Screen -->
         <center>
-        <div id="cam_screen">
+        <div id="cam_screen0">
           <img class="img-thumbnail" alt="" height="100%" src="http://192.168.91.11:8080/?action=stream">
         </div>
         </center>
@@ -104,7 +104,7 @@
                   ・画面回転：
                   <!-- Monitor Screen Control bar -->
                   <span id="val_rotate">0</span> °
-                  <input class="slider-width" type="range" name="num" min="0" max="360" step="10" value="0" onchange="rotateScreen( this.value )">
+                  <input class="slider-width" type="range" name="num" min="0" max="360" step="10" value="0" onchange="rotateScreen( 'cam_screen0', this.value )">
                 </div>
               </div>
 
