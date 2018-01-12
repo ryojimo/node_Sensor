@@ -168,7 +168,7 @@ DataPerson.prototype.ReadFile = function( file ){
 */
 DataPerson.prototype.MakeJson = function( string ){
   console.log( "[DataPerson.js] MakeJson()" );
-  console.log( "[DataPerson.js] file = " + string );
+//  console.log( "[DataPerson.js] file = " + string );
 
   var obj = new Array();
   var ret;
