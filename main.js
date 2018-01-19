@@ -286,7 +286,7 @@ io.sockets.on( 'connection', function( socket ){
         console.log( "[main.js] " + "pid=" + music_pid );
       });
     } else if( data == 'PLAY' ){
-      music.Play( 'Coldplay.mp3' );
+      music.Play( 'Music.mp3' );
     } else {
       music.ChangeStatus( data );
     }
