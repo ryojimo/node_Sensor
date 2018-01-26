@@ -13,39 +13,39 @@ var server = io.connect( "http://" + sv_ip + ":" + sv_port ); //ローカル
 
 //-----------------------------------------------------------------------------
 //-------------------------------------
-var obj_sa_acc_x   = {chart:null, data:null, color:'#E64A19', title:"加速度(x)",    unit:"[?]"};
-var obj_sa_acc_y   = {chart:null, data:null, color:'#E64A19', title:"加速度(y)",    unit:"[?]"};
-var obj_sa_acc_z   = {chart:null, data:null, color:'#E64A19', title:"加速度(z)",    unit:"[?]"};
-var obj_sa_gyro_g1 = {chart:null, data:null, color:'#FFA000',   title:"ジャイロ(g1)", unit:"[?]"};
-var obj_sa_gyro_g2 = {chart:null, data:null, color:'#FFA000',   title:"ジャイロ(g2)", unit:"[?]"};
+var obj_sa_acc_x   = {chart:null, data:null, type:'area', color:'#E64A19', title:"加速度(x)",    unit:"[?]"};
+var obj_sa_acc_y   = {chart:null, data:null, type:'area', color:'#E64A19', title:"加速度(y)",    unit:"[?]"};
+var obj_sa_acc_z   = {chart:null, data:null, type:'area', color:'#E64A19', title:"加速度(z)",    unit:"[?]"};
+var obj_sa_gyro_g1 = {chart:null, data:null, type:'area', color:'#FFA000',   title:"ジャイロ(g1)", unit:"[?]"};
+var obj_sa_gyro_g2 = {chart:null, data:null, type:'area', color:'#FFA000',   title:"ジャイロ(g2)", unit:"[?]"};
 
-var obj_si_bme280_atmos = {chart:null, data:null, color:'#1976D2', title:"気圧(bme280)", unit:"[hPa]"};
-var obj_si_bme280_humi  = {chart:null, data:null, color:'#00796B', title:"湿度(bme280)", unit:"[%]"};
-var obj_si_bme280_temp  = {chart:null, data:null, color:'#C2185B', title:"温度(bme280)", unit:"[℃]"};
-var obj_si_gp2y0e03     = {chart:null, data:null, color:'#455A64', title:"距離(gp2y0e03)", unit:"[cm]"};
-var obj_si_lps25h_atmos = {chart:null, data:null, color:'#1976D2', title:"気圧(lps25h)", unit:"[hPa]"};
-var obj_si_lps25h_temp  = {chart:null, data:null, color:'#C2185B', title:"温度(lps25h)", unit:"[℃]"};
-var obj_si_tsl2561_lux  = {chart:null, data:null, color:'#AFB42B', title:"照度(tsl2561)", unit:"[LUX]"};
+var obj_si_bme280_atmos = {chart:null, data:null, type:'area', color:'#1976D2', title:"気圧(bme280)", unit:"[hPa]"};
+var obj_si_bme280_humi  = {chart:null, data:null, type:'area', color:'#00796B', title:"湿度(bme280)", unit:"[%]"};
+var obj_si_bme280_temp  = {chart:null, data:null, type:'area', color:'#C2185B', title:"温度(bme280)", unit:"[℃]"};
+var obj_si_gp2y0e03     = {chart:null, data:null, type:'area', color:'#455A64', title:"距離(gp2y0e03)", unit:"[cm]"};
+var obj_si_lps25h_atmos = {chart:null, data:null, type:'area', color:'#1976D2', title:"気圧(lps25h)", unit:"[hPa]"};
+var obj_si_lps25h_temp  = {chart:null, data:null, type:'area', color:'#C2185B', title:"温度(lps25h)", unit:"[℃]"};
+var obj_si_tsl2561_lux  = {chart:null, data:null, type:'area', color:'#AFB42B', title:"照度(tsl2561)", unit:"[LUX]"};
 
-var obj_sensors_daily = {chart:null, data:null, color:'#F06292', title:"一日のデータ", unit:""};
+var obj_sensors_daily   = {chart:null, data:null, type:'area',   color:'#1E88E5', title:"一日のデータ", unit:""};
 
 
 // ブラウザオブジェクトから受け取るイベント
 window.onload = function(){
   console.log( "[app.js] window.onloaded" );
 
-  obj_sa_acc_x        = makeChart30s( "cid_sa_acc_x",        obj_sa_acc_x        );
-  obj_sa_acc_y        = makeChart30s( "cid_sa_acc_y",        obj_sa_acc_y        );
-  obj_sa_acc_z        = makeChart30s( "cid_sa_acc_z",        obj_sa_acc_z        );
-  obj_sa_gyro_g1      = makeChart30s( "cid_sa_gyro_g1",      obj_sa_gyro_g1      );
-  obj_sa_gyro_g2      = makeChart30s( "cid_sa_gyro_g2",      obj_sa_gyro_g2      );
-  obj_si_bme280_atmos = makeChart30s( "cid_si_bme280_atmos", obj_si_bme280_atmos );
-  obj_si_bme280_humi  = makeChart30s( "cid_si_bme280_humi",  obj_si_bme280_humi  );
-  obj_si_bme280_temp  = makeChart30s( "cid_si_bme280_temp",  obj_si_bme280_temp  );
-  obj_si_gp2y0e03     = makeChart30s( "cid_si_gp2y0e03",     obj_si_gp2y0e03     );
-  obj_si_lps25h_atmos = makeChart30s( "cid_si_lps25h_atmos", obj_si_lps25h_atmos );
-  obj_si_lps25h_temp  = makeChart30s( "cid_si_lps25h_temp",  obj_si_lps25h_temp  );
-  obj_si_tsl2561_lux  = makeChart30s( "cid_si_tsl2561_lux",  obj_si_tsl2561_lux  );
+  obj_sa_acc_x        = makeChartSensor30s( "cid_sa_acc_x",        obj_sa_acc_x        );
+  obj_sa_acc_y        = makeChartSensor30s( "cid_sa_acc_y",        obj_sa_acc_y        );
+  obj_sa_acc_z        = makeChartSensor30s( "cid_sa_acc_z",        obj_sa_acc_z        );
+  obj_sa_gyro_g1      = makeChartSensor30s( "cid_sa_gyro_g1",      obj_sa_gyro_g1      );
+  obj_sa_gyro_g2      = makeChartSensor30s( "cid_sa_gyro_g2",      obj_sa_gyro_g2      );
+  obj_si_bme280_atmos = makeChartSensor30s( "cid_si_bme280_atmos", obj_si_bme280_atmos );
+  obj_si_bme280_humi  = makeChartSensor30s( "cid_si_bme280_humi",  obj_si_bme280_humi  );
+  obj_si_bme280_temp  = makeChartSensor30s( "cid_si_bme280_temp",  obj_si_bme280_temp  );
+  obj_si_gp2y0e03     = makeChartSensor30s( "cid_si_gp2y0e03",     obj_si_gp2y0e03     );
+  obj_si_lps25h_atmos = makeChartSensor30s( "cid_si_lps25h_atmos", obj_si_lps25h_atmos );
+  obj_si_lps25h_temp  = makeChartSensor30s( "cid_si_lps25h_temp",  obj_si_lps25h_temp  );
+  obj_si_tsl2561_lux  = makeChartSensor30s( "cid_si_tsl2561_lux",  obj_si_tsl2561_lux  );
   obj_sa_acc_x.chart.render();
   obj_sa_acc_x.chart.render();
   obj_sa_acc_y.chart.render();
@@ -60,7 +60,7 @@ window.onload = function(){
   obj_si_lps25h_temp.chart.render();
   obj_si_tsl2561_lux.chart.render();
 
-  obj_sensors_daily   = makeChart1d( "cid_sensors_daily", obj_sensors_daily );
+  obj_sensors_daily   = makeChartDaily( "cid_sensors_daily", obj_sensors_daily );
   obj_sensors_daily.chart.render();
 };
 
@@ -76,10 +76,10 @@ window.onunload = function(){
  * @param {object} obj - グラフ化する対象のオブジェクト
  * @return {object} chart - 作成するグラフのオブジェクトとデータ
  * @example
- * makeChart30s( "cid_sa_acc_x", obj_sa_acc_x );
+ * makeChartSensor30s( "cid_sa_acc_x", obj_sa_acc_x );
 */
-function makeChart30s( domid, obj ){
-  console.log( "[app.js] makeChart30s()" );
+function makeChartSensor30s( domid, obj ){
+  console.log( "[app.js] makeChartSensor30s()" );
   console.log( "[app.js] domid = " + domid );
 
   var data = new Array({label:"30秒前", y:0}, {label:"20秒前", y:0}, {label:"10秒前", y:0}, {label:"今", y:0});
@@ -98,7 +98,7 @@ function makeChart30s( domid, obj ){
     ],
     axisX: { labelAngle:-45, labelFontSize:14, labelFontColor:'#222' },
     axisY: { labelFontSize:14, labelFontColor:'#222' },
-    data: [{type: 'area',           // グラフの種類 (area, bar, bubble, column, stackedColumn )
+    data: [{type: obj.type,           // グラフの種類 (area, bar, bubble, column, stackedColumn )
             color: obj.color,
             cursor: "pointer",
             dataPoints: data        // グラフに描画するデータ
@@ -115,10 +115,10 @@ function makeChart30s( domid, obj ){
  * @param {object} obj - グラフ化する対象のオブジェクト
  * @return {string} chart - 作成するグラフのオブジェクトとデータ
  * @example
- * makeChart1d( "cid_sensors_daily", obj_sensors_daily );
+ * makeChartDaily( "cid_sensors_daily", obj_sensors_daily );
 */
-function makeChart1d( domid, obj ){
-  console.log( "[app.js] makeChart1d()" );
+function makeChartDaily( domid, obj ){
+  console.log( "[app.js] makeChartDaily()" );
   console.log( "[app.js] domid = " + domid );
 
   var data = new Array({label:"00-00", y:0}, {label:"01-00", y:0}, {label:"02-00", y:0}, {label:"03-00", y:0},
@@ -143,7 +143,7 @@ function makeChart1d( domid, obj ){
     ],
     axisX: { labelAngle:-45, labelFontSize:14, labelFontColor:'#222' },
     axisY: { labelFontSize:14, labelFontColor:'#222' },
-    data: [{type: 'area',           // グラフの種類 (area, bar, bubble, column, stackedColumn )
+    data: [{type: obj.type,           // グラフの種類 (area, bar, bubble, column, stackedColumn )
             color: obj.color,
             cursor: "pointer",
             dataPoints: data        // グラフに描画するデータ
@@ -228,19 +228,19 @@ server.on( 'S_to_C_SENSOR_ONE_DAY', function( data ){
 
   var obj = (new Function("return " + data.value))();
   switch( str ){
-    case 'sa_acc_x'  : updateChartDaily( "sa_acc_x",   obj ); break;
-    case 'sa_acc_y'  : updateChartDaily( "sa_acc_y",   obj ); break;
-    case 'sa_acc_z'  : updateChartDaily( "sa_acc_z",   obj ); break;
-    case 'sa_gyro_g1': updateChartDaily( "sa_gyro_g1", obj ); break;
-    case 'sa_gyro_g2': updateChartDaily( "sa_gyro_g2", obj ); break;
+    case 'sa_acc_x'  : updateChartDaily( obj_sensors_daily, obj ); break;
+    case 'sa_acc_y'  : updateChartDaily( obj_sensors_daily, obj ); break;
+    case 'sa_acc_z'  : updateChartDaily( obj_sensors_daily, obj ); break;
+    case 'sa_gyro_g1': updateChartDaily( obj_sensors_daily, obj ); break;
+    case 'sa_gyro_g2': updateChartDaily( obj_sensors_daily, obj ); break;
 
-    case 'si_bme280_atmos': updateChartDaily( "si_bme280_atmos", obj ); break;
-    case 'si_bme280_humi' : updateChartDaily( "si_bme280_humi",  obj ); break;
-    case 'si_bme280_temp' : updateChartDaily( "si_bme280_temp",  obj ); break;
-    case 'si_gp2y0e03'    : updateChartDaily( "si_gp2y0e03",     obj ); break;
-    case 'si_lps25h_atmos': updateChartDaily( "si_lps25h_atmos", obj ); break;
-    case 'si_lps25h_temp' : updateChartDaily( "si_lps25h_temp",  obj ); break;
-    case 'si_tsl2561_lux' : updateChartDaily( "si_tsl2561_lux",  obj ); break;
+    case 'si_bme280_atmos': updateChartDaily( obj_sensors_daily, obj ); break;
+    case 'si_bme280_humi' : updateChartDaily( obj_sensors_daily, obj ); break;
+    case 'si_bme280_temp' : updateChartDaily( obj_sensors_daily, obj ); break;
+    case 'si_gp2y0e03'    : updateChartDaily( obj_sensors_daily, obj ); break;
+    case 'si_lps25h_atmos': updateChartDaily( obj_sensors_daily, obj ); break;
+    case 'si_lps25h_temp' : updateChartDaily( obj_sensors_daily, obj ); break;
+    case 'si_tsl2561_lux' : updateChartDaily( obj_sensors_daily, obj ); break;
     default               : alert( "unknown sensor." ); break;
   }
 });
@@ -282,28 +282,27 @@ function updateChartLast30s( chart, data ){
 
 /**
  * 1 day のセンサ値をグラフ表示する。
- * @param {string} title - グラフに表示するタイトル
+ * @param {object} obj_chart - 対象の chart オブジェクト
  * @param {object} data - グラフに表示するデータ
  * @return {void}
  * @example
  * updateChartDaily( "temp", obj );
 */
-function updateChartDaily( title, data ){
+function updateChartDaily( obj_chart, data ){
   console.log( "[app.js] updateChartDaily()" );
-  console.log( "[app.js] title = " + title );
 
 //  var obj = (new Function("return " + data))();
 
   var i = 0;
   for( var key in data ){
-    obj_sensors_daily.data[i].label = key;
-    obj_sensors_daily.data[i].y     = data[key];
+    obj_chart.data[i].label = key;
+    obj_chart.data[i].y     = data[key];
     i++;
   }
 
-  obj_sensors_daily.chart.options.title.text = title;
-  obj_sensors_daily.chart.options.data.dataPoints = obj_sensors_daily.data;
-  obj_sensors_daily.chart.render();
+  obj_chart.chart.options.title.text = obj_chart.title;
+  obj_chart.chart.options.data.dataPoints = obj_sensors_daily.data;
+  obj_chart.chart.render();
 }
 
 
@@ -337,7 +336,7 @@ function sendGetCmd( cmd ){
 function sendGetCmdSensorOneDay(){
   console.log( "[app.js] sendGetCmdSensorOneDay()" );
 
-  var date   = $("#val_date").val();
+  var date   = $("#val_date_sensor").val();
   var sensor = $("#val_which").val();
   console.log( "[app.js] date   = " + date );
   console.log( "[app.js] sensor = " + sensor );
