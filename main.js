@@ -10,6 +10,7 @@ var socketio = require( 'socket.io' );
 var fs       = require( 'fs' );
 var colors   = require( 'colors' );
 require( 'date-utils' );
+var schedule = require( 'node-schedule' );
 
 const DataCmnt   = require( './js/DataCmnt' );
 const DataPerson = require( './js/DataPerson' );
@@ -150,7 +151,9 @@ var music_pid = 0;
 
 
 startSystem();
-
+var job01 = runBoard( ' 1 0-23/1 * * *', "sudo ./board.out sensors"   );
+var job02 = runBoard( '30 7      * * *', "sudo ./board.out relay on"  );
+var job03 = runBoard( '45 7      * * *', "sudo ./board.out relay off" );
 
 /**
  * システムを開始する
@@ -165,6 +168,37 @@ function startSystem() {
   timerFlg  = setInterval( function(){
                 getSensorDataLast30s( "sudo ./board.out sensors" );
               }, 10000 );
+};
+
+
+/**
+ * node-schedule の Job を登録する
+ * @param {string} when - Job を実行する時間
+ * @param {string} cmd - 実行するコマンド
+ * @return {object} job - node-schedule に登録した job
+ * @example
+ * runBoard( '30 7 * * *', "sudo ./board.out relay on" );
+*/
+function runBoard( when, cmd ) {
+  console.log( "[main.js] runBoard()" );
+  console.log( "[main.js] when = " + when );
+  console.log( "[main.js] cmd  = " + cmd );
+
+  var job = schedule.scheduleJob(when, function(){
+    console.log( "[main.js] node-schedule で " + cmd + "が実行されました" );
+
+    var exec = require( 'child_process' ).exec;
+    var ret  = exec( cmd,
+      function( err, stdout, stderr ){
+        console.log( "[main.js] stdout = " + stdout );
+        console.log( "[main.js] stderr = " + stderr );
+        if( err ){
+          console.log( "[main.js] " + err );
+        }
+      });
+  });
+
+  return job;
 };
 
 
