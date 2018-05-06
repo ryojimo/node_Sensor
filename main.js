@@ -15,6 +15,7 @@ var schedule = require( 'node-schedule' );
 const DataCmnt   = require( './js/DataCmnt' );
 const DataPerson = require( './js/DataPerson' );
 const DataSensor = require( './js/DataSensor' );
+const DataSensors = require( './js/DataSensors' );
 const Docomo     = require( './js/Docomo' );
 const PlayMusic  = require( './js/PlayMusic' );
 
@@ -145,15 +146,17 @@ var si_lps25h_temp  = new DataSensor( 'si_lps25h_temp'  );
 
 var si_tsl2561_lux  = new DataSensor( 'si_tsl2561_lux'  );
 
+var sensors = new DataSensors();
+
 var docomo  = new Docomo();
 var music   = new PlayMusic();
 var music_pid = 0;
 
 
 startSystem();
-var job01 = runBoard( ' 1 0-23/1 * * *', "sudo ./board.out sensors"   );
-var job02 = runBoard( '30 7      * * *', "sudo ./board.out relay on"  );
-var job03 = runBoard( '45 7      * * *', "sudo ./board.out relay off" );
+var job01 = runBoard(       '30 7      * * *', "sudo ./board.out relay on"  );
+var job02 = runBoard(       '45 7      * * *', "sudo ./board.out relay off" );
+var job03 = runBoardSensor( ' 1 0-23/1 * * *', "sudo ./board.out sensors"   );
 
 /**
  * システムを開始する
@@ -194,6 +197,47 @@ function runBoard( when, cmd ) {
         console.log( "[main.js] stderr = " + stderr );
         if( err ){
           console.log( "[main.js] " + err );
+        }
+      });
+  });
+
+  return job;
+};
+
+
+/**
+ * node-schedule の Job を登録する
+ * @param {string} when - Job を実行する時間
+ * @param {string} cmd - 実行するコマンド
+ * @return {object} job - node-schedule に登録した job
+ * @example
+ * runBoard( '30 7 * * *', "sudo ./board.out relay on" );
+*/
+function runBoardSensor( when, cmd ) {
+  console.log( "[main.js] runBoardSensor()" );
+  console.log( "[main.js] when = " + when );
+  console.log( "[main.js] cmd  = " + cmd );
+
+  var job = schedule.scheduleJob(when, function(){
+    console.log( "[main.js] node-schedule で " + cmd + "が実行されました" );
+
+    var exec = require( 'child_process' ).exec;
+    var ret  = exec( cmd,
+      function( err, stdout, stderr ){
+        console.log( "[main.js] stdout = " + stdout );
+        console.log( "[main.js] stderr = " + stderr );
+        if( err ){
+          console.log( "[main.js] " + err );
+        }
+
+        var date = new Date();
+        var hour = toDoubleDigits( date.getHours() );
+
+        if( hour == "00" ){
+          sensors.CreateMongoDbDocument();
+          sensors.SetMongoDbData( stdout );
+        } else{
+          sensors.SetMongoDbData( stdout );
         }
       });
   });
@@ -467,7 +511,7 @@ var toDoubleDigits = function( num ){
 
 
 /**
- * 現在の日付を YYYY_MM_DD 形式で取得する
+ * 現在の日付を YYYY-MM-DD 形式で取得する
  * @param {void}
  * @return {string} day - 日付
  * @example
@@ -506,3 +550,5 @@ var hhmmss = function(){
   console.log( "[main.js] time = " + time );
   return time;
 };
+
+
