@@ -154,9 +154,6 @@ var music_pid = 0;
 
 
 startSystem();
-var job01 = runBoard(       '30 7      * * *', "sudo ./board.out relay on"  );
-var job02 = runBoard(       '45 7      * * *', "sudo ./board.out relay off" );
-var job03 = runBoardSensor( ' 1 0-23/1 * * *', "sudo ./board.out sensors"   );
 
 /**
  * システムを開始する
@@ -168,9 +165,18 @@ var job03 = runBoardSensor( ' 1 0-23/1 * * *', "sudo ./board.out sensors"   );
 function startSystem() {
   console.log( "[main.js] startSystem()" );
 
+  var job01;
+  var job02;
+  var job03;
+
+/*
   timerFlg  = setInterval( function(){
                 getSensorDataLast30s( "sudo ./board.out sensors" );
               }, 10000 );
+*/
+  job01 = runBoard(       '00 18      * * *', "sudo ./board.out relay on"  );
+  job02 = runBoard(       '5  18      * * *', "sudo ./board.out relay off" );
+  job03 = runBoardSensor( '00 0-23/1  * * *', "sudo ./board.out sensors"   );
 };
 
 
@@ -198,7 +204,8 @@ function runBoard( when, cmd ) {
         if( err ){
           console.log( "[main.js] " + err );
         }
-      });
+      }
+    );
   });
 
   return job;
@@ -230,16 +237,14 @@ function runBoardSensor( when, cmd ) {
           console.log( "[main.js] " + err );
         }
 
-        var date = new Date();
-        var hour = toDoubleDigits( date.getHours() );
-
-        if( hour == "00" ){
-          sensors.CreateMongoDbDocument();
-          sensors.SetMongoDbData( stdout );
-        } else{
-          sensors.SetMongoDbData( stdout );
+        var hour = hhmmss();
+        if( hour.indexOf( "18:00:" ) != -1 ){   // 18:00:** の時に DB を作成する
+          console.log( "[main.js] " + hour );
+          sensors.CreateMongoDb( yyyymmdd() );
         }
-      });
+        sensors.UpdateMongoDb( yyyymmdd(), hour, stdout );
+      }
+    );
   });
 
   return job;
@@ -500,8 +505,8 @@ function getSensorDataLast30s( cmd ){
  * toDoubleDigits( 8 );
 */
 var toDoubleDigits = function( num ){
-  console.log( "[main.js] toDoubleDigits()" );
-  console.log( "[main.js] num = " + num );
+//  console.log( "[main.js] toDoubleDigits()" );
+//  console.log( "[main.js] num = " + num );
   num += "";
   if( num.length === 1 ){
     num = "0" + num;
