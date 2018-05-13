@@ -174,9 +174,9 @@ function startSystem() {
                 getSensorDataLast30s( "sudo ./board.out sensors" );
               }, 10000 );
 */
-  job01 = runBoard(       '00 18      * * *', "sudo ./board.out relay on"  );
-  job02 = runBoard(       '5  18      * * *', "sudo ./board.out relay off" );
-  job03 = runBoardSensor( '00 0-23/1  * * *', "sudo ./board.out sensors"   );
+  job01 = runBoard(       '30 7      * * *', "sudo ./board.out relay on"  );
+  job02 = runBoard(       '45 7      * * *', "sudo ./board.out relay off" );
+  job03 = runBoardSensor( '00 0-23/1 * * *', "sudo ./board.out sensors"   );
 };
 
 
