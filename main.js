@@ -176,7 +176,7 @@ function startSystem() {
 */
   job01 = runBoard(       '30 7      * * *', "sudo ./board.out relay on"  );
   job02 = runBoard(       '45 7      * * *', "sudo ./board.out relay off" );
-  job03 = runBoardSensor( '00 0-23/1 * * *', "sudo ./board.out sensors"   );
+  job03 = runBoardSensor( ' 0 0-23/1 * * *', "sudo ./board.out sensors"   );
 };
 
 
@@ -237,12 +237,9 @@ function runBoardSensor( when, cmd ) {
           console.log( "[main.js] " + err );
         }
 
-        var hour = hhmmss();
-        if( hour.indexOf( "18:00:" ) != -1 ){   // 18:00:** の時に DB を作成する
-          console.log( "[main.js] " + hour );
-          sensors.CreateMongoDb( yyyymmdd() );
-        }
-        sensors.UpdateMongoDb( yyyymmdd(), hour, stdout );
+        var hour = hhmmss().substr(0,5);      // hh:mm:ss から hh:mm を取り出して hour にセット
+        console.log( "[main.js] " + hour );
+        sensors.CreateMongoDbDocument( yyyymmdd(), hour, stdout );
       }
     );
   });
