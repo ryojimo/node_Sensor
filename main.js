@@ -179,7 +179,10 @@ function startSystem() {
   job02 = runBoard(       '45 7      * * *', "sudo ./board.out relay off" );
   job03 = runBoardSensor( ' 0 0-23/1 * * *', "sudo ./board.out sensors"   );
 */
-  sensors.GetMongoDbOneDay( "2018-05-15", "si_bme280_atmos" );
+  sensors.GetMongoDbOneDay( "2018-05-15", "si_bme280_atmos", function( err, data ){
+    console.log( err );
+    console.log( data );
+  });
 };
 
 
@@ -297,34 +300,10 @@ io.sockets.on( 'connection', function( socket ){
     console.log( "[main.js] data.date   = " + data.date );
     console.log( "[main.js] data.sensor = " + data.sensor );
 
-    var file = '/media/pi/USBDATA/' + data.date + '_sensor.txt';
-
-    var ret = false;
-    switch( data.sensor )
-    {
-    case sa_acc_x.name   : ret = sa_acc_x.UpdateDataOneDay( file );   obj = sa_acc_x.dataOneDay;   break;
-    case sa_acc_y.name   : ret = sa_acc_y.UpdateDataOneDay( file );   obj = sa_acc_y.dataOneDay;   break;
-    case sa_acc_z.name   : ret = sa_acc_z.UpdateDataOneDay( file );   obj = sa_acc_z.dataOneDay;   break;
-    case sa_gyro_g1.name : ret = sa_gyro_g1.UpdateDataOneDay( file ); obj = sa_gyro_g1.dataOneDay; break;
-    case sa_gyro_g2.name : ret = sa_gyro_g2.UpdateDataOneDay( file ); obj = sa_gyro_g2.dataOneDay; break;
-
-    case si_bme280_atmos.name : ret = si_bme280_atmos.UpdateDataOneDay( file ); obj = si_bme280_atmos.dataOneDay; break;
-    case si_bme280_humi.name  : ret = si_bme280_humi.UpdateDataOneDay( file );  obj = si_bme280_humi.dataOneDay;  break;
-    case si_bme280_temp.name  : ret = si_bme280_temp.UpdateDataOneDay( file );  obj = si_bme280_temp.dataOneDay;  break;
-
-    case si_gp2y0e03.name     : ret = si_gp2y0e03.UpdateDataOneDay( file );     obj = si_gp2y0e03.dataOneDay;     break;
-
-    case si_lps25h_atmos.name : ret = si_lps25h_atmos.UpdateDataOneDay( file ); obj = si_lps25h_atmos.dataOneDay; break;
-    case si_lps25h_temp.name  : ret = si_lps25h_temp.UpdateDataOneDay( file );  obj = si_lps25h_temp.dataOneDay;  break;
-
-    case si_tsl2561_lux.name  : ret = si_tsl2561_lux.UpdateDataOneDay( file );  obj = si_tsl2561_lux.dataOneDay;  break;
-    }
-
-    if( ret == false ){
-      io.sockets.emit( 'S_to_C_SENSOR_ONE_DAY', {ret:false, value:JSON.stringify(obj)} );
-    } else {
-      io.sockets.emit( 'S_to_C_SENSOR_ONE_DAY', {ret:true, value:JSON.stringify(obj)} );
-    }
+    sensors.GetMongoDbOneDay( data.date, data.sensor, function( err, data ){
+//      console.log( data );
+      io.sockets.emit( 'S_to_C_SENSOR_ONE_DAY', {ret:err, value:JSON.stringify(data)} );
+    });
   });
 
 

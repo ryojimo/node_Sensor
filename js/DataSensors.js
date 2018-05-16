@@ -121,11 +121,12 @@ DataSensors.prototype.UpdateMongoDb = function( day, hour, data ){
  * 指定した日付の指定したセンサの 1 日の値を取得する
  * @param {string} day - 対象の日付。( MongoDB のコレクション名でも使用 )
  * @param {string} sensor - 対象のセンサ。
- * @return {obj} data - 1 日のセンサデータ。
+ * @param {obj} callback - データを取得するためのコールバック関数
+ * @return {void}
  * @example
  * GetMongoDbOneDay( "2018-05-14", "si_bme280_temp" );
 */
-DataSensors.prototype.GetMongoDbOneDay = function( day, sensor ){
+DataSensors.prototype.GetMongoDbOneDay = function( day, sensor, callback ){
   console.log( "[DataSensors.js] GetMongoDbOneDay()" );
   console.log( "[DataSensors.js] day    = " + day );
   console.log( "[DataSensors.js] sensor = " + sensor );
@@ -145,18 +146,24 @@ DataSensors.prototype.GetMongoDbOneDay = function( day, sensor ){
     var dbo = db.db( "sensors" );
 
     // コレクションに含まれるドキュメントをすべて取得
-    dbo.collection( cname ).find({}).toArray((error, documents) => {
-      if (err) throw err;
-//      console.log( documents );
+    dbo.collection( cname ).find({}).toArray( function(err, documents){
+      try{
+        if (err) throw err;
 
-      var i = 0;
-      for( var key in dataOneDay ){
-        dataOneDay[key] = documents[i].sensors[sensor];
-        i++;
+        var i = 0;
+        for( var key in dataOneDay ){
+          dataOneDay[key] = documents[i].sensors[sensor];
+          i++;
+        }
+        db.close();
+
+//      console.log( dataOneDay );
+        callback( true, dataOneDay );
       }
-
-      console.log( dataOneDay );
-      db.close();
+      catch( e ){
+        console.log( "[DataSensors.js] e = " + e );
+        callback( false, dataOneDay );
+      }
     });
   });
 }
