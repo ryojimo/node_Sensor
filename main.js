@@ -405,7 +405,8 @@ function getSensorData30s( cmd ){
 
       console.log( "[main.js] diff_all = " + diff_all );
       io.sockets.emit( 'S_to_C_DATA_LAST30S', {diff:diff_all, value:data} );
-    });
+    }
+  );
 }
 
 
