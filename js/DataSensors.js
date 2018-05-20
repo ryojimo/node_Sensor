@@ -32,15 +32,94 @@ var DataSensors = function(){
   this.mongo_url = "mongodb://localhost:27017/";
 
   /**
-   * 1 日のセンサ値
+   * 30 秒前までのセンサ値が入った JSON 配列
    * @type {Object}
   */
-  this.dataOneDay = { "00-00": 0, "01-00": 0, "02-00": 0, "03-00": 0, "04-00": 0, "05-00": 0,
-                      "06-00": 0, "07-00": 0, "08-00": 0, "09-00": 0, "10-00": 0, "11-00": 0,
-                      "12-00": 0, "13-00": 0, "14-00": 0, "15-00": 0, "16-00": 0, "17-00": 0,
-                      "18-00": 0, "19-00": 0, "20-00": 0, "21-00": 0, "22-00": 0, "23-00": 0
-                    };
+  this.data30s = [];
 };
+
+
+/**
+ * data30s プロパティを初期化する。
+ * @param {obj} names - センサ名の配列
+ * @return {void}
+ * @example
+ * InitData30s( data );
+*/
+DataSensors.prototype.InitData30s = function( names ){
+  console.log( "[DataSensors.js] InitData30s()" );
+
+  for( var i = 0; i < names.length; i++ ){
+    this.data30s[i] = {sensor: names[i], values: { "30秒前": 0, "20秒前": 0, "10秒前": 0, "今": 0 }};
+  }
+
+  console.log('[DataSensors.js] this.data30s = ' + JSON.stringify(this.data30s) );
+}
+
+
+/**
+ * data30s プロパティを更新する。
+ * @param {string} data - {センサ名:値, センサ名:値, ...} が入った JSON 文字列
+ * @return {string} - 更新した this.data30s の文字列
+ * @example
+ * UpdateData30s( {"sa_acc_x":2030, "sa_acc_y":2847, "sa_acc_z" :1855, ....} );
+*/
+DataSensors.prototype.UpdateData30s = function( data ){
+  console.log( "[DataSensors.js] UpdateData30s()" );
+//  console.log( "[DataSensors.js] data = " + data );
+
+  var jsonObj = (new Function( "return " + data ))();
+
+  for( var key in jsonObj ){
+    for( var i=0; i < this.data30s.length; i++ ){
+      if( this.data30s[i].sensor == key ){
+//        console.log('[DataSensors.js] key          = ' + key);
+//        console.log('[DataSensors.js] jsonObj[key] = ' + jsonObj[key]);
+        this.data30s[i].values["30秒前"] = this.data30s[i].values["20秒前"];
+        this.data30s[i].values["20秒前"] = this.data30s[i].values["10秒前"];
+        this.data30s[i].values["10秒前"] = this.data30s[i].values["今"];
+        this.data30s[i].values["今"] = jsonObj[key];
+      }
+    }
+  }
+
+//  console.log('[DataSensors.js] this.data30s = ' + JSON.stringify(this.data30s) );
+    return( JSON.stringify(this.data30s) );
+}
+
+
+/**
+ * this.data30s プロパティで "10秒前" と "今" の値に大きな差があるか？チェックする。
+ * @param {string} name - センサ名
+ * @return {bool} ret - 500 以上の差があれば true を返す
+ * @example
+ * IsLargeDiff();
+*/
+DataSensors.prototype.IsLargeDiff = function( name ){
+  console.log( "[DataSensor.js] IsLargeDiff()" );
+  console.log( "[DataSensor.js] name = " + name );
+
+  var diff = 0;
+  var flg = 0;
+  for( var i=0; i < this.data30s.length; i++ ){
+    if( this.data30s[i].sensor == name ){
+//    console.log('[DataSensors.js] key          = ' + key);
+//    console.log('[DataSensors.js] jsonObj[key] = ' + jsonObj[key]);
+      flg  = this.data30s[i].values["10秒前"];
+      diff = this.data30s[i].values["10秒前"] - this.data30s[i].values["今"];
+    }
+  }
+
+  var ret = false;
+  if( flg != 0 && ( diff < -500 || 500 < diff ) ){
+    ret = true;
+    console.log( "10秒前の値と今の値が 500 以上差があります。" );
+  } else {
+    ret = false;
+  }
+
+  return ret;
+}
 
 
 /**
@@ -50,10 +129,10 @@ var DataSensors = function(){
  * @param {string} data - センサ名:値 が入った JSON 文字列
  * @return {void}
  * @example
- * CreateMongoDbDocument( "2018-05-14", "08:00", "{...}" );
+ * CreateMDDoc( "2018-05-14", "08:00", "{...}" );
 */
-DataSensors.prototype.CreateMongoDbDocument = function( day, hour, data ){
-  console.log( "[DataSensors.js] CreateMongoDbDocument()" );
+DataSensors.prototype.CreateMDDoc = function( day, hour, data ){
+  console.log( "[DataSensors.js] CreateMDDoc()" );
 
   var jsonObj = (new Function( "return " + data ))();
 
@@ -85,10 +164,11 @@ DataSensors.prototype.CreateMongoDbDocument = function( day, hour, data ){
  * @param {string} data - センサ名:値 が入った JSON 文字列
  * @return {void}
  * @example
- * UpdateMongoDb( "2018-05-14", "08:00", "{...}" );
+ * UpdateMDDoc( "2018-05-14", "08:00", "{...}" );
 */
-DataSensors.prototype.UpdateMongoDb = function( day, hour, data ){
-  console.log( "[DataSensors.js] UpdateMongoDb()" );
+/*
+DataSensors.prototype.UpdateMDDoc = function( day, hour, data ){
+  console.log( "[DataSensors.js] UpdateMDDoc()" );
 
   var jsonObj = (new Function( "return " + data ))();
 
@@ -115,7 +195,7 @@ DataSensors.prototype.UpdateMongoDb = function( day, hour, data ){
     });
   });
 }
-
+*/
 
 /**
  * 指定した日付の指定したセンサの 1 日の値を取得する
@@ -124,20 +204,20 @@ DataSensors.prototype.UpdateMongoDb = function( day, hour, data ){
  * @param {obj} callback - データを取得するためのコールバック関数
  * @return {void}
  * @example
- * GetMongoDbOneDay( "2018-05-14", "si_bme280_temp" );
+ * GetMDDocDataOneDay( "2018-05-14", "si_bme280_temp" );
 */
-DataSensors.prototype.GetMongoDbOneDay = function( day, sensor, callback ){
-  console.log( "[DataSensors.js] GetMongoDbOneDay()" );
+DataSensors.prototype.GetMDDocDataOneDay = function( day, sensor, callback ){
+  console.log( "[DataSensors.js] GetMDDocDataOneDay()" );
   console.log( "[DataSensors.js] day    = " + day );
   console.log( "[DataSensors.js] sensor = " + sensor );
 
   var cname = day;  // コレクション名
 
-  var dataOneDay = { "00-00": 0, "01-00": 0, "02-00": 0, "03-00": 0, "04-00": 0, "05-00": 0,
-                     "06-00": 0, "07-00": 0, "08-00": 0, "09-00": 0, "10-00": 0, "11-00": 0,
-                     "12-00": 0, "13-00": 0, "14-00": 0, "15-00": 0, "16-00": 0, "17-00": 0,
-                     "18-00": 0, "19-00": 0, "20-00": 0, "21-00": 0, "22-00": 0, "23-00": 0
-                   };
+  var data = { "00-00": 0, "01-00": 0, "02-00": 0, "03-00": 0, "04-00": 0, "05-00": 0,
+               "06-00": 0, "07-00": 0, "08-00": 0, "09-00": 0, "10-00": 0, "11-00": 0,
+               "12-00": 0, "13-00": 0, "14-00": 0, "15-00": 0, "16-00": 0, "17-00": 0,
+               "18-00": 0, "19-00": 0, "20-00": 0, "21-00": 0, "22-00": 0, "23-00": 0
+             };
 
   MongoClient.connect( this.mongo_url, function(err, db) {
     if( err ) throw err;
@@ -151,18 +231,18 @@ DataSensors.prototype.GetMongoDbOneDay = function( day, sensor, callback ){
         if (err) throw err;
 
         var i = 0;
-        for( var key in dataOneDay ){
-          dataOneDay[key] = documents[i].sensors[sensor];
+        for( var key in data ){
+          data[key] = documents[i].sensors[sensor];
           i++;
         }
         db.close();
 
-//      console.log( dataOneDay );
-        callback( true, dataOneDay );
+//      console.log( data );
+        callback( true, data );
       }
       catch( e ){
         console.log( "[DataSensors.js] e = " + e );
-        callback( false, dataOneDay );
+        callback( false, data );
       }
     });
   });

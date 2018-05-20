@@ -16,8 +16,8 @@ var server = io.connect( "http://" + sv_ip + ":" + sv_port ); //ローカル
 var obj_sa_acc_x   = {chart:null, data:null, type:'area', color:'#E64A19', title:"加速度(x)",    unit:"[?]"};
 var obj_sa_acc_y   = {chart:null, data:null, type:'area', color:'#E64A19', title:"加速度(y)",    unit:"[?]"};
 var obj_sa_acc_z   = {chart:null, data:null, type:'area', color:'#E64A19', title:"加速度(z)",    unit:"[?]"};
-var obj_sa_gyro_g1 = {chart:null, data:null, type:'area', color:'#FFA000',   title:"ジャイロ(g1)", unit:"[?]"};
-var obj_sa_gyro_g2 = {chart:null, data:null, type:'area', color:'#FFA000',   title:"ジャイロ(g2)", unit:"[?]"};
+var obj_sa_gyro_g1 = {chart:null, data:null, type:'area', color:'#FFA000', title:"ジャイロ(g1)", unit:"[?]"};
+var obj_sa_gyro_g2 = {chart:null, data:null, type:'area', color:'#FFA000', title:"ジャイロ(g2)", unit:"[?]"};
 
 var obj_si_bme280_atmos = {chart:null, data:null, type:'area', color:'#1976D2', title:"気圧(bme280)", unit:"[hPa]"};
 var obj_si_bme280_humi  = {chart:null, data:null, type:'area', color:'#00796B', title:"湿度(bme280)", unit:"[%]"};
@@ -177,37 +177,24 @@ server.on( 'S_to_C_DATA', function( data ){
 
 server.on( 'S_to_C_DATA_LAST30S', function( data ){
   console.log( "[app.js] " + 'S_to_C_DATA_LAST30S' );
-//  console.log( "[app.js] data.diff  = " + data.diff );
-//  console.log( "[app.js] data.value = " + data.value );
+  console.log( "[app.js] data.diff  = " + data.diff );
+  console.log( "[app.js] data.value = " + data.value );
 
-  var obj = (new Function( "return " + data.value ))();
-  document.getElementById( "val_sa_acc_x"   ).innerHTML = obj.sa_acc_x["今"];    // 数値を表示
-  document.getElementById( "val_sa_acc_y"   ).innerHTML = obj.sa_acc_y["今"];    // 数値を表示
-  document.getElementById( "val_sa_acc_z"   ).innerHTML = obj.sa_acc_z["今"];    // 数値を表示
-  document.getElementById( "val_sa_gyro_g1" ).innerHTML = obj.sa_gyro_g1["今"];  // 数値を表示
-  document.getElementById( "val_sa_gyro_g2" ).innerHTML = obj.sa_gyro_g2["今"];  // 数値を表示
+  var obj = [];
+  obj = (new Function( "return " + data.value ))();
 
-  document.getElementById( "val_si_bme280_atmos" ).innerHTML = obj.si_bme280_atmos["今"];  // 数値を表示
-  document.getElementById( "val_si_bme280_humi"  ).innerHTML = obj.si_bme280_humi["今"];   // 数値を表示
-  document.getElementById( "val_si_bme280_temp"  ).innerHTML = obj.si_bme280_temp["今"];   // 数値を表示
-  document.getElementById( "val_si_gp2y0e03"     ).innerHTML = obj.si_gp2y0e03["今"];      // 数値を表示
-  document.getElementById( "val_si_lps25h_atmos" ).innerHTML = obj.si_lps25h_atmos["今"];  // 数値を表示
-  document.getElementById( "val_si_lps25h_temp"  ).innerHTML = obj.si_lps25h_temp["今"];   // 数値を表示
-  document.getElementById( "val_si_tsl2561_lux"  ).innerHTML = obj.si_tsl2561_lux["今"];   // 数値を表示
+  for( var i=0; i<obj.length; i++ ){
+    var name;
+    console.log( "[app.js] obj[ " + i + " ].sensor = " + obj[i].sensor );
 
-  updateChartLast30s( "obj_sa_acc_x",        obj.sa_acc_x   );
-  updateChartLast30s( "obj_sa_acc_y",        obj.sa_acc_y   );
-  updateChartLast30s( "obj_sa_acc_z",        obj.sa_acc_z   );
-  updateChartLast30s( "obj_sa_gyro_g1",      obj.sa_gyro_g1 );
-  updateChartLast30s( "obj_sa_gyro_g2",      obj.sa_gyro_g2 );
+    // 今の値を表示
+    name = "val_" + obj[i].sensor;
+    document.getElementById( name ).innerHTML = obj[i].values["今"];
 
-  updateChartLast30s( "obj_si_bme280_atmos", obj.si_bme280_atmos );
-  updateChartLast30s( "obj_si_bme280_humi",  obj.si_bme280_humi  );
-  updateChartLast30s( "obj_si_bme280_temp",  obj.si_bme280_temp  );
-  updateChartLast30s( "obj_si_gp2y0e03",     obj.si_gp2y0e03     );
-  updateChartLast30s( "obj_si_lps25h_atmos", obj.si_lps25h_atmos );
-  updateChartLast30s( "obj_si_lps25h_temp",  obj.si_lps25h_temp  );
-  updateChartLast30s( "obj_si_tsl2561_lux",  obj.si_tsl2561_lux  );
+    // グラフ表示
+    name = "obj_" + obj[i].sensor;
+    updateChartLast30s( name, obj[i].values );
+  }
 
   if( data.diff == true ){
     var hi = "10秒以上の揺れを検出しました";
@@ -219,30 +206,13 @@ server.on( 'S_to_C_DATA_LAST30S', function( data ){
 server.on( 'S_to_C_SENSOR_ONE_DAY', function( data ){
   console.log( "[app.js] " + 'S_to_C_SENSOR_ONE_DAY' );
 //  console.log( "[app.js] data = " + data );
-  var str = $("#val_which").val();
-//  console.log( "[app.js] str = " + str );
 
   if( data.ret == false ){
     window.alert( "データがありません。\n\r" );
   }
 
   var obj = (new Function("return " + data.value))();
-  switch( str ){
-    case 'sa_acc_x'  : updateChartDaily( obj_sensors_daily, obj ); break;
-    case 'sa_acc_y'  : updateChartDaily( obj_sensors_daily, obj ); break;
-    case 'sa_acc_z'  : updateChartDaily( obj_sensors_daily, obj ); break;
-    case 'sa_gyro_g1': updateChartDaily( obj_sensors_daily, obj ); break;
-    case 'sa_gyro_g2': updateChartDaily( obj_sensors_daily, obj ); break;
-
-    case 'si_bme280_atmos': updateChartDaily( obj_sensors_daily, obj ); break;
-    case 'si_bme280_humi' : updateChartDaily( obj_sensors_daily, obj ); break;
-    case 'si_bme280_temp' : updateChartDaily( obj_sensors_daily, obj ); break;
-    case 'si_gp2y0e03'    : updateChartDaily( obj_sensors_daily, obj ); break;
-    case 'si_lps25h_atmos': updateChartDaily( obj_sensors_daily, obj ); break;
-    case 'si_lps25h_temp' : updateChartDaily( obj_sensors_daily, obj ); break;
-    case 'si_tsl2561_lux' : updateChartDaily( obj_sensors_daily, obj ); break;
-    default               : alert( "unknown sensor." ); break;
-  }
+  updateChartDaily( obj_sensors_daily, obj );
 });
 
 
@@ -341,8 +311,8 @@ function sendGetCmdSensorOneDay(){
   console.log( "[app.js] date   = " + date );
   console.log( "[app.js] sensor = " + sensor );
 
-  if( date < "2017-12-24" ){
-    alert( "2017/12/24 以降を指定してください。" );
+  if( date < "2018-05-15" ){
+    alert( "2018/05/15 以降を指定してください。" );
   }
 
   var obj = { date:date, sensor:sensor };

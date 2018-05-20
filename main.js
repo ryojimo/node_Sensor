@@ -14,7 +14,6 @@ var schedule = require( 'node-schedule' );
 
 const DataCmnt   = require( './js/DataCmnt' );
 const DataPerson = require( './js/DataPerson' );
-const DataSensor = require( './js/DataSensor' );
 const DataSensors = require( './js/DataSensors' );
 const Docomo     = require( './js/Docomo' );
 const PlayMusic  = require( './js/PlayMusic' );
@@ -128,24 +127,13 @@ var timerFlg;
 
 var cmnt    = new DataCmnt();
 
-var sa_acc_x   = new DataSensor( 'sa_acc_x'   );
-var sa_acc_y   = new DataSensor( 'sa_acc_y'   );
-var sa_acc_z   = new DataSensor( 'sa_acc_z'   );
-
-var sa_gyro_g1 = new DataSensor( 'sa_gyro_g1' );
-var sa_gyro_g2 = new DataSensor( 'sa_gyro_g2' );
-
-var si_bme280_atmos = new DataSensor( 'si_bme280_atmos' );
-var si_bme280_humi  = new DataSensor( 'si_bme280_humi'  );
-var si_bme280_temp  = new DataSensor( 'si_bme280_temp'  );
-
-var si_gp2y0e03     = new DataSensor( 'si_gp2y0e03'     );
-
-var si_lps25h_atmos = new DataSensor( 'si_lps25h_atmos' );
-var si_lps25h_temp  = new DataSensor( 'si_lps25h_temp'  );
-
-var si_tsl2561_lux  = new DataSensor( 'si_tsl2561_lux'  );
-
+var sen_names = [ 'sa_acc_x', 'sa_acc_y', 'sa_acc_z',
+                  'sa_gyro_g1', 'sa_gyro_g2',
+                  'si_bme280_atmos', 'si_bme280_humi', 'si_bme280_temp',
+                  'si_gp2y0e03',
+                  'si_lps25h_atmos', 'si_lps25h_temp',
+                  'si_tsl2561_lux'
+                ];
 var sensors = new DataSensors();
 
 var docomo  = new Docomo();
@@ -169,20 +157,15 @@ function startSystem() {
   var job02;
   var job03;
 
-/*
+  sensors.InitData30s( sen_names );
+
   timerFlg  = setInterval( function(){
-                getSensorDataLast30s( "sudo ./board.out sensors" );
+                getSensorData30s( "sudo ./board.out sensors" );
               }, 10000 );
-*/
-/*
+
   job01 = runBoard(       '30 7      * * *', "sudo ./board.out relay on"  );
   job02 = runBoard(       '45 7      * * *', "sudo ./board.out relay off" );
   job03 = runBoardSensor( ' 0 0-23/1 * * *', "sudo ./board.out sensors"   );
-*/
-  sensors.GetMongoDbOneDay( "2018-05-15", "si_bme280_atmos", function( err, data ){
-    console.log( err );
-    console.log( data );
-  });
 };
 
 
@@ -245,7 +228,7 @@ function runBoardSensor( when, cmd ) {
 
         var hour = hhmmss().substr(0,5);      // hh:mm:ss から hh:mm を取り出して hour にセット
         console.log( "[main.js] " + hour );
-        sensors.CreateMongoDbDocument( yyyymmdd(), hour, stdout );
+        sensors.CreateMDDoc( yyyymmdd(), hour, stdout );
       }
     );
   });
@@ -300,7 +283,7 @@ io.sockets.on( 'connection', function( socket ){
     console.log( "[main.js] data.date   = " + data.date );
     console.log( "[main.js] data.sensor = " + data.sensor );
 
-    sensors.GetMongoDbOneDay( data.date, data.sensor, function( err, data ){
+    sensors.GetMDDocDataOneDay( data.date, data.sensor, function( err, data ){
 //      console.log( data );
       io.sockets.emit( 'S_to_C_SENSOR_ONE_DAY', {ret:err, value:JSON.stringify(data)} );
     });
@@ -386,10 +369,10 @@ io.sockets.on( 'connection', function( socket ){
  * @param {string} cmd - 実行するコマンド
  * @return {void}
  * @example
- * getSensorDataLast30s();
+ * getSensorData30s();
 */
-function getSensorDataLast30s( cmd ){
-  console.log( "[main.js] getSensorDataLast30s()" );
+function getSensorData30s( cmd ){
+  console.log( "[main.js] getSensorData30s()" );
   console.log( "[main.js] cmd = " + cmd );
   var exec = require( 'child_process' ).exec;
   var ret  = exec( cmd,
@@ -400,79 +383,29 @@ function getSensorDataLast30s( cmd ){
         console.log( "[main.js] " + err );
       }
 
-      var obj = (new Function("return " + stdout))();
-
-      sa_acc_x.UpdateDataLast30s( obj.sa_acc_x );
-      sa_acc_y.UpdateDataLast30s( obj.sa_acc_y );
-      sa_acc_z.UpdateDataLast30s( obj.sa_acc_z );
-      sa_gyro_g1.UpdateDataLast30s( obj.sa_gyro_g1 );
-      sa_gyro_g2.UpdateDataLast30s( obj.sa_gyro_g2 );
-
-      si_bme280_atmos.UpdateDataLast30s( obj.si_bme280_atmos );
-      si_bme280_humi.UpdateDataLast30s( obj.si_bme280_humi );
-      si_bme280_temp.UpdateDataLast30s( obj.si_bme280_temp );
-
-      si_gp2y0e03.UpdateDataLast30s( obj.si_gp2y0e03 );
-
-      si_lps25h_atmos.UpdateDataLast30s( obj.si_lps25h_atmos );
-      si_lps25h_temp.UpdateDataLast30s( obj.si_lps25h_temp );
-
-      si_tsl2561_lux.UpdateDataLast30s( obj.si_tsl2561_lux );
-
-      var data = { sa_acc_x:0,
-                   sa_acc_y:0,
-                   sa_acc_z:0,
-                   sa_gyro_g1:0,
-                   sa_gyro_g2:0,
-                   si_bme280_atmos:0,
-                   si_bme280_humi:0,
-                   si_bme280_temp:0,
-                   si_gp2y0e03:0,
-                   si_lps25h_atmos:0,
-                   si_lps25h_temp:0,
-                   si_tsl2561_lux:0
-      };
-
-      data.sa_acc_x   = sa_acc_x.dataLast30s;
-      data.sa_acc_y   = sa_acc_y.dataLast30s;
-      data.sa_acc_z   = sa_acc_z.dataLast30s;
-      data.sa_gyro_g1 = sa_gyro_g1.dataLast30s;
-      data.sa_gyro_g2 = sa_gyro_g2.dataLast30s;
-
-      data.si_bme280_atmos = si_bme280_atmos.dataLast30s;
-      data.si_bme280_humi  = si_bme280_humi.dataLast30s;
-      data.si_bme280_temp  = si_bme280_temp.dataLast30s;
-
-      data.si_gp2y0e03     = si_gp2y0e03.dataLast30s;
-
-      data.si_lps25h_atmos = si_lps25h_atmos.dataLast30s;
-      data.si_lps25h_temp  = si_lps25h_temp.dataLast30s;
-
-      data.si_tsl2561_lux  = si_tsl2561_lux.dataLast30s;
-//      console.log( "[main.js] data = " + JSON.stringify(data) );
+      var data = sensors.UpdateData30s( stdout );
+      console.log( "[main.js] data = " + data );
+      var jsonObj = (new Function( "return " + data ))();
 
       // 加速度センサとジャイロセンサの "10秒前" と" 今" の値に大きな差があるか？をチェック
-      var diff_sa_acc_x   = false;
-      var diff_sa_acc_y   = false;
-      var diff_sa_acc_z   = false;
-      var diff_sa_gyro_g1 = false;
-      var diff_sa_gyro_g2 = false;
-
-      diff_sa_acc_x   = sa_acc_x.IsLargeDiff();
-      diff_sa_acc_y   = sa_acc_y.IsLargeDiff();
-      diff_sa_acc_z   = sa_acc_z.IsLargeDiff();
-      diff_sa_gyro_g1 = sa_gyro_g1.IsLargeDiff();
-      diff_sa_gyro_g2 = sa_gyro_g2.IsLargeDiff();
+      var diff_sa_acc_x   = sensors.IsLargeDiff( "sa_acc_x" );
+      var diff_sa_acc_y   = sensors.IsLargeDiff( "sa_acc_y" );
+      var diff_sa_acc_z   = sensors.IsLargeDiff( "sa_acc_z" );
+      var diff_sa_gyro_g1 = sensors.IsLargeDiff( "sa_gyro_g1" );
+      var diff_sa_gyro_g2 = sensors.IsLargeDiff( "sa_gyro_g2" );
 
       var diff_all = false;
       if( diff_sa_acc_x   == true || diff_sa_acc_z   == true ||
           diff_sa_gyro_g1 == true || diff_sa_gyro_g2 == true ){
         diff_all = true;
+        console.log( "10秒前の値と今の値が 500 以上差があります。" );
+      } else {
+        console.log( "10秒前の値と今の値が 500 以上差がありません。" );
       }
 
       console.log( "[main.js] diff_all = " + diff_all );
-      io.sockets.emit( 'S_to_C_DATA_LAST30S', {diff:diff_all, value:JSON.stringify(data)} );
-  });
+      io.sockets.emit( 'S_to_C_DATA_LAST30S', {diff:diff_all, value:data} );
+    });
 }
 
 
