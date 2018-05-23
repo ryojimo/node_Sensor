@@ -41,7 +41,7 @@ var DataSensors = function(){
 
 /**
  * data30s プロパティを初期化する。
- * @param {obj} names - センサ名の配列
+ * @param {Array.<string>} names - センサ名の配列
  * @return {void}
  * @example
  * InitData30s( data );
@@ -59,7 +59,7 @@ DataSensors.prototype.InitData30s = function( names ){
 
 /**
  * data30s プロパティを更新する。
- * @param {string} data - {センサ名:値, センサ名:値, ...} が入った JSON 文字列
+ * @param {Object.<string, number>} data - {センサ名:値, ...} が入った JSON 文字列
  * @return {string} - 更新した this.data30s の文字列
  * @example
  * UpdateData30s( {"sa_acc_x":2030, "sa_acc_y":2847, "sa_acc_z" :1855, ....} );
@@ -126,7 +126,7 @@ DataSensors.prototype.IsLargeDiff = function( name ){
  * Mongodb にデータベース、コレクション、ドキュメントを作成する
  * @param {string} day - 日付。( MongoDB のコレクション名でも使用 )
  * @param {string} hour - 時間。
- * @param {string} data - センサ名:値 が入った JSON 文字列
+ * @param {Object.<string, number>} data - センサ名:値 が入った JSON 文字列
  * @return {void}
  * @example
  * CreateMDDoc( "2018-05-14", "08:00", "{...}" );
@@ -136,72 +136,35 @@ DataSensors.prototype.CreateMDDoc = function( day, hour, data ){
 
   var jsonObj = (new Function( "return " + data ))();
 
-  MongoClient.connect( this.mongo_url, function(err, db) {
-    if( err ) throw err;
+  var doc = { hour: hour, sensors: jsonObj };
 
-    // データベースの取得する
+  MongoClient.connect( this.mongo_url, function(err, db) {
+    if( err ){
+      throw err;
+    }
+
+    // データベースを取得する
     var dbo = db.db( "sensors" );
 
-    // コレクションの取得する
+    // コレクションを取得する
     var clo = dbo.collection( day );
 
-    // { hour: "08:00", sensor:{...} } を持つドキュメントを作る
-    var obj = { hour: hour, sensors: jsonObj };
-
-    // obj をデータベースに insert する
-    clo.insertOne( obj, function(err, res) {
-      if (err) throw err;
+    // doc をデータベースに insert する
+    clo.insertOne( doc, function(err, res) {
+      if( err ){
+        throw err;
+      }
       db.close();
     });
   });
 }
 
-
-/**
- * Mongodb にデータベース、コレクション、ドキュメントを作成する
- * @param {string} day - 日付。( MongoDB のコレクション名でも使用 )
- * @param {string} hour - 時間。
- * @param {string} data - センサ名:値 が入った JSON 文字列
- * @return {void}
- * @example
- * UpdateMDDoc( "2018-05-14", "08:00", "{...}" );
-*/
-/*
-DataSensors.prototype.UpdateMDDoc = function( day, hour, data ){
-  console.log( "[DataSensors.js] UpdateMDDoc()" );
-
-  var jsonObj = (new Function( "return " + data ))();
-
-  MongoClient.connect( this.mongo_url, function(err, db) {
-    if( err ) throw err;
-
-    // データベースの取得する
-    var dbo = db.db( "sensors" );
-
-    // コレクションの取得する
-    var clo = dbo.collection( day );
-
-    // 対象のドキュメント {date: "2018-mm-dd"}
-    var myquery = { hour: hour };
-
-    var dataSet = {};
-    dataSet[ "sensors" ] = jsonObj;
-    var newvalue = { $set: dataSet };
-
-    // newvalue をデータベースに入れて更新する
-    clo.updateOne( myquery, newvalue, function(err, res) {
-      if (err) throw err;
-      db.close();
-    });
-  });
-}
-*/
 
 /**
  * 指定した日付の指定したセンサの 1 日の値を取得する
  * @param {string} day - 対象の日付。( MongoDB のコレクション名でも使用 )
  * @param {string} sensor - 対象のセンサ。
- * @param {obj} callback - データを取得するためのコールバック関数
+ * @param {function(boolean, Object.<string, number>)} callback - データを取得するためのコールバック関数
  * @return {void}
  * @example
  * GetMDDocDataOneDay( "2018-05-14", "si_bme280_temp" );
@@ -222,13 +185,18 @@ DataSensors.prototype.GetMDDocDataOneDay = function( day, sensor, callback ){
   MongoClient.connect( this.mongo_url, function(err, db) {
     if( err ) throw err;
 
-    // データベースの取得
+    // データベースを取得する
     var dbo = db.db( "sensors" );
 
-    // コレクションに含まれるドキュメントをすべて取得
-    dbo.collection( cname ).find({}).toArray( function(err, documents){
+    // コレクションを取得する
+    var clo = dbo.collection( cname );
+
+    // コレクションに含まれるすべてのドキュメントを取得する
+    clo.find({}).toArray( function(err, documents){
       try{
-        if (err) throw err;
+        if( err ){
+          throw err;
+        }
 
         var i = 0;
         for( var key in data ){
