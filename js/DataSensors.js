@@ -23,13 +23,13 @@ var DataSensors = function(){
    * MongoDB のデータベース名
    * @type {string}
   */
-  this.nameDatabase = "sensors";
+  this.nameDatabase = 'sensors';
 
   /**
    * MongoDB の URL
    * @type {string}
   */
-  this.mongo_url = "mongodb://localhost:27017/";
+  this.mongo_url = 'mongodb://localhost:27017/';
 
   /**
    * 30 秒前までのセンサ値が入った JSON 配列
@@ -50,7 +50,7 @@ DataSensors.prototype.InitData30s = function( names ){
   console.log( "[DataSensors.js] InitData30s()" );
 
   for( var i = 0; i < names.length; i++ ){
-    this.data30s[i] = {sensor: names[i], values: { "30秒前": 0, "20秒前": 0, "10秒前": 0, "今": 0 }};
+    this.data30s[i] = {sensor: names[i], values: { '30秒前': 0, '20秒前': 0, '10秒前': 0, '今': 0 }};
   }
 
   console.log('[DataSensors.js] this.data30s = ' + JSON.stringify(this.data30s) );
@@ -68,17 +68,17 @@ DataSensors.prototype.UpdateData30s = function( data ){
   console.log( "[DataSensors.js] UpdateData30s()" );
 //  console.log( "[DataSensors.js] data = " + data );
 
-  var jsonObj = (new Function( "return " + data ))();
+  var jsonObj = (new Function( 'return ' + data ))();
 
   for( var key in jsonObj ){
     for( var i=0; i < this.data30s.length; i++ ){
       if( this.data30s[i].sensor == key ){
 //        console.log('[DataSensors.js] key          = ' + key);
 //        console.log('[DataSensors.js] jsonObj[key] = ' + jsonObj[key]);
-        this.data30s[i].values["30秒前"] = this.data30s[i].values["20秒前"];
-        this.data30s[i].values["20秒前"] = this.data30s[i].values["10秒前"];
-        this.data30s[i].values["10秒前"] = this.data30s[i].values["今"];
-        this.data30s[i].values["今"] = jsonObj[key];
+        this.data30s[i].values['30秒前'] = this.data30s[i].values['20秒前'];
+        this.data30s[i].values['20秒前'] = this.data30s[i].values['10秒前'];
+        this.data30s[i].values['10秒前'] = this.data30s[i].values['今'];
+        this.data30s[i].values['今'] = jsonObj[key];
       }
     }
   }
@@ -105,8 +105,8 @@ DataSensors.prototype.IsLargeDiff = function( name ){
     if( this.data30s[i].sensor == name ){
 //    console.log('[DataSensors.js] key          = ' + key);
 //    console.log('[DataSensors.js] jsonObj[key] = ' + jsonObj[key]);
-      flg  = this.data30s[i].values["10秒前"];
-      diff = this.data30s[i].values["10秒前"] - this.data30s[i].values["今"];
+      flg  = this.data30s[i].values['10秒前'];
+      diff = this.data30s[i].values['10秒前'] - this.data30s[i].values['今'];
     }
   }
 
@@ -123,7 +123,7 @@ DataSensors.prototype.IsLargeDiff = function( name ){
 
 
 /**
- * Mongodb にデータベース、コレクション、ドキュメントを作成する
+ * Mongodb にデータベース、コレクション、ドキュメントを作成する。
  * @param {string} day - 日付。( MongoDB のコレクション名でも使用 )
  * @param {string} hour - 時間。
  * @param {Object.<string, number>} data - センサ名:値 が入った JSON 文字列
@@ -134,7 +134,7 @@ DataSensors.prototype.IsLargeDiff = function( name ){
 DataSensors.prototype.CreateMDDoc = function( day, hour, data ){
   console.log( "[DataSensors.js] CreateMDDoc()" );
 
-  var jsonObj = (new Function( "return " + data ))();
+  var jsonObj = (new Function( 'return ' + data ))();
 
   var doc = { hour: hour, sensors: jsonObj };
 
@@ -144,7 +144,7 @@ DataSensors.prototype.CreateMDDoc = function( day, hour, data ){
     }
 
     // データベースを取得する
-    var dbo = db.db( "sensors" );
+    var dbo = db.db( 'sensors' );
 
     // コレクションを取得する
     var clo = dbo.collection( day );
@@ -161,13 +161,13 @@ DataSensors.prototype.CreateMDDoc = function( day, hour, data ){
 
 
 /**
- * 指定した日付の指定したセンサの 1 日の値を取得する
+ * 指定した日付の指定したセンサの 1 日の値を取得する。
  * @param {string} day - 対象の日付。( MongoDB のコレクション名でも使用 )
  * @param {string} sensor - 対象のセンサ。
  * @param {function(boolean, Object.<string, number>)} callback - データを取得するためのコールバック関数
  * @return {void}
  * @example
- * GetMDDocDataOneDay( "2018-05-14", "si_bme280_temp" );
+ * GetMDDocDataOneDay( '2018-05-14', 'si_bme280_temp' );
 */
 DataSensors.prototype.GetMDDocDataOneDay = function( day, sensor, callback ){
   console.log( "[DataSensors.js] GetMDDocDataOneDay()" );
@@ -176,17 +176,17 @@ DataSensors.prototype.GetMDDocDataOneDay = function( day, sensor, callback ){
 
   var cname = day;  // コレクション名
 
-  var data = { "00-00": 0, "01-00": 0, "02-00": 0, "03-00": 0, "04-00": 0, "05-00": 0,
-               "06-00": 0, "07-00": 0, "08-00": 0, "09-00": 0, "10-00": 0, "11-00": 0,
-               "12-00": 0, "13-00": 0, "14-00": 0, "15-00": 0, "16-00": 0, "17-00": 0,
-               "18-00": 0, "19-00": 0, "20-00": 0, "21-00": 0, "22-00": 0, "23-00": 0
+  var data = { '00-00': 0, '01-00': 0, '02-00': 0, '03-00': 0, '04-00': 0, '05-00': 0,
+               '06-00': 0, '07-00': 0, '08-00': 0, '09-00': 0, '10-00': 0, '11-00': 0,
+               '12-00': 0, '13-00': 0, '14-00': 0, '15-00': 0, '16-00': 0, '17-00': 0,
+               '18-00': 0, '19-00': 0, '20-00': 0, '21-00': 0, '22-00': 0, '23-00': 0
              };
 
   MongoClient.connect( this.mongo_url, function(err, db) {
     if( err ) throw err;
 
     // データベースを取得する
-    var dbo = db.db( "sensors" );
+    var dbo = db.db( 'sensors' );
 
     // コレクションを取得する
     var clo = dbo.collection( cname );

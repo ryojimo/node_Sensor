@@ -31,10 +31,10 @@ var DataRoom = function(){
    * @type {Object}
   */
   this.date = 0;
-  this.dataOneDay = { "00-00": 0, "01-00": 0, "02-00": 0, "03-00": 0, "04-00": 0, "05-00": 0,
-                      "06-00": 0, "07-00": 0, "08-00": 0, "09-00": 0, "10-00": 0, "11-00": 0,
-                      "12-00": 0, "13-00": 0, "14-00": 0, "15-00": 0, "16-00": 0, "17-00": 0,
-                      "18-00": 0, "19-00": 0, "20-00": 0, "21-00": 0, "22-00": 0, "23-00": 0};
+  this.dataOneDay = { '00-00': 0, '01-00': 0, '02-00': 0, '03-00': 0, '04-00': 0, '05-00': 0,
+                      '06-00': 0, '07-00': 0, '08-00': 0, '09-00': 0, '10-00': 0, '11-00': 0,
+                      '12-00': 0, '13-00': 0, '14-00': 0, '15-00': 0, '16-00': 0, '17-00': 0,
+                      '18-00': 0, '19-00': 0, '20-00': 0, '21-00': 0, '22-00': 0, '23-00': 0};
 };
 
 
@@ -55,9 +55,9 @@ DataRoom.prototype.Update = function(){
 /**
  * 引数の file からデータを読み出して dataOneDay プロパティを更新する。
  * @param {string} file - 対象のファイル ( フルパス )
- * @return {object} ret - 読み出したデータ
+ * @return {Object} ret - 読み出したデータ
  * @example
- * var obj = UpdateDataOneDay( "/media/pi/USBDATA/2018-01-23_room.txt" );
+ * var obj = UpdateDataOneDay( '/media/pi/USBDATA/2018-01-23_room.txt' );
 */
 DataRoom.prototype.UpdateDataOneDay = function( file ){
   console.log( "[DataRoom.js] UpdateDataOneDay()" );
@@ -106,20 +106,20 @@ DataRoom.prototype.AppendFile = function( file ){
 
   var date = new Date();
   var hour = toDoubleDigits( date.getHours() );
-  var str = "";
+  var str = '';
 
-  if( hour == "00" ){
-    str += "{";
+  if( hour == '00' ){
+    str += '{';
   }
 
   // hour から -1 した時間を this.hour にセット
-  this.hour = toDoubleDigits(hour - 1) + "-00";
-  str += '"' + this.hour + '"' + ":" + this.cnt;
+  this.hour = toDoubleDigits(hour - 1) + '-00';
+  str += '"' + this.hour + '"' + ':' + this.cnt;
 
-  if( hour == "23" ){
-    str += "}";
+  if( hour == '23' ){
+    str += '}';
   } else {
-    str += ", ";
+    str += ', ';
   }
 
   console.log( "[DataRoom.js] hour = " + hour );
@@ -148,12 +148,14 @@ DataRoom.prototype.AppendFile = function( file ){
 var toDoubleDigits = function( num ){
   console.log( "[DataRoom.js] toDoubleDigits()" );
   console.log( "[DataRoom.js] num = " + num );
-  num += "";
+  num += '';
   if( num.length === 1 ){
-    num = "0" + num;
+    num = '0' + num;
   }
   return num;
 };
 
 
 module.exports = DataRoom;
+
+

@@ -22,13 +22,13 @@ var DataCmnt = function(){
    * データ
    * @type {Object}
   */
-  this.data = { time:"", area:"", gid:"", cmnt:"" };
+  this.data = { time:'', area:'', gid:'', cmnt:'' };
 };
 
 
 /**
  * データを更新する
- * @param {object} data - 更新するデータ
+ * @param {Object} data - 更新するデータ
  * @return {void}
  * @example
  * Update( obj );
@@ -48,13 +48,13 @@ DataCmnt.prototype.Update = function( data ){
  * @param {string} file - 対象のファイル ( フルパス )
  * @return {void}
  * @example
- * AppendFile( "/media/pi/USBDATA/data.txt" );
+ * AppendFile( '/media/pi/USBDATA/data.txt' );
 */
 DataCmnt.prototype.AppendFile = function( file ){
   console.log( "[DataCmnt.js] AppendFile()" );
   console.log( "[DataCmnt.js] file = " + file );
 
-  var wdata = JSON.stringify(this.data) + ", \n";
+  var wdata = JSON.stringify(this.data) + ', \n';
   console.log( "[dataCmnt.js] wdata = " + wdata );
 
   try{
@@ -70,9 +70,9 @@ DataCmnt.prototype.AppendFile = function( file ){
 /**
  * 引数の file の中身を読み出す
  * @param {string} file - 対象のファイル ( フルパス )
- * @return {object} ret - 読み出したデータ
+ * @return {Object} ret - 読み出したデータ
  * @example
- * var obj = ReadFile( "/media/pi/USBDATA/data.txt" );
+ * var obj = ReadFile( '/media/pi/USBDATA/data.txt' );
 */
 DataCmnt.prototype.ReadFile = function( file ){
   console.log( "[DataCmnt.js] ReadFile()" );

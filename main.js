@@ -143,6 +143,7 @@ var music_pid = 0;
 
 startSystem();
 
+
 /**
  * システムを開始する
  * @param {void}
@@ -160,12 +161,12 @@ function startSystem() {
   sensors.InitData30s( sen_names );
 
   timerFlg  = setInterval( function(){
-                getSensorData30s( "sudo ./board.out sensors" );
+                getSensorData30s( 'sudo ./board.out sensors' );
               }, 10000 );
 
-  job01 = runBoard(       '30 7      * * *', "sudo ./board.out relay on"  );
-  job02 = runBoard(       '45 7      * * *', "sudo ./board.out relay off" );
-  job03 = runBoardSensor( ' 0 0-23/1 * * *', "sudo ./board.out sensors"   );
+  job01 = runBoard(       '30 7      * * *', 'sudo ./board.out relay on'  );
+  job02 = runBoard(       '45 7      * * *', 'sudo ./board.out relay off' );
+  job03 = runBoardSensor( ' 0 0-23/1 * * *', 'sudo ./board.out sensors'   );
 };
 
 
@@ -175,7 +176,7 @@ function startSystem() {
  * @param {string} cmd - 実行するコマンド
  * @return {object} job - node-schedule に登録した job
  * @example
- * runBoard( '30 7 * * *', "sudo ./board.out relay on" );
+ * runBoard( '30 7 * * *', 'sudo ./board.out relay on' );
 */
 function runBoard( when, cmd ) {
   console.log( "[main.js] runBoard()" );
@@ -245,7 +246,7 @@ io.sockets.on( 'connection', function( socket ){
   // 切断したときに送信
   socket.on( 'disconnect', function(){
     console.log( "[main.js] " + 'disconnect' );
-//  io.sockets.emit("S_to_C_DATA", {value:"user disconnected"});
+//  io.sockets.emit('S_to_C_DATA', {value:'user disconnected'});
   });
 
 
@@ -342,7 +343,7 @@ io.sockets.on( 'connection', function( socket ){
     console.log( "[main.js] " + 'C_to_S_TALK' );
     console.log( "[main.js] cmnt = " + cmnt );
 
-    docomo.Update( "nozomi", "hello" );
+    docomo.Update( 'nozomi', 'hello' );
     docomo.Talk( cmnt, function(){
       io.sockets.emit( 'S_to_C_TALK_CB', {value:true} )
     });
@@ -355,7 +356,7 @@ io.sockets.on( 'connection', function( socket ){
     console.log( "[main.js] data.talker = " + data.talker );
     console.log( "[main.js] data.cmnt   = " + data.cmnt );
 
-    docomo.Update( data.talker , "hello" );
+    docomo.Update( data.talker , 'hello' );
     docomo.Talk( data.cmnt, function(){
     });
   });
@@ -385,14 +386,14 @@ function getSensorData30s( cmd ){
 
       var data = sensors.UpdateData30s( stdout );
       console.log( "[main.js] data = " + data );
-      var jsonObj = (new Function( "return " + data ))();
+      var jsonObj = (new Function( 'return ' + data ))();
 
       // 加速度センサとジャイロセンサの "10秒前" と" 今" の値に大きな差があるか？をチェック
-      var diff_sa_acc_x   = sensors.IsLargeDiff( "sa_acc_x" );
-      var diff_sa_acc_y   = sensors.IsLargeDiff( "sa_acc_y" );
-      var diff_sa_acc_z   = sensors.IsLargeDiff( "sa_acc_z" );
-      var diff_sa_gyro_g1 = sensors.IsLargeDiff( "sa_gyro_g1" );
-      var diff_sa_gyro_g2 = sensors.IsLargeDiff( "sa_gyro_g2" );
+      var diff_sa_acc_x   = sensors.IsLargeDiff( 'sa_acc_x' );
+      var diff_sa_acc_y   = sensors.IsLargeDiff( 'sa_acc_y' );
+      var diff_sa_acc_z   = sensors.IsLargeDiff( 'sa_acc_z' );
+      var diff_sa_gyro_g1 = sensors.IsLargeDiff( 'sa_gyro_g1' );
+      var diff_sa_gyro_g2 = sensors.IsLargeDiff( 'sa_gyro_g2' );
 
       var diff_all = false;
       if( diff_sa_acc_x   == true || diff_sa_acc_z   == true ||
@@ -420,9 +421,9 @@ function getSensorData30s( cmd ){
 var toDoubleDigits = function( num ){
 //  console.log( "[main.js] toDoubleDigits()" );
 //  console.log( "[main.js] num = " + num );
-  num += "";
+  num += '';
   if( num.length === 1 ){
-    num = "0" + num;
+    num = '0' + num;
   }
   return num;
 };
@@ -464,7 +465,7 @@ var hhmmss = function(){
   var min  = toDoubleDigits( date.getMinutes() );
   var sec  = toDoubleDigits( date.getSeconds() );
 
-  var time = hour + ":" + min + ":" + sec;
+  var time = hour + ':' + min + ':' + sec;
   console.log( "[main.js] time = " + time );
   return time;
 };
