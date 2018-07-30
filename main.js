@@ -12,11 +12,10 @@ var colors   = require( 'colors' );
 require( 'date-utils' );
 var schedule = require( 'node-schedule' );
 
-const DataCmnt   = require( './js/DataCmnt' );
-const DataPerson = require( './js/DataPerson' );
+const DataCmnts   = require( './js/DataCmnts' );
 const DataSensors = require( './js/DataSensors' );
-const Docomo     = require( './js/Docomo' );
-const PlayMusic  = require( './js/PlayMusic' );
+const Docomo      = require( './js/Docomo' );
+const PlayMusic   = require( './js/PlayMusic' );
 
 
 // Ver. 表示
@@ -125,7 +124,7 @@ var io = socketio.listen( server );
 //-----------------------------------------------------------------------------
 var timerFlg;
 
-var cmnt    = new DataCmnt();
+var cmnt    = new DataCmnts();
 
 var sen_names = [ 'sa_acc_x', 'sa_acc_y', 'sa_acc_z',
                   'sa_gyro_g1', 'sa_gyro_g2',
@@ -227,9 +226,10 @@ function runBoardSensor( when, cmd ) {
           console.log( "[main.js] " + err );
         }
 
+        var jsonObj = (new Function( 'return ' + stdout ))();
         var hour = hhmmss().substr(0,5);      // hh:mm:ss から hh:mm を取り出して hour にセット
         console.log( "[main.js] " + hour );
-        sensors.CreateMDDoc( yyyymmdd(), hour, stdout );
+        sensors.CreateMDDoc( yyyymmdd(), hour, jsonObj );
       }
     );
   });
@@ -317,9 +317,11 @@ io.sockets.on( 'connection', function( socket ){
     console.log( "[main.js] data.cmnt = " + data.cmnt );
     console.log( "[main.js] file = " + file );
 
-    cmnt.Update( data );
-    cmnt.AppendFile( file );
-    var ret = cmnt.ReadFile( file );
+/*
+    cmnts.Update( data );
+    cmnts.AppendFile( file );
+    var ret = cmnts.ReadFile( file );
+*/
   });
 
 
@@ -384,9 +386,9 @@ function getSensorData30s( cmd ){
         console.log( "[main.js] " + err );
       }
 
-      var data = sensors.UpdateData30s( stdout );
-      console.log( "[main.js] data = " + data );
-      var jsonObj = (new Function( 'return ' + data ))();
+      var jsonObj = (new Function( 'return ' + stdout ))();
+      var data = sensors.UpdateData30s( jsonObj );
+      console.log( "[main.js] data = " + JSON.stringify(data) );
 
       // 加速度センサとジャイロセンサの "10秒前" と" 今" の値に大きな差があるか？をチェック
       var diff_sa_acc_x   = sensors.IsLargeDiff( 'sa_acc_x' );

@@ -178,22 +178,22 @@ server.on( 'S_to_C_DATA', function( data ){
 server.on( 'S_to_C_DATA_LAST30S', function( data ){
   console.log( "[app.js] " + 'S_to_C_DATA_LAST30S' );
   console.log( "[app.js] data.diff  = " + data.diff );
-  console.log( "[app.js] data.value = " + data.value );
+  console.log( "[app.js] data.value = " + JSON.stringify(data.value) );
 
-  var obj = [];
-  obj = (new Function( 'return ' + data.value ))();
+//  var obj = [];
+//  obj = (new Function( 'return ' + data.value ))();
 
-  for( var i=0; i<obj.length; i++ ){
+  for( var i=0; i<data.value.length; i++ ){
     var name;
-    console.log( "[app.js] obj[ " + i + " ].sensor = " + obj[i].sensor );
+    console.log( "[app.js] data.value[ " + i + " ].sensor = " + data.value[i].sensor );
 
     // 今の値を表示
-    name = 'val_' + obj[i].sensor;
-    document.getElementById( name ).innerHTML = obj[i].values['今'];
+    name = 'val_' + data.value[i].sensor;
+    document.getElementById( name ).innerHTML = data.value[i].values['今'];
 
     // グラフ表示
-    name = 'obj_' + obj[i].sensor;
-    updateChartLast30s( name, obj[i].values );
+    name = 'obj_' + data.value[i].sensor;
+    updateChartLast30s( name, data.value[i].values );
   }
 
   if( data.diff == true ){
@@ -205,14 +205,13 @@ server.on( 'S_to_C_DATA_LAST30S', function( data ){
 
 server.on( 'S_to_C_SENSOR_ONE_DAY', function( data ){
   console.log( "[app.js] " + 'S_to_C_SENSOR_ONE_DAY' );
-//  console.log( "[app.js] data = " + data );
+//  console.log( "[app.js] data = " + JSON.stringify(data.value) );
 
   if( data.ret == false ){
     alert( 'データがありません。\n\r' );
   }
 
-  var obj = (new Function('return ' + data.value))();
-  updateChartDaily( obj_sensors_daily, obj );
+  updateChartDaily( obj_sensors_daily, data.value );
 });
 
 
