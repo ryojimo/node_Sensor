@@ -59,16 +59,16 @@ DataSensors.prototype.InitData30s = function( names ){
 
 /**
  * data30s プロパティを更新する。
- * @param {Object.<string, number>} data - {センサ名:値, ...} が入った JSON 文字列
- * @return {string} - 更新した this.data30s の文字列
+ * @param {Object.<string, number>} jsonObj - {センサ名:値, ...} が入った JSON オブジェクト
+ * @return {string} - 更新した this.data30s の JSON オブジェクト
  * @example
  * UpdateData30s( {"sa_acc_x":2030, "sa_acc_y":2847, "sa_acc_z" :1855, ....} );
 */
-DataSensors.prototype.UpdateData30s = function( data ){
+DataSensors.prototype.UpdateData30s = function( jsonObj ){
   console.log( "[DataSensors.js] UpdateData30s()" );
-//  console.log( "[DataSensors.js] data = " + data );
+//  console.log( "[DataSensors.js] data = " + JSON.stringify(jsonObj) );
 
-  var jsonObj = (new Function( 'return ' + data ))();
+//  var jsonObj = (new Function( 'return ' + jsonObj ))();
 
   for( var key in jsonObj ){
     for( var i=0; i < this.data30s.length; i++ ){
@@ -84,7 +84,7 @@ DataSensors.prototype.UpdateData30s = function( data ){
   }
 
 //  console.log('[DataSensors.js] this.data30s = ' + JSON.stringify(this.data30s) );
-    return( JSON.stringify(this.data30s) );
+    return( this.data30s );
 }
 
 
@@ -126,15 +126,13 @@ DataSensors.prototype.IsLargeDiff = function( name ){
  * Mongodb にデータベース、コレクション、ドキュメントを作成する。
  * @param {string} day - 日付。( MongoDB のコレクション名でも使用 )
  * @param {string} hour - 時間。
- * @param {Object.<string, number>} data - センサ名:値 が入った JSON 文字列
+ * @param {Object.<string, number>} jsonObj - {センサ名:値, ...} が入った JSON オブジェクト
  * @return {void}
  * @example
  * CreateMDDoc( "2018-05-14", "08:00", "{...}" );
 */
-DataSensors.prototype.CreateMDDoc = function( day, hour, data ){
+DataSensors.prototype.CreateMDDoc = function( day, hour, jsonObj ){
   console.log( "[DataSensors.js] CreateMDDoc()" );
-
-  var jsonObj = (new Function( 'return ' + data ))();
 
   var doc = { hour: hour, sensors: jsonObj };
 
