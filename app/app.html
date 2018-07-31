@@ -35,14 +35,9 @@
 
   <style>
   body {
-      position: relative; 
+      position: relative;
   }
   #section_screen {padding-top:30px;/*height:700px*/;color: #fff; background-color: #B0BEC5;}
-<!--
-  #section_music  {padding-top:30px;/*height:200px*/;color: #fff; background-color: #FF8A65;}
-  #section_mic    {padding-top:30px;/*height:200px*/;color: #fff; background-color: #DCE775;}
-  #section_talk   {padding-top:30px;/*height:200px*/;color: #fff; background-color: #81C784;}
--->
   #section_sensor_now   {padding-top:30px;/*height:200px;*/color: #fff; background-color: #4DB6AC;}
   #section_sensor_10sec {padding-top:30px;/*height:300px;*/color: #fff; background-color: #26C6DA;}
   #section_sensor_30sec {padding-top:30px;/*height:600px;*/color: #fff; background-color: #03A9F4;}
@@ -64,11 +59,6 @@
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav navbar-right">
         <li><a href="#section_screen">Screen</a></li>
-<!--
-        <li><a href="#section_music" >Music</a></li>
-        <li><a href="#section_mic"   >Mic</a></li>
-        <li><a href="#section_talk"   >Talk</a></li>
--->
         <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Sensor<span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="#section_sensor_now">Sensor Now</a></li>
@@ -140,65 +130,6 @@
 </section>
 <br/>
 </div>
-
-
-<!-- Music -->
-<!--
-<div id="section_music" class="container-fluid">
-<section>
-  <h1>Music</h1>
-  <button type="button" class="btn btn-default btn-lg" onclick="sendMusicCmd( 'GET PID' );">GET PID</button>
-  <button type="button" class="btn btn-default btn-lg" onclick="sendMusicCmd( 'PLAY'    );">PLAY</button>
-  <button type="button" class="btn btn-default btn-lg" onclick="sendMusicCmd( 'STOP'    );">STOP</button>
-  <button type="button" class="btn btn-default btn-lg" onclick="sendMusicCmd( 'PAUSE'   );">PAUSE</button>
-  <button type="button" class="btn btn-default btn-lg" onclick="sendMusicCmd( 'RESUME'  );">RESUME</button>
-</section>
-<br/>
-</div>
--->
-
-
-<!-- Mic -->
-<!--
-<div id="section_mic" class="container-fluid">
-<section>
-  <h1>Mic</h1>
-  <textarea class="form-control" name="cmnt" rows="2" id="val_cmnt" placeholder="" style="color: #000;"></textarea>
-  <br/>
-  <button type="button" class="btn btn-default btn-lg" onclick="submitMicStart();">マイク ON</button>
-  <button type="button" class="btn btn-default btn-lg" onclick="submitMicStop();" >マイク OFF</button>
-  <button type="button" class="btn btn-default btn-lg" onclick="sendCmnt();"      >投稿</button>
-  <button type="button" class="btn btn-default btn-lg" onclick="clearCmnt();"     >クリア</button>
-</section>
-<br/>
-</div>
--->
-
-
-<!-- Talk -->
-<!--
-<div id="section_talk" class="container-fluid">
-<section>
-  <h1>Talk</h1>
-  <select style="color: #000;" name="話し手" oninput="sendTalk();" id="val_talker">
-    <option value="nozomi">nozomi</option>
-    <option value="maki">maki</option>
-    <option value="kaho">kaho</option>
-    <option value="akari">akari</option>
-    <option value="nanako">nanako</option>
-    <option value="seiji">seiji</option>
-    <option value="osamu">osamu</option>
-    <option value="hiroshi">hiroshi</option>
-    <option value="anzu">anzu</option>
-  </select>
-  <br/>
-  <textarea class="form-control" name="cmnt" rows="2" id="val_talk" placeholder="" style="color: #000;"></textarea>
-  <br/>
-  <button type="button" class="btn btn-default btn-lg" onclick="sendTalk();">送信</button>
-</section>
-<br/>
-</div>
--->
 
 
 <!-- Sensor Now -->
@@ -380,7 +311,7 @@
 <div id="section_sensor_daily" class="container-fluid">
 <section>
   <h1>Sensor Daily</h1>
-  <p>2018/05/15 から計測開始。</p>
+  <p>2018/08/01 から計測開始。</p>
 
   <input style="color: #000;" type="date" name="日時指定" oninput="sendGetCmdSensorOneDay();" id="val_date_sensor">
   <select style="color: #000;" name="センサ" oninput="sendGetCmdSensorOneDay();" id="val_which">

@@ -12,10 +12,8 @@ var colors   = require( 'colors' );
 require( 'date-utils' );
 var schedule = require( 'node-schedule' );
 
-const DataCmnts   = require( './js/DataCmnts' );
 const DataSensors = require( './js/DataSensors' );
 const Docomo      = require( './js/Docomo' );
-const PlayMusic   = require( './js/PlayMusic' );
 
 
 // Ver. 表示
@@ -124,8 +122,6 @@ var io = socketio.listen( server );
 //-----------------------------------------------------------------------------
 var timerFlg;
 
-var cmnt    = new DataCmnts();
-
 var sen_names = [ 'sa_acc_x', 'sa_acc_y', 'sa_acc_z',
                   'sa_gyro_g1', 'sa_gyro_g2',
                   'si_bme280_atmos', 'si_bme280_humi', 'si_bme280_temp',
@@ -136,8 +132,6 @@ var sen_names = [ 'sa_acc_x', 'sa_acc_y', 'sa_acc_z',
 var sensors = new DataSensors();
 
 var docomo  = new Docomo();
-var music   = new PlayMusic();
-var music_pid = 0;
 
 
 startSystem();
@@ -286,7 +280,7 @@ io.sockets.on( 'connection', function( socket ){
 
     sensors.GetMDDocDataOneDay( data.date, data.sensor, function( err, data ){
 //      console.log( data );
-      io.sockets.emit( 'S_to_C_SENSOR_ONE_DAY', {ret:err, value:JSON.stringify(data)} );
+      io.sockets.emit( 'S_to_C_SENSOR_ONE_DAY', {ret:err, value:data} );
     });
   });
 
@@ -304,40 +298,6 @@ io.sockets.on( 'connection', function( socket ){
           console.log( "[main.js] " + err );
         }
       });
-  });
-
-
-  socket.on( 'C_to_S_CMNT', function( data ){
-    console.log( "[main.js] " + 'C_to_S_CMNT' );
-    console.log( "[main.js] data = " + data );
-
-    var data = { time: hhmmss(), cmnt: data }
-    var file = '/media/pi/USBDATA/' + yyyymmdd() + '_cmnt.txt';
-    console.log( "[main.js] data.time = " + data.time );
-    console.log( "[main.js] data.cmnt = " + data.cmnt );
-    console.log( "[main.js] file = " + file );
-
-/*
-    cmnts.Update( data );
-    cmnts.AppendFile( file );
-    var ret = cmnts.ReadFile( file );
-*/
-  });
-
-
-  socket.on( 'C_to_S_MUSIC', function( data ){
-    console.log( "[main.js] " + 'C_to_S_MUSIC' );
-
-    if( data == 'GET PID' ){
-      music.GetPID( function( id ){
-        music_pid = id;
-        console.log( "[main.js] " + "pid=" + music_pid );
-      });
-    } else if( data == 'PLAY' ){
-      music.Play( 'Music.mp3' );
-    } else {
-      music.ChangeStatus( data );
-    }
   });
 
 
