@@ -27,7 +27,7 @@ var obj_si_lps25h_atmos = {chart:null, data:null, type:'area', color:'#1976D2', 
 var obj_si_lps25h_temp  = {chart:null, data:null, type:'area', color:'#C2185B', minimum:0,   title:'温度(lps25h)', unit:'[℃]'};
 var obj_si_tsl2561_lux  = {chart:null, data:null, type:'area', color:'#AFB42B', minimum:0,   title:'照度(tsl2561)', unit:'[LUX]'};
 
-var obj_sensors_daily   = {chart:null, data:null, type:'area', color:'#1E88E5', title:'一日のデータ', unit:''};
+var obj_sensors_daily   = {chart:null, data:null, type:'area', color:'#1E88E5', minimum:0,   title:'一日のデータ', unit:''};
 
 
 // ブラウザオブジェクトから受け取るイベント
@@ -312,11 +312,11 @@ function sendGetCmdSensorOneDay(){
 
   if( date < '2018-08-01' ){
     alert( '2018/08/01 以降を指定してください。' );
+  } else {
+    var obj = { date:date, sensor:sensor };
+    console.log( "[app.js] server.emit(" + 'C_to_S_GET_SENSOR_ONE_DAY' + ")" );
+    server.emit( 'C_to_S_GET_SENSOR_ONE_DAY', obj );
   }
-
-  var obj = { date:date, sensor:sensor };
-  console.log( "[app.js] server.emit(" + 'C_to_S_GET_SENSOR_ONE_DAY' + ")" );
-  server.emit( 'C_to_S_GET_SENSOR_ONE_DAY', obj );
 }
 
 
