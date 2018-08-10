@@ -13,19 +13,19 @@ var server = io.connect( 'http://' + sv_ip + ':' + sv_port ); //ローカル
 
 //-----------------------------------------------------------------------------
 //-------------------------------------
-var obj_sa_acc_x        = {chart:null, data:null, type:'area', color:'#E64A19', title:'加速度(x)',    unit:'[?]'};
-var obj_sa_acc_y        = {chart:null, data:null, type:'area', color:'#E64A19', title:'加速度(y)',    unit:'[?]'};
-var obj_sa_acc_z        = {chart:null, data:null, type:'area', color:'#E64A19', title:'加速度(z)',    unit:'[?]'};
-var obj_sa_gyro_g1      = {chart:null, data:null, type:'area', color:'#FFA000', title:'ジャイロ(g1)', unit:'[?]'};
-var obj_sa_gyro_g2      = {chart:null, data:null, type:'area', color:'#FFA000', title:'ジャイロ(g2)', unit:'[?]'};
+var obj_sa_acc_x        = {chart:null, data:null, type:'area', color:'#E64A19', minimum:0,   title:'加速度(x)',    unit:'[?]'};
+var obj_sa_acc_y        = {chart:null, data:null, type:'area', color:'#E64A19', minimum:0,   title:'加速度(y)',    unit:'[?]'};
+var obj_sa_acc_z        = {chart:null, data:null, type:'area', color:'#E64A19', minimum:0,   title:'加速度(z)',    unit:'[?]'};
+var obj_sa_gyro_g1      = {chart:null, data:null, type:'area', color:'#FFA000', minimum:0,   title:'ジャイロ(g1)', unit:'[?]'};
+var obj_sa_gyro_g2      = {chart:null, data:null, type:'area', color:'#FFA000', minimum:0,   title:'ジャイロ(g2)', unit:'[?]'};
 
-var obj_si_bme280_atmos = {chart:null, data:null, type:'area', color:'#1976D2', title:'気圧(bme280)', unit:'[hPa]'};
-var obj_si_bme280_humi  = {chart:null, data:null, type:'area', color:'#00796B', title:'湿度(bme280)', unit:'[%]'};
-var obj_si_bme280_temp  = {chart:null, data:null, type:'area', color:'#C2185B', title:'温度(bme280)', unit:'[℃]'};
-var obj_si_gp2y0e03     = {chart:null, data:null, type:'area', color:'#455A64', title:'距離(gp2y0e03)', unit:'[cm]'};
-var obj_si_lps25h_atmos = {chart:null, data:null, type:'area', color:'#1976D2', title:'気圧(lps25h)', unit:'[hPa]'};
-var obj_si_lps25h_temp  = {chart:null, data:null, type:'area', color:'#C2185B', title:'温度(lps25h)', unit:'[℃]'};
-var obj_si_tsl2561_lux  = {chart:null, data:null, type:'area', color:'#AFB42B', title:'照度(tsl2561)', unit:'[LUX]'};
+var obj_si_bme280_atmos = {chart:null, data:null, type:'area', color:'#1976D2', minimum:900, title:'気圧(bme280)', unit:'[hPa]'};
+var obj_si_bme280_humi  = {chart:null, data:null, type:'area', color:'#00796B', minimum:0,   title:'湿度(bme280)', unit:'[%]'};
+var obj_si_bme280_temp  = {chart:null, data:null, type:'area', color:'#C2185B', minimum:0,   title:'温度(bme280)', unit:'[℃]'};
+var obj_si_gp2y0e03     = {chart:null, data:null, type:'area', color:'#455A64', minimum:0,   title:'距離(gp2y0e03)', unit:'[cm]'};
+var obj_si_lps25h_atmos = {chart:null, data:null, type:'area', color:'#1976D2', minimum:900, title:'気圧(lps25h)', unit:'[hPa]'};
+var obj_si_lps25h_temp  = {chart:null, data:null, type:'area', color:'#C2185B', minimum:0,   title:'温度(lps25h)', unit:'[℃]'};
+var obj_si_tsl2561_lux  = {chart:null, data:null, type:'area', color:'#AFB42B', minimum:0,   title:'照度(tsl2561)', unit:'[LUX]'};
 
 var obj_sensors_daily   = {chart:null, data:null, type:'area', color:'#1E88E5', title:'一日のデータ', unit:''};
 
@@ -97,7 +97,7 @@ function makeChartSensor30s( domid, obj ){
                }
     ],
     axisX: { labelAngle:-45, labelFontSize:14, labelFontColor:'#222' },
-    axisY: { labelFontSize:14, labelFontColor:'#222' },
+    axisY: { minimum: obj.minimum, labelFontSize:14, labelFontColor:'#222' },
     data: [{type: obj.type,           // グラフの種類 (area, bar, bubble, column, stackedColumn )
             color: obj.color,
             cursor: 'pointer',
@@ -142,7 +142,7 @@ function makeChartDaily( domid, obj ){
                }
     ],
     axisX: { labelAngle:-45, labelFontSize:14, labelFontColor:'#222' },
-    axisY: { labelFontSize:14, labelFontColor:'#222' },
+    axisY: { minimum: obj.minimum, labelFontSize:14, labelFontColor:'#222' },
     data: [{type: obj.type,           // グラフの種類 (area, bar, bubble, column, stackedColumn )
             color: obj.color,
             cursor: 'pointer',
