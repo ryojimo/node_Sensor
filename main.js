@@ -154,12 +154,12 @@ function startSystem() {
   sensors.InitData30s( sen_names );
 
   timerFlg  = setInterval( function(){
-                getSensorData30s( 'sudo ./board.out sensors' );
+                getSensorData30s( 'sudo ./board.out --sensors' );
               }, 10000 );
 
-  job01 = runBoard(       '30 7      * * *', 'sudo ./board.out relay on'  );
-  job02 = runBoard(       '45 7      * * *', 'sudo ./board.out relay off' );
-  job03 = runBoardSensor( ' 0 0-23/1 * * *', 'sudo ./board.out sensors'   );
+  job01 = runBoard(       '30 7      * * *', 'sudo ./board.out --relay on'  );
+  job02 = runBoard(       '45 7      * * *', 'sudo ./board.out --relay off' );
+  job03 = runBoardSensor( ' 0 0-23/1 * * *', 'sudo ./board.out --sensors'   );
 };
 
 
@@ -169,7 +169,7 @@ function startSystem() {
  * @param {string} cmd - 実行するコマンド
  * @return {object} job - node-schedule に登録した job
  * @example
- * runBoard( '30 7 * * *', 'sudo ./board.out relay on' );
+ * runBoard( '30 7 * * *', 'sudo ./board.out --relay on' );
 */
 function runBoard( when, cmd ) {
   console.log( "[main.js] runBoard()" );
@@ -201,7 +201,7 @@ function runBoard( when, cmd ) {
  * @param {string} cmd - 実行するコマンド
  * @return {object} job - node-schedule に登録した job
  * @example
- * runBoard( '30 7 * * *', "sudo ./board.out relay on" );
+ * runBoard( '30 7 * * *', "sudo ./board.out --sensors" );
 */
 function runBoardSensor( when, cmd ) {
   console.log( "[main.js] runBoardSensor()" );

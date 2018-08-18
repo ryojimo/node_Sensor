@@ -285,7 +285,7 @@ function updateChartDaily( obj_chart, data ){
  * @param {string} cmd - コマンドの文字列
  * @return {void}
  * @example
- * sendGetCmd( 'sudo ./board.out temp1' );
+ * sendGetCmd( 'sudo ./board.out --sa_pm' );
 */
 function sendGetCmd( cmd ){
   console.log( "[app.js] sendGetCmd()" );
@@ -325,7 +325,7 @@ function sendGetCmdSensorOneDay(){
  * @param {string} cmd - コマンドの文字列
  * @return {void}
  * @example
- * sendSetCmd( 'sudo ./board.out relay on' );
+ * sendSetCmd( 'sudo ./board.out --relay on' );
 */
 function sendSetCmd( cmd ){
   console.log( "[app.js] sendSetCmd()" );
@@ -341,7 +341,7 @@ function sendSetCmd( cmd ){
  * @param {string} cmd - コマンドの文字列
  * @return {void}
  * @example
- * sendSetCmdServo( 'sudo ./board.out motorsv ' + 30 );
+ * sendSetCmdServo( 'sudo ./board.out --motorsv ' + 30 );
 */
 function sendSetCmdServo( cmd ){
   console.log( "[app.js] sendSetCmdServo()" );
