@@ -13,39 +13,60 @@ var server = io.connect( 'http://' + sv_ip + ':' + sv_port ); //ローカル
 
 //-----------------------------------------------------------------------------
 //-------------------------------------
-var obj_sa_acc_x        = {chart:null, data:null, type:'area', color:'#E64A19', minimum:0,   title:'加速度(x)',    unit:'[?]'};
-var obj_sa_acc_y        = {chart:null, data:null, type:'area', color:'#E64A19', minimum:0,   title:'加速度(y)',    unit:'[?]'};
-var obj_sa_acc_z        = {chart:null, data:null, type:'area', color:'#E64A19', minimum:0,   title:'加速度(z)',    unit:'[?]'};
-var obj_sa_gyro_g1      = {chart:null, data:null, type:'area', color:'#FFA000', minimum:0,   title:'ジャイロ(g1)', unit:'[?]'};
-var obj_sa_gyro_g2      = {chart:null, data:null, type:'area', color:'#FFA000', minimum:0,   title:'ジャイロ(g2)', unit:'[?]'};
+var obj_sa_acc_x        = {name:'sa_acc_x',        chart:null, data:null, type:'area', color:'#E64A19', minimum:0,   title:'加速度(x)',    unit:'[?]'};
+var obj_sa_acc_y        = {name:'sa_acc_y',        chart:null, data:null, type:'area', color:'#E64A19', minimum:0,   title:'加速度(y)',    unit:'[?]'};
+var obj_sa_acc_z        = {name:'sa_acc_z',        chart:null, data:null, type:'area', color:'#E64A19', minimum:0,   title:'加速度(z)',    unit:'[?]'};
+var obj_sa_gyro_g1      = {name:'sa_gyro_g1',      chart:null, data:null, type:'area', color:'#FFA000', minimum:0,   title:'ジャイロ(g1)', unit:'[?]'};
+var obj_sa_gyro_g2      = {name:'sa_gyro_g2',      chart:null, data:null, type:'area', color:'#FFA000', minimum:0,   title:'ジャイロ(g2)', unit:'[?]'};
 
-var obj_si_bme280_atmos = {chart:null, data:null, type:'area', color:'#1976D2', minimum:900, title:'気圧(bme280)', unit:'[hPa]'};
-var obj_si_bme280_humi  = {chart:null, data:null, type:'area', color:'#00796B', minimum:0,   title:'湿度(bme280)', unit:'[%]'};
-var obj_si_bme280_temp  = {chart:null, data:null, type:'area', color:'#C2185B', minimum:0,   title:'温度(bme280)', unit:'[℃]'};
-var obj_si_gp2y0e03     = {chart:null, data:null, type:'area', color:'#455A64', minimum:0,   title:'距離(gp2y0e03)', unit:'[cm]'};
-var obj_si_lps25h_atmos = {chart:null, data:null, type:'area', color:'#1976D2', minimum:900, title:'気圧(lps25h)', unit:'[hPa]'};
-var obj_si_lps25h_temp  = {chart:null, data:null, type:'area', color:'#C2185B', minimum:0,   title:'温度(lps25h)', unit:'[℃]'};
-var obj_si_tsl2561_lux  = {chart:null, data:null, type:'area', color:'#AFB42B', minimum:0,   title:'照度(tsl2561)', unit:'[LUX]'};
+var obj_si_bme280_atmos = {name:'si_bme280_atmos', chart:null, data:null, type:'area', color:'#1976D2', minimum:900, title:'気圧(bme280)',   unit:'[hPa]'};
+var obj_si_bme280_humi  = {name:'si_bme280_humi',  chart:null, data:null, type:'area', color:'#00796B', minimum:0,   title:'湿度(bme280)',   unit:'[%]'};
+var obj_si_bme280_temp  = {name:'si_bme280_temp',  chart:null, data:null, type:'area', color:'#C2185B', minimum:0,   title:'温度(bme280)',   unit:'[℃]'};
+var obj_si_gp2y0e03     = {name:'si_gp2y0e03',     chart:null, data:null, type:'area', color:'#455A64', minimum:0,   title:'距離(gp2y0e03)', unit:'[cm]'};
+var obj_si_lps25h_atmos = {name:'si_lps25h_atmos', chart:null, data:null, type:'area', color:'#1976D2', minimum:900, title:'気圧(lps25h)',   unit:'[hPa]'};
+var obj_si_lps25h_temp  = {name:'si_lps25h_temp',  chart:null, data:null, type:'area', color:'#C2185B', minimum:0,   title:'温度(lps25h)',   unit:'[℃]'};
+var obj_si_tsl2561_lux  = {name:'si_tsl2561_lux',  chart:null, data:null, type:'area', color:'#AFB42B', minimum:0,   title:'照度(tsl2561)',  unit:'[LUX]'};
 
-var obj_sensors_daily   = {chart:null, data:null, type:'area', color:'#1E88E5', minimum:0,   title:'一日のデータ', unit:''};
+var obj_sensors_daily   = {name:'sensors_daily',   chart:null, data:null, type:'area', color:'#1E88E5', minimum:0,   title:'一日のデータ', unit:''};
 
 
 // ブラウザオブジェクトから受け取るイベント
 window.onload = function(){
   console.log( "[app.js] window.onloaded" );
+  initChartSensor30s();
+  initChartSensorDaily();
+  initTableSensorNow();
+};
 
-  obj_sa_acc_x        = makeChartSensor30s( 'cid_sa_acc_x',        obj_sa_acc_x        );
-  obj_sa_acc_y        = makeChartSensor30s( 'cid_sa_acc_y',        obj_sa_acc_y        );
-  obj_sa_acc_z        = makeChartSensor30s( 'cid_sa_acc_z',        obj_sa_acc_z        );
-  obj_sa_gyro_g1      = makeChartSensor30s( 'cid_sa_gyro_g1',      obj_sa_gyro_g1      );
-  obj_sa_gyro_g2      = makeChartSensor30s( 'cid_sa_gyro_g2',      obj_sa_gyro_g2      );
-  obj_si_bme280_atmos = makeChartSensor30s( 'cid_si_bme280_atmos', obj_si_bme280_atmos );
-  obj_si_bme280_humi  = makeChartSensor30s( 'cid_si_bme280_humi',  obj_si_bme280_humi  );
-  obj_si_bme280_temp  = makeChartSensor30s( 'cid_si_bme280_temp',  obj_si_bme280_temp  );
-  obj_si_gp2y0e03     = makeChartSensor30s( 'cid_si_gp2y0e03',     obj_si_gp2y0e03     );
-  obj_si_lps25h_atmos = makeChartSensor30s( 'cid_si_lps25h_atmos', obj_si_lps25h_atmos );
-  obj_si_lps25h_temp  = makeChartSensor30s( 'cid_si_lps25h_temp',  obj_si_lps25h_temp  );
-  obj_si_tsl2561_lux  = makeChartSensor30s( 'cid_si_tsl2561_lux',  obj_si_tsl2561_lux  );
+
+window.onunload = function(){
+  console.log( "[app.js] window.onunloaded" );
+};
+
+
+/**
+ * 30 sec のセンサ値表示用のパラメータを初期化する。
+ * @param {void}
+ * @return {void}
+ * @example
+ * initChartSensor30s();
+*/
+function initChartSensor30s(){
+  console.log( "[app.js] initChartSensor30s()" );
+
+  obj_sa_acc_x        = makeChartSensor30s( obj_sa_acc_x        );
+  obj_sa_acc_y        = makeChartSensor30s( obj_sa_acc_y        );
+  obj_sa_acc_z        = makeChartSensor30s( obj_sa_acc_z        );
+  obj_sa_gyro_g1      = makeChartSensor30s( obj_sa_gyro_g1      );
+  obj_sa_gyro_g2      = makeChartSensor30s( obj_sa_gyro_g2      );
+  obj_si_bme280_atmos = makeChartSensor30s( obj_si_bme280_atmos );
+  obj_si_bme280_humi  = makeChartSensor30s( obj_si_bme280_humi  );
+  obj_si_bme280_temp  = makeChartSensor30s( obj_si_bme280_temp  );
+  obj_si_gp2y0e03     = makeChartSensor30s( obj_si_gp2y0e03     );
+  obj_si_lps25h_atmos = makeChartSensor30s( obj_si_lps25h_atmos );
+  obj_si_lps25h_temp  = makeChartSensor30s( obj_si_lps25h_temp  );
+  obj_si_tsl2561_lux  = makeChartSensor30s( obj_si_tsl2561_lux  );
+
   obj_sa_acc_x.chart.render();
   obj_sa_acc_x.chart.render();
   obj_sa_acc_y.chart.render();
@@ -59,30 +80,70 @@ window.onload = function(){
   obj_si_lps25h_atmos.chart.render();
   obj_si_lps25h_temp.chart.render();
   obj_si_tsl2561_lux.chart.render();
-
-  obj_sensors_daily   = makeChartDaily( 'cid_sensors_daily', obj_sensors_daily );
-  obj_sensors_daily.chart.render();
+  return;
 };
 
 
-window.onunload = function(){
-  console.log( "[app.js] window.onunloaded" );
+/**
+ * 1 day のセンサ値表示用のパラメータを初期化する。
+ * @param {void}
+ * @return {void}
+ * @example
+ * initChartSensorDaily();
+*/
+function initChartSensorDaily(){
+  console.log( "[app.js] initChartSensorDaily()" );
+  obj_sensors_daily   = makeChartSensorDaily( obj_sensors_daily );
+  obj_sensors_daily.chart.render();
+  return;
+};
+
+
+/**
+ * 現在のセンサ値表示用のテーブルを初期化する。
+ * @param {void}
+ * @return {void}
+ * @example
+ * initTableSensorNow();
+*/
+function initTableSensorNow(){
+  console.log( "[app.js] initTableSensorNow()" );
+
+  $("#tabulator-table-10sec").tabulator({
+    layout:"fitData",
+    tooltips:true,
+    addRowPos:"top",
+    history:true,
+    pagination:"local",
+    paginationSize:15,
+    movableColumns:true,
+    initialSort:[
+      {column:"title", dir:"asc"},
+    ],
+    columns:[
+      {title:"センサ", field:"sensor", align:"center", width:"100", sortable:"true", sorter:"string", formatter:"plaintext", editable:false,                                  },
+      {title:"単位",   field:"unit",   align:"center", width:"100", sortable:"true", sorter:"string", formatter:"plaintext", editable:false,                                  },
+      {title:"値",     field:"value",  align:"right",  width:"100", sortable:"true", sorter:"number", formatter:"plaintext", editable:false, cssClass:"tabulator-background", },
+    ],
+  });
+  return;
 };
 
 
 /**
  * 30sec のデータを表示するグラフ ( チャート ) を作成する。
- * @param {string} domid - グラフを表示する DOM の ID 名
  * @param {object} obj - グラフ化する対象のオブジェクト
  * @return {object} chart - 作成するグラフのオブジェクトとデータ
  * @example
- * makeChartSensor30s( 'cid_sa_acc_x', obj_sa_acc_x );
+ * makeChartSensor30s( obj_sa_acc_x );
 */
-function makeChartSensor30s( domid, obj ){
+function makeChartSensor30s( obj ){
   console.log( "[app.js] makeChartSensor30s()" );
-  console.log( "[app.js] domid = " + domid );
 
   var data = new Array({label:'30秒前', y:0}, {label:'20秒前', y:0}, {label:'10秒前', y:0}, {label:'今', y:0});
+
+  var domid = 'cid_' + obj.name;
+  console.log( "[app.js] domid = " + domid );
 
   var chart = new CanvasJS.Chart(domid, {
     animationEnabled: true,
@@ -111,15 +172,13 @@ function makeChartSensor30s( domid, obj ){
 
 /**
  * 1 day のデータを表示するグラフ ( チャート ) を作成する。
- * @param {string} domid - グラフを表示する DOM の ID 名
  * @param {object} obj - グラフ化する対象のオブジェクト
  * @return {string} chart - 作成するグラフのオブジェクトとデータ
  * @example
- * makeChartDaily( 'cid_sensors_daily', obj_sensors_daily );
+ * makeChartSensorDaily( 'cid_sensors_daily', obj_sensors_daily );
 */
-function makeChartDaily( domid, obj ){
-  console.log( "[app.js] makeChartDaily()" );
-  console.log( "[app.js] domid = " + domid );
+function makeChartSensorDaily( obj ){
+  console.log( "[app.js] makeChartSensorDaily()" );
 
   var data = new Array({label:'00-00', y:0}, {label:'01-00', y:0}, {label:'02-00', y:0}, {label:'03-00', y:0},
                        {label:'04-00', y:0}, {label:'05-00', y:0}, {label:'06-00', y:0}, {label:'07-00', y:0},
@@ -128,6 +187,9 @@ function makeChartDaily( domid, obj ){
                        {label:'16-00', y:0}, {label:'17-00', y:0}, {label:'18-00', y:0}, {label:'19-00', y:0},
                        {label:'20-00', y:0}, {label:'21-00', y:0}, {label:'22-00', y:0}, {label:'23-00', y:0}
                       );
+
+  var domid = 'cid_' + obj.name;
+  console.log( "[app.js] domid = " + domid );
 
   var chart = new CanvasJS.Chart(domid, {
     animationEnabled: true,
@@ -187,19 +249,18 @@ server.on( 'S_to_C_DATA_LAST30S', function( data ){
     var name;
     console.log( "[app.js] data.value[ " + i + " ].sensor = " + data.value[i].sensor );
 
-    // 今の値を表示
-    name = 'val_' + data.value[i].sensor;
-    document.getElementById( name ).innerHTML = data.value[i].values['今'];
-
     // グラフ表示
     name = 'obj_' + data.value[i].sensor;
-    updateChartLast30s( name, data.value[i].values );
+    updateChartSensor30s( name, data.value[i].values );
   }
 
   if( data.diff == true ){
     var hi = '10秒以上の揺れを検出しました';
     sendTalkData( hi );
   }
+
+  // テーブル表示
+  updateTableSensorNow( data.value );
 });
 
 
@@ -211,7 +272,7 @@ server.on( 'S_to_C_SENSOR_ONE_DAY', function( data ){
     alert( 'データがありません。\n\r' );
   }
 
-  updateChartDaily( obj_sensors_daily, data.value );
+  updateChartSensorDaily( obj_sensors_daily, data.value );
 });
 
 
@@ -229,10 +290,10 @@ server.on( 'S_to_C_TALK_CB', function(){
  * @param {object} data - グラフに表示するデータ
  * @return {void}
  * @example
- * updateChartLast30s( 'chart_temp', obj.acc_x );
+ * updateChartSensor30s( 'chart_temp', obj.acc_x );
 */
-function updateChartLast30s( chart, data ){
-  console.log( "[app.js] updateChartLast30s()" );
+function updateChartSensor30s( chart, data ){
+  console.log( "[app.js] updateChartSensor30s()" );
   console.log( "[app.js] chart = " + chart );
 
 //  var obj = (new Function('return ' + data))();
@@ -255,10 +316,10 @@ function updateChartLast30s( chart, data ){
  * @param {object} data - グラフに表示するデータ
  * @return {void}
  * @example
- * updateChartDaily( 'temp', obj );
+ * updateChartSensorDaily( 'temp', obj );
 */
-function updateChartDaily( obj_chart, data ){
-  console.log( "[app.js] updateChartDaily()" );
+function updateChartSensorDaily( obj_chart, data ){
+  console.log( "[app.js] updateChartSensorDaily()" );
 
 //  var obj = (new Function('return ' + data))();
 
@@ -273,6 +334,29 @@ function updateChartDaily( obj_chart, data ){
   obj_chart.chart.options.data.dataPoints = obj_sensors_daily.data;
   obj_chart.chart.render();
 }
+
+
+/**
+ * 現在のセンサ値表示用のテーブルを更新する。
+ * @param {object} obj - テーブルに表示するデータ
+ * @return {void}
+ * @example
+ * updateTableSensorNow();
+*/
+function updateTableSensorNow( obj ){
+  console.log( "[app.js] updateTableSensorNow()" );
+  console.log( "[app.js] obj = " + JSON.stringify(obj) );
+
+  var data = [];
+
+  for( var i = 0; i < obj.length; i++ ){
+    data[i] = {sensor: obj[i].sensor, unit: "", value: obj[i].values['今'] };
+  }
+
+  console.log( "[app.js] data = " + JSON.stringify(data) );
+  $("#tabulator-table-10sec").tabulator( "setData", data );
+  return;
+};
 
 
 //-----------------------------------------------------------------------------

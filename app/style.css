@@ -21,6 +21,19 @@ Author URI:  ---
     width: 40% !important;
 }
 
+.tabulator-background
+{
+    color: #000000;
+    background-color: #FFFDE7;
+
+    border: 0.5px solid #BDBDBD;
+}
+
+.tabulator .tabulator-col-title{
+    width: 500px;
+    text-align: center;
+}
+
 
 /*-----------------------------------------------------------------------------
  * <body> selector

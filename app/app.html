@@ -20,13 +20,19 @@
   <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
   <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
 
-  <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
   <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js"></script>
 
+  <!-- tabulator -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/3.5.3/css/tabulator.min.css" rel="stylesheet">
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tabulator/3.5.3/js/tabulator.min.js"></script>
+
+  <!-- Others -->
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/canvasjs/1.7.0/canvasjs.min.js"></script>
   <script type="text/javascript" src="/socket.io/socket.io.js"></script>
   <script type="text/javascript" src="/jQueryRotate.js"></script>
@@ -161,79 +167,7 @@
   <h1>Sensor 10sec</h1>
   <p>10sec ごとのセンサ値を表示します。</p>
 
-  <div class="container table-responsive">
-    <table class="table table-bordered table-condensed">
-      <thead>
-        <tr>
-          <th>センサ</th>
-          <th>単位</th>
-          <th>値</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>加速度(x)</td>
-          <td>[?]</td>
-          <td><span class="fix" id="val_sa_acc_x">--</span></td>
-        </tr>
-        <tr>
-          <td>加速度(y)</td>
-          <td>[?]</td>
-          <td><span class="fix" id="val_sa_acc_y">--</span></td>
-        </tr>
-        <tr>
-          <td>加速度(z)</td>
-          <td>[?]</td>
-          <td><span class="fix" id="val_sa_acc_z">--</span></td>
-        </tr>
-        <tr>
-          <td>ジャイロ(g1)</td>
-          <td>[?]</td>
-          <td><span class="fix" id="val_sa_gyro_g1">--</span></td>
-        </tr>
-        <tr>
-          <td>ジャイロ(g2)</td>
-          <td>[?]</td>
-          <td><span class="fix" id="val_sa_gyro_g2">--</span></td>
-        </tr>
-        <tr>
-          <td>気圧(BME280)</td>
-          <td>[hPa]</td>
-          <td><span class="fix" id="val_si_bme280_atmos">--</span></td>
-        </tr>
-        <tr>
-          <td>湿度(BME280)</td>
-          <td>[%]</td>
-          <td><span class="fix" id="val_si_bme280_humi">--</span></td>
-        </tr>
-        <tr>
-          <td>温度(BME280)</td>
-          <td>[℃]</td>
-          <td><span class="fix" id="val_si_bme280_temp">--</span></td>
-        </tr>
-        <tr>
-          <td>距離</td>
-          <td>[cm]</td>
-          <td><span class="fix" id="val_si_gp2y0e03">--</span></td>
-        </tr>
-        <tr>
-          <td>気圧(LPS25H)</td>
-          <td>[hPa]</td>
-          <td><span class="fix" id="val_si_lps25h_atmos">--</span></td>
-        </tr>
-        <tr>
-          <td>温度(LPS25H)</td>
-          <td>[℃]</td>
-          <td><span class="fix" id="val_si_lps25h_temp">--</span></td>
-        </tr>
-        <tr>
-          <td>照度</td>
-          <td>[ルクス]</td>
-          <td><span class="fix" id="val_si_tsl2561_lux">--</span></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <div id="tabulator-table-10sec"></div>
 </section>
 <br/>
 </div>
@@ -246,7 +180,7 @@
 
   <div class="container">
     <div class="row">
-      <div class="col-sm-9">
+      <div class="col-sm-12">
         <div class="well" style="background:rgba(0,0,0,0.2);">
           <div class="row">
             <div class="col-sm-4"><div class="chart" id="cid_sa_acc_x"></div></div>
@@ -257,7 +191,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-sm-6">
+      <div class="col-sm-8">
         <div class="well" style="background:rgba(0,0,0,0.2);">
           <div class="row">
             <div class="col-sm-6"><div class="chart" id="cid_sa_gyro_g1"></div></div>
