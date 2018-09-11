@@ -133,7 +133,7 @@ function initTableSensorNow(){
 /**
  * 30sec のデータを表示するグラフ ( チャート ) を作成する。
  * @param {object} obj - グラフ化する対象のオブジェクト
- * @return {object} chart - 作成するグラフのオブジェクトとデータ
+ * @return {object} obj - 作成するグラフのオブジェクトとデータ
  * @example
  * makeChartSensor30s( obj_sa_acc_x );
 */
@@ -173,9 +173,9 @@ function makeChartSensor30s( obj ){
 /**
  * 1 day のデータを表示するグラフ ( チャート ) を作成する。
  * @param {object} obj - グラフ化する対象のオブジェクト
- * @return {string} chart - 作成するグラフのオブジェクトとデータ
+ * @return {string} obj - 作成するグラフのオブジェクトとデータ
  * @example
- * makeChartSensorDaily( 'cid_sensors_daily', obj_sensors_daily );
+ * makeChartSensorDaily( obj_sensors_daily );
 */
 function makeChartSensorDaily( obj ){
   console.log( "[app.js] makeChartSensorDaily()" );
@@ -237,42 +237,35 @@ server.on( 'S_to_C_DATA', function( data ){
 });
 
 
-server.on( 'S_to_C_DATA_LAST30S', function( data ){
-  console.log( "[app.js] " + 'S_to_C_DATA_LAST30S' );
-  console.log( "[app.js] data.diff  = " + data.diff );
-  console.log( "[app.js] data.value = " + JSON.stringify(data.value) );
+server.on( 'S_to_C_SENSOR_30S', function( data ){
+  console.log( "[app.js] " + 'S_to_C_SENSOR_30S' );
+  console.log( "[app.js] data.value = " + JSON.stringify(data) );
 
-//  var obj = [];
 //  obj = (new Function( 'return ' + data.value ))();
-
-  for( var i=0; i<data.value.length; i++ ){
-    var name;
-    console.log( "[app.js] data.value[ " + i + " ].sensor = " + data.value[i].sensor );
-
-    // グラフ表示
-    name = 'obj_' + data.value[i].sensor;
-    updateChartSensor30s( name, data.value[i].values );
-  }
 
   if( data.diff == true ){
     var hi = '10秒以上の揺れを検出しました';
     sendTalkData( hi );
   }
 
+  // グラフ表示
+  updateChartSensor30s( data.value );
+
   // テーブル表示
   updateTableSensorNow( data.value );
 });
 
 
-server.on( 'S_to_C_SENSOR_ONE_DAY', function( data ){
-  console.log( "[app.js] " + 'S_to_C_SENSOR_ONE_DAY' );
-//  console.log( "[app.js] data = " + JSON.stringify(data.value) );
+server.on( 'S_to_C_SENSOR_DAILY', function( data ){
+  console.log( "[app.js] " + 'S_to_C_SENSOR_DAILY' );
+  console.log( "[app.js] data = " + JSON.stringify(data) );
 
   if( data.ret == false ){
     alert( 'データがありません。\n\r' );
   }
 
-  updateChartSensorDaily( obj_sensors_daily, data.value );
+  // グラフ表示
+  updateChartSensorDaily( data.value );
 });
 
 
@@ -286,53 +279,57 @@ server.on( 'S_to_C_TALK_CB', function(){
 //-------------------------------------
 /**
  * 30s 間のセンサ値をグラフ表示する。
- * @param {string} chart - 対象のグラフ
- * @param {object} data - グラフに表示するデータ
+ * @param {object} obj - グラフに表示するデータ
  * @return {void}
  * @example
- * updateChartSensor30s( 'chart_temp', obj.acc_x );
+ * updateChartSensor30s( obj );
 */
-function updateChartSensor30s( chart, data ){
+function updateChartSensor30s( obj ){
   console.log( "[app.js] updateChartSensor30s()" );
-  console.log( "[app.js] chart = " + chart );
+//  console.log( "[app.js] obj = " + JSON.stringify(obj) );
 
-//  var obj = (new Function('return ' + data))();
+  for( var i=0; i<obj.length; i++ ){
+    console.log( "[app.js] data.value[ " + i + " ].sensor = " + obj[i].sensor );
+    console.log( "[app.js] data.value[ " + i + " ].values = " + JSON.stringify(obj[i].values) );
 
-  var i = 0;
-  for( var key in data ){
-    window[chart].data[i].label = key;
-    window[chart].data[i].y     = data[key];
-    i++;
+    var name = 'obj_' + obj[i].sensor;
+
+    var cnt = 0;
+    for( var key in obj[i].values ){
+      window[name].data[cnt].label = key;
+      window[name].data[cnt].y     = obj[i].values[key];
+      cnt++;
+    }
+
+    window[name].chart.options.data.dataPoints = window[name].data;
+    window[name].chart.render();
   }
-
-  window[chart].chart.options.data.dataPoints = window[chart].data;
-  window[chart].chart.render();
 }
 
 
 /**
  * 1 day のセンサ値をグラフ表示する。
- * @param {object} obj_chart - 対象の chart オブジェクト
- * @param {object} data - グラフに表示するデータ
+ * @param {object} obj - グラフに表示するデータ
  * @return {void}
  * @example
- * updateChartSensorDaily( 'temp', obj );
+ * updateChartSensorDaily( obj );
 */
-function updateChartSensorDaily( obj_chart, data ){
+function updateChartSensorDaily( obj ){
   console.log( "[app.js] updateChartSensorDaily()" );
+//  console.log( "[app.js] obj = " + JSON.stringify(obj) );
 
-//  var obj = (new Function('return ' + data))();
+  var name = 'obj_sensors_daily';
 
-  var i = 0;
-  for( var key in data ){
-    obj_chart.data[i].label = key;
-    obj_chart.data[i].y     = data[key];
-    i++;
+  var cnt = 0;
+  for( var key in obj ){
+    window[name].data[cnt].label = key;
+    window[name].data[cnt].y     = obj[key];
+    cnt++;
   }
 
-  obj_chart.chart.options.title.text = obj_chart.title;
-  obj_chart.chart.options.data.dataPoints = obj_sensors_daily.data;
-  obj_chart.chart.render();
+  window[name].chart.options.title.text = window[name].title;
+  window[name].chart.options.data.dataPoints = window[name].data;
+  window[name].chart.render();
 }
 
 
@@ -341,11 +338,11 @@ function updateChartSensorDaily( obj_chart, data ){
  * @param {object} obj - テーブルに表示するデータ
  * @return {void}
  * @example
- * updateTableSensorNow();
+ * updateTableSensorNow( obj );
 */
 function updateTableSensorNow( obj ){
   console.log( "[app.js] updateTableSensorNow()" );
-  console.log( "[app.js] obj = " + JSON.stringify(obj) );
+//  console.log( "[app.js] obj = " + JSON.stringify(obj) );
 
   var data = [];
 
@@ -353,7 +350,7 @@ function updateTableSensorNow( obj ){
     data[i] = {sensor: obj[i].sensor, unit: "", value: obj[i].values['今'] };
   }
 
-  console.log( "[app.js] data = " + JSON.stringify(data) );
+//  console.log( "[app.js] data = " + JSON.stringify(data) );
   $("#tabulator-table-10sec").tabulator( "setData", data );
   return;
 };
@@ -398,8 +395,8 @@ function sendGetCmdSensorOneDay(){
     alert( '2018/08/01 以降を指定してください。' );
   } else {
     var obj = { date:date, sensor:sensor };
-    console.log( "[app.js] server.emit(" + 'C_to_S_GET_SENSOR_ONE_DAY' + ")" );
-    server.emit( 'C_to_S_GET_SENSOR_ONE_DAY', obj );
+    console.log( "[app.js] server.emit(" + 'C_to_S_SENSOR_DAILY' + ")" );
+    server.emit( 'C_to_S_SENSOR_DAILY', obj );
   }
 }
 

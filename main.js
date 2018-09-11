@@ -273,14 +273,14 @@ io.sockets.on( 'connection', function( socket ){
   });
 
 
-  socket.on( 'C_to_S_GET_SENSOR_ONE_DAY', function( data ){
-    console.log( "[main.js] " + 'C_to_S_GET_SENSOR_ONE_DAY' );
+  socket.on( 'C_to_S_SENSOR_DAILY', function( data ){
+    console.log( "[main.js] " + 'C_to_S_SENSOR_DAILY' );
     console.log( "[main.js] data.date   = " + data.date );
     console.log( "[main.js] data.sensor = " + data.sensor );
 
     sensors.GetMDDocDataOneDay( data.date, data.sensor, function( err, data ){
 //      console.log( data );
-      io.sockets.emit( 'S_to_C_SENSOR_ONE_DAY', {ret:err, value:data} );
+      io.sockets.emit( 'S_to_C_SENSOR_DAILY', {ret:err, value:data} );
     });
   });
 
@@ -367,7 +367,7 @@ function getSensorData30s( cmd ){
       }
 
       console.log( "[main.js] diff_all = " + diff_all );
-      io.sockets.emit( 'S_to_C_DATA_LAST30S', {diff:diff_all, value:data} );
+      io.sockets.emit( 'S_to_C_SENSOR_30S', {diff:diff_all, value:data} );
     }
   );
 }
