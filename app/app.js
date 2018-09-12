@@ -13,11 +13,11 @@ var server = io.connect( 'http://' + sv_ip + ':' + sv_port ); //ローカル
 
 //-----------------------------------------------------------------------------
 //-------------------------------------
-var obj_sa_acc_x        = {name:'sa_acc_x',        chart:null, data:null, type:'area', color:'#E64A19', minimum:0,   title:'加速度(x)',    unit:'[?]'};
-var obj_sa_acc_y        = {name:'sa_acc_y',        chart:null, data:null, type:'area', color:'#E64A19', minimum:0,   title:'加速度(y)',    unit:'[?]'};
-var obj_sa_acc_z        = {name:'sa_acc_z',        chart:null, data:null, type:'area', color:'#E64A19', minimum:0,   title:'加速度(z)',    unit:'[?]'};
-var obj_sa_gyro_g1      = {name:'sa_gyro_g1',      chart:null, data:null, type:'area', color:'#FFA000', minimum:0,   title:'ジャイロ(g1)', unit:'[?]'};
-var obj_sa_gyro_g2      = {name:'sa_gyro_g2',      chart:null, data:null, type:'area', color:'#FFA000', minimum:0,   title:'ジャイロ(g2)', unit:'[?]'};
+var obj_sa_acc_x        = {name:'sa_acc_x',        chart:null, data:null, type:'area', color:'#E64A19', minimum:0,   title:'加速度(x)',      unit:'[?]'};
+var obj_sa_acc_y        = {name:'sa_acc_y',        chart:null, data:null, type:'area', color:'#E64A19', minimum:0,   title:'加速度(y)',      unit:'[?]'};
+var obj_sa_acc_z        = {name:'sa_acc_z',        chart:null, data:null, type:'area', color:'#E64A19', minimum:0,   title:'加速度(z)',      unit:'[?]'};
+var obj_sa_gyro_g1      = {name:'sa_gyro_g1',      chart:null, data:null, type:'area', color:'#FFA000', minimum:0,   title:'ジャイロ(g1)',   unit:'[?]'};
+var obj_sa_gyro_g2      = {name:'sa_gyro_g2',      chart:null, data:null, type:'area', color:'#FFA000', minimum:0,   title:'ジャイロ(g2)',   unit:'[?]'};
 
 var obj_si_bme280_atmos = {name:'si_bme280_atmos', chart:null, data:null, type:'area', color:'#1976D2', minimum:900, title:'気圧(bme280)',   unit:'[hPa]'};
 var obj_si_bme280_humi  = {name:'si_bme280_humi',  chart:null, data:null, type:'area', color:'#00796B', minimum:0,   title:'湿度(bme280)',   unit:'[%]'};
@@ -54,18 +54,18 @@ window.onunload = function(){
 function initChartSensor30s(){
   console.log( "[app.js] initChartSensor30s()" );
 
-  obj_sa_acc_x        = makeChartSensor30s( obj_sa_acc_x        );
-  obj_sa_acc_y        = makeChartSensor30s( obj_sa_acc_y        );
-  obj_sa_acc_z        = makeChartSensor30s( obj_sa_acc_z        );
-  obj_sa_gyro_g1      = makeChartSensor30s( obj_sa_gyro_g1      );
-  obj_sa_gyro_g2      = makeChartSensor30s( obj_sa_gyro_g2      );
-  obj_si_bme280_atmos = makeChartSensor30s( obj_si_bme280_atmos );
-  obj_si_bme280_humi  = makeChartSensor30s( obj_si_bme280_humi  );
-  obj_si_bme280_temp  = makeChartSensor30s( obj_si_bme280_temp  );
-  obj_si_gp2y0e03     = makeChartSensor30s( obj_si_gp2y0e03     );
-  obj_si_lps25h_atmos = makeChartSensor30s( obj_si_lps25h_atmos );
-  obj_si_lps25h_temp  = makeChartSensor30s( obj_si_lps25h_temp  );
-  obj_si_tsl2561_lux  = makeChartSensor30s( obj_si_tsl2561_lux  );
+  makeChartSensor30s( obj_sa_acc_x        );
+  makeChartSensor30s( obj_sa_acc_y        );
+  makeChartSensor30s( obj_sa_acc_z        );
+  makeChartSensor30s( obj_sa_gyro_g1      );
+  makeChartSensor30s( obj_sa_gyro_g2      );
+  makeChartSensor30s( obj_si_bme280_atmos );
+  makeChartSensor30s( obj_si_bme280_humi  );
+  makeChartSensor30s( obj_si_bme280_temp  );
+  makeChartSensor30s( obj_si_gp2y0e03     );
+  makeChartSensor30s( obj_si_lps25h_atmos );
+  makeChartSensor30s( obj_si_lps25h_temp  );
+  makeChartSensor30s( obj_si_tsl2561_lux  );
 
   obj_sa_acc_x.chart.render();
   obj_sa_acc_x.chart.render();
@@ -93,7 +93,8 @@ function initChartSensor30s(){
 */
 function initChartSensorDaily(){
   console.log( "[app.js] initChartSensorDaily()" );
-  obj_sensors_daily   = makeChartSensorDaily( obj_sensors_daily );
+
+  makeChartSensorDaily( obj_sensors_daily );
   obj_sensors_daily.chart.render();
   return;
 };
@@ -121,9 +122,9 @@ function initTableSensorNow(){
       {column:"title", dir:"asc"},
     ],
     columns:[
-      {title:"センサ", field:"sensor", align:"center", width:"100", sortable:"true", sorter:"string", formatter:"plaintext", editable:false,                                  },
-      {title:"単位",   field:"unit",   align:"center", width:"100", sortable:"true", sorter:"string", formatter:"plaintext", editable:false,                                  },
-      {title:"値",     field:"value",  align:"right",  width:"100", sortable:"true", sorter:"number", formatter:"plaintext", editable:false, cssClass:"tabulator-background", },
+      {title:"センサ", field:"sensor", align:"left",  width:"150", sortable:"true", sorter:"string", formatter:"plaintext", editable:false,                                  },
+      {title:"値",     field:"value",  align:"right", width:"100", sortable:"true", sorter:"number", formatter:"plaintext", editable:false, cssClass:"tabulator-background", },
+      {title:"単位",   field:"unit",   align:"left",  width:"100", sortable:"true", sorter:"string", formatter:"plaintext", editable:false,                                  },
     ],
   });
   return;
@@ -133,7 +134,7 @@ function initTableSensorNow(){
 /**
  * 30sec のデータを表示するグラフ ( チャート ) を作成する。
  * @param {object} obj - グラフ化する対象のオブジェクト
- * @return {object} obj - 作成するグラフのオブジェクトとデータ
+ * @return {void}
  * @example
  * makeChartSensor30s( obj_sa_acc_x );
 */
@@ -166,14 +167,16 @@ function makeChartSensor30s( obj ){
     }]
   });
 
-  return {chart:chart, data:data};
+  obj.chart = chart;
+  obj.data  = data;
+  return;
 };
 
 
 /**
  * 1 day のデータを表示するグラフ ( チャート ) を作成する。
  * @param {object} obj - グラフ化する対象のオブジェクト
- * @return {string} obj - 作成するグラフのオブジェクトとデータ
+ * @return {void}
  * @example
  * makeChartSensorDaily( obj_sensors_daily );
 */
@@ -212,7 +215,9 @@ function makeChartSensorDaily( obj ){
     }]
   });
 
-  return {chart:chart, data:data};
+  obj.chart = chart;
+  obj.data  = data;
+  return;
 };
 
 
@@ -301,6 +306,7 @@ function updateChartSensor30s( obj ){
       cnt++;
     }
 
+    window[name].chart.options.title.text = window[name].title;
     window[name].chart.options.data.dataPoints = window[name].data;
     window[name].chart.render();
   }
@@ -347,7 +353,10 @@ function updateTableSensorNow( obj ){
   var data = [];
 
   for( var i = 0; i < obj.length; i++ ){
-    data[i] = {sensor: obj[i].sensor, unit: "", value: obj[i].values['今'] };
+    var name = 'obj_' + obj[i].sensor;
+    var unit = window[name].unit;
+
+    data[i] = {sensor: obj[i].sensor, unit: unit, value: obj[i].values['今'] };
   }
 
 //  console.log( "[app.js] data = " + JSON.stringify(data) );
