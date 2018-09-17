@@ -11,6 +11,7 @@ var fs       = require( 'fs' );
 var colors   = require( 'colors' );
 require( 'date-utils' );
 var schedule = require( 'node-schedule' );
+var express  = require( 'express' );
 
 const DataSensors = require( './js/DataSensors' );
 const Docomo      = require( './js/Docomo' );
@@ -21,6 +22,12 @@ var now = new Date();
 console.log( "[main.js] " + now.toFormat("YYYY年MM月DD日 HH24時MI分SS秒").rainbow );
 console.log( "[main.js] " + "ver.01 : app.js".rainbow );
 console.log( "[main.js] " + "access to http://localhost:3000" );
+
+// Express オブジェクトを生成
+var ex_app = express();
+var ex_server = ex_app.listen( 3001, function(){
+    console.log( "[main.js] " + "Node.js is listening to PORT:" + ex_server.address().port );
+});
 
 // サーバー・オブジェクトを生成
 var server = http.createServer();
@@ -230,6 +237,65 @@ function runBoardSensor( when, cmd ) {
 
   return job;
 };
+
+
+//-----------------------------------------------------------------------------
+// クライアントからコネクションが来た時の処理関数 ( Express )
+//-----------------------------------------------------------------------------
+ex_app.get("/api/sensors", function(req, res, next){
+
+  var exec = require( 'child_process' ).exec;
+  var ret  = exec( 'sudo ./board.out --sensors',
+    function( err, stdout, stderr ){
+      console.log( "[main.js] stdout = " + stdout );
+      console.log( "[main.js] stderr = " + stderr );
+      if( err ){
+        console.log( "[main.js] " + err );
+      }
+
+      var jsonObj = (new Function( 'return ' + stdout ))();
+      res.json( jsonObj );
+    }
+  );
+});
+
+
+ex_app.get("/api/sensors/:sensorId", function(req, res, next){
+
+  var target = req.params.sensorId;
+
+  var exec = require( 'child_process' ).exec;
+  var ret  = exec( 'sudo ./board.out --' + target + '=json',
+    function( err, stdout, stderr ){
+      console.log( "[main.js] stdout = " + stdout );
+      console.log( "[main.js] stderr = " + stderr );
+      if( err ){
+        console.log( "[main.js] " + err );
+      }
+
+      var jsonObj = (new Function( 'return ' + stdout ))();
+      res.json( jsonObj );
+    }
+  );
+});
+
+
+ex_app.get("/api/time", function(req, res, next){
+
+  var exec = require( 'child_process' ).exec;
+  var ret  = exec( 'sudo ./board.out --time=json',
+    function( err, stdout, stderr ){
+      console.log( "[main.js] stdout = " + stdout );
+      console.log( "[main.js] stderr = " + stderr );
+      if( err ){
+        console.log( "[main.js] " + err );
+      }
+
+      var jsonObj = (new Function( 'return ' + stdout ))();
+      res.json( jsonObj );
+    }
+  );
+});
 
 
 //-----------------------------------------------------------------------------
