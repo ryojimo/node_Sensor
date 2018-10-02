@@ -158,7 +158,7 @@ function startSystem() {
   var job02;
   var job03;
 
-  sensors.InitData30s( sen_names );
+  sensors.initData30s( sen_names );
 
   timerFlg  = setInterval( function(){
                 getSensorData30s( 'sudo ./board.out --sensors' );
@@ -230,7 +230,7 @@ function runBoardSensor( when, cmd ) {
         var jsonObj = (new Function( 'return ' + stdout ))();
         var hour = hhmmss().substr(0,5);      // hh:mm:ss から hh:mm を取り出して hour にセット
         console.log( "[main.js] " + hour );
-        sensors.CreateMDDoc( yyyymmdd(), hour, jsonObj );
+        sensors.createDoc( yyyymmdd(), hour, jsonObj );
       }
     );
   });
@@ -344,7 +344,7 @@ io.sockets.on( 'connection', function( socket ){
     console.log( "[main.js] data.date   = " + data.date );
     console.log( "[main.js] data.sensor = " + data.sensor );
 
-    sensors.GetMDDocDataOneDay( data.date, data.sensor, function( err, data ){
+    sensors.getOneDay( data.date, data.sensor, function( err, data ){
 //      console.log( data );
       io.sockets.emit( 'S_to_C_SENSOR_DAILY', {ret:err, value:data} );
     });
@@ -371,8 +371,8 @@ io.sockets.on( 'connection', function( socket ){
     console.log( "[main.js] " + 'C_to_S_TALK' );
     console.log( "[main.js] cmnt = " + cmnt );
 
-    docomo.Update( 'nozomi', 'hello' );
-    docomo.Talk( cmnt, function(){
+    docomo.update( 'nozomi', 'hello' );
+    docomo.talk( cmnt, function(){
       io.sockets.emit( 'S_to_C_TALK_CB', {value:true} )
     });
   });
@@ -384,8 +384,8 @@ io.sockets.on( 'connection', function( socket ){
     console.log( "[main.js] data.talker = " + data.talker );
     console.log( "[main.js] data.cmnt   = " + data.cmnt );
 
-    docomo.Update( data.talker , 'hello' );
-    docomo.Talk( data.cmnt, function(){
+    docomo.update( data.talker , 'hello' );
+    docomo.talk( data.cmnt, function(){
     });
   });
 
@@ -413,15 +413,15 @@ function getSensorData30s( cmd ){
       }
 
       var jsonObj = (new Function( 'return ' + stdout ))();
-      var data = sensors.UpdateData30s( jsonObj );
+      var data = sensors.updateData30s( jsonObj );
       console.log( "[main.js] data = " + JSON.stringify(data) );
 
       // 加速度センサとジャイロセンサの "10秒前" と" 今" の値に大きな差があるか？をチェック
-      var diff_sa_acc_x   = sensors.IsLargeDiff( 'sa_acc_x' );
-      var diff_sa_acc_y   = sensors.IsLargeDiff( 'sa_acc_y' );
-      var diff_sa_acc_z   = sensors.IsLargeDiff( 'sa_acc_z' );
-      var diff_sa_gyro_g1 = sensors.IsLargeDiff( 'sa_gyro_g1' );
-      var diff_sa_gyro_g2 = sensors.IsLargeDiff( 'sa_gyro_g2' );
+      var diff_sa_acc_x   = sensors.isLarge( 'sa_acc_x' );
+      var diff_sa_acc_y   = sensors.isLarge( 'sa_acc_y' );
+      var diff_sa_acc_z   = sensors.isLarge( 'sa_acc_z' );
+      var diff_sa_gyro_g1 = sensors.isLarge( 'sa_gyro_g1' );
+      var diff_sa_gyro_g2 = sensors.isLarge( 'sa_gyro_g2' );
 
       var diff_all = false;
       if( diff_sa_acc_x   == true || diff_sa_acc_z   == true ||
