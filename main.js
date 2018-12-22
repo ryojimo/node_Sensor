@@ -131,7 +131,7 @@ function startSystem() {
   var job01 = runBoard(       '30  7      * * *', 'sudo ./board.out --relay on'  );
   var job02 = runBoard(       '45  7      * * *', 'sudo ./board.out --relay off' );
   var job03 = runBoardSensor( ' 0  0-23/1 * * *', 'sudo ./board.out --sensors'   );
-  var job04 = storeSensor(    ' 5 23 * * *'                                      );
+  var job04 = storeSensor(    ' 5 23      * * *'                                 );
 };
 
 
@@ -295,7 +295,7 @@ function runBoardSensor( when, cmd ) {
   console.log( "[main.js] cmd  = " + cmd );
 
   var job = schedule.scheduleJob(when, function(){
-    console.log( "[main.js] node-schedule で " + cmd + "が実行されました" );
+    console.log( "[main.js] node-schedule で " + cmd + " が実行されました" );
 
     var exec = require( 'child_process' ).exec;
     var ret  = exec( cmd,
@@ -325,7 +325,7 @@ function runBoardSensor( when, cmd ) {
  * @param {string} when - Job を実行する時間
  * @return {object} job - node-schedule に登録した job
  * @example
- * runBoardSensor( ' 0 0-23/1 * * *' );
+ * storeSensor( ' 0 0-23/1 * * *' );
 */
 function storeSensor( when ) {
   console.log( "[main.js] storeSensor()" );
@@ -340,8 +340,8 @@ function storeSensor( when ) {
       data.push( {sensor: key, values: g_sensors[key].data1day} );
     }
 
-    var date = g_apiCmn.yyyymmdd();
-    g_apiFileSystem.write( '/media/pi/USBDATA/' +  date + '_sensor.txt', data );
+    var filename = g_apiCmn.yyyymmdd() + '_sensor.txt';
+    g_apiFileSystem.write( '/media/pi/USBDATA/' +  filename, data );
   });
 
   return job;
@@ -376,15 +376,14 @@ io.sockets.on( 'connection', function( socket ){
     console.log( "[main.js] data = " + data );
 
     var exec = require( 'child_process' ).exec;
-    var ret  = exec( data,
-      function( err, stdout, stderr ){
-        console.log( "[main.js] stdout = " + stdout );
-        console.log( "[main.js] stderr = " + stderr );
-        if( err ){
-          console.log( "[main.js] " + err );
-        }
+    var ret  = exec( data, function( err, stdout, stderr ){
+      console.log( "[main.js] stdout = " + stdout );
+      console.log( "[main.js] stderr = " + stderr );
+      if( err ){
+        console.log( "[main.js] " + err );
+      }
 
-        io.sockets.emit( 'S_to_C_DATA', {value:stdout} );
+      io.sockets.emit( 'S_to_C_DATA', {value:stdout} );
     });
   });
 
@@ -394,8 +393,22 @@ io.sockets.on( 'connection', function( socket ){
     console.log( "[main.js] data.date   = " + data.date );
     console.log( "[main.js] data.sensor = " + data.sensor );
 
-    var data = g_sensors[ data.sensor ].data1day;
-    io.sockets.emit( 'S_to_C_SENSOR_DAILY', {ret:true, value:data} );
+    var ret = {};
+    var filename = data.date + '_sensor.txt';
+    var jsonObj = g_apiFileSystem.read( '/media/pi/USBDATA/' +  filename );
+
+    if( jsonObj == NULL )
+    {
+      io.sockets.emit( 'S_to_C_SENSOR_DAILY', {ret:false, value:NULL} );
+    } else{
+      for( var i=0; i<jsonObj.length; i++ ){
+        if( data.sensor == jsonObj[i].sensor ){
+          ret = jsonObj[i].values;
+          break;
+        }
+      }
+      io.sockets.emit( 'S_to_C_SENSOR_DAILY', {ret:true, value:ret} );
+    }
   });
 
 
@@ -404,14 +417,13 @@ io.sockets.on( 'connection', function( socket ){
     console.log( "[main.js] data = " + data );
 
     var exec = require( 'child_process' ).exec;
-    var ret  = exec( data,
-      function( err, stdout, stderr ){
-        console.log( "[main.js] stdout = " + stdout );
-        console.log( "[main.js] stderr = " + stderr );
-        if( err ){
-          console.log( "[main.js] " + err );
-        }
-      });
+    var ret  = exec( data, function( err, stdout, stderr ){
+      console.log( "[main.js] stdout = " + stdout );
+      console.log( "[main.js] stderr = " + stderr );
+      if( err ){
+        console.log( "[main.js] " + err );
+      }
+    });
   });
 
 

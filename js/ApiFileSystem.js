@@ -33,16 +33,17 @@ ApiFileSystem.prototype.read = function( file ){
   console.log( "[ApiFileSystem.js] read()" );
   console.log( "[ApiFileSystem.js] file = " + file );
 
-  var ret = false;
+  var ret = NULL;
   try{
     fs.statSync( file );
     var ret = fs.readFileSync( file, 'utf8');
     var jsonObj = (new Function("return " + ret))();
     console.log( "[ApiFileSystem.js] jsonObj = " + JSON.stringify(jsonObj) );
+    ret = jsonObj;
   } catch( err ){
     if( err.code === 'ENOENT' ){
       console.log( "[ApiFileSystem.js] file does not exist." );
-      ret = false
+      ret = NULL;
     }
   }
   return ret;
