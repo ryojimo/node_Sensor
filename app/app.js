@@ -248,16 +248,11 @@ server.on( 'S_to_C_SENSOR_30S', function( data ){
 
 //  obj = (new Function( 'return ' + data.value ))();
 
-  if( data.diff == true ){
-    var hi = '10秒以上の揺れを検出しました';
-    sendTalkData( hi );
-  }
-
   // グラフ表示
-  updateChartSensor30s( data.value );
+  updateChartSensor30s( data );
 
   // テーブル表示
-  updateTableSensorNow( data.value );
+  updateTableSensorNow( data );
 });
 
 
@@ -404,8 +399,8 @@ function sendGetCmdSensorOneDay(){
     alert( '2018/08/01 以降を指定してください。' );
   } else {
     var obj = { date:date, sensor:sensor };
-    console.log( "[app.js] server.emit(" + 'C_to_S_SENSOR_DAILY' + ")" );
-    server.emit( 'C_to_S_SENSOR_DAILY', obj );
+    console.log( "[app.js] server.emit(" + 'C_to_S_GET_SENSOR_DAILY' + ")" );
+    server.emit( 'C_to_S_GET_SENSOR_DAILY', obj );
   }
 }
 
@@ -443,22 +438,6 @@ function sendSetCmdServo( cmd ){
   document.getElementById('val_servo').innerHTML = str.match( /\d+/ ); // 数値を表示
 
   sendSetCmd( cmd );
-}
-
-
-/**
- * しゃべる文字データを送る。
- * @param {string} cmnt - しゃべる文字列
- * @return {void}
- * @example
- * sendTalkData( cmnt );
-*/
-function sendTalkData( cmnt ){
-  console.log( "[app.js] sendTalkData()" );
-  console.log( "[app.js] cmnt = " + cmnt );
-
-  console.log( "[app.js] server.emit(" + 'C_to_S_TALK' + ")" );
-  server.emit( 'C_to_S_TALK', cmnt );
 }
 
 

@@ -11,10 +11,12 @@ var fs       = require( 'fs' );
 var colors   = require( 'colors' );
 require( 'date-utils' );
 var schedule = require( 'node-schedule' );
-var express  = require( 'express' );
 
-const DataSensors = require( './js/DataSensors' );
-const Docomo      = require( './js/Docomo' );
+const ApiCmn        = require( './js/ApiCmn' );
+const ApiFileSystem = require( './js/ApiFileSystem' );
+
+const DataSensor = require( './js/DataSensor' );
+const Docomo     = require( './js/Docomo' );
 
 
 // Ver. 表示
@@ -22,12 +24,6 @@ var now = new Date();
 console.log( "[main.js] " + now.toFormat("YYYY年MM月DD日 HH24時MI分SS秒").rainbow );
 console.log( "[main.js] " + "ver.01 : app.js".rainbow );
 console.log( "[main.js] " + "access to http://localhost:3000" );
-
-// Express オブジェクトを生成
-var ex_app = express();
-var ex_server = ex_app.listen( 3001, function(){
-    console.log( "[main.js] " + "Node.js is listening to PORT:" + ex_server.address().port );
-});
 
 // サーバー・オブジェクトを生成
 var server = http.createServer();
@@ -46,76 +42,58 @@ function doRequest(
 ){
   switch( req.url ){
   case '/':
-    fs.readFile( './app/app.html', 'UTF-8',
-      function( err, data ){
-        if( err ){
-          res.writeHead( 404, {'Content-Type': 'text/html'} );
-          res.write( 'File Not Found.' );
-          res.end();
-          return;
-        }
-        res.writeHead( 200, {'Content-Type': 'text/html',
-                             'Access-Control-Allow-Origin': '*'
-                      } );
-        res.write( data );
+    fs.readFile( './app/app.html', 'UTF-8', function( err, data ){
+      if( err ){
+        res.writeHead( 404, {'Content-Type': 'text/html'} );
+        res.write( 'File Not Found.' );
         res.end();
+        return;
       }
-    );
+      res.writeHead( 200, {'Content-Type': 'text/html',
+                           'Access-Control-Allow-Origin': '*' } );
+      res.write( data );
+      res.end();
+    });
   break;
   case '/app.js':
-    fs.readFile( './app/app.js', 'UTF-8',
-      function( err, data ){
-        res.writeHead( 200, {'Content-Type': 'application/javascript',
-                             'Access-Control-Allow-Origin': '*'
-                      } );
-        res.write( data );
-        res.end();
-      }
-    );
+    fs.readFile( './app/app.js', 'UTF-8', function( err, data ){
+      res.writeHead( 200, {'Content-Type': 'application/javascript',
+                           'Access-Control-Allow-Origin': '*' } );
+      res.write( data );
+      res.end();
+    });
   break;
   case '/style.css':
-    fs.readFile( './app/style.css', 'UTF-8',
-      function( err, data ){
-        res.writeHead( 200, {'Content-Type': 'text/css',
-                             'Access-Control-Allow-Origin': '*'
-                      } );
-        res.write( data );
-        res.end();
-      }
-    );
+    fs.readFile( './app/style.css', 'UTF-8', function( err, data ){
+      res.writeHead( 200, {'Content-Type': 'text/css',
+                           'Access-Control-Allow-Origin': '*' } );
+      res.write( data );
+      res.end();
+    });
   break;
   case '/bg.gif':
-    fs.readFile( './app/bg.gif', 'binary',
-      function( err, data ){
-        res.writeHead( 200, {'Content-Type': 'image/gif',
-                             'Access-Control-Allow-Origin': '*'
-                      } );
-        res.write( data, 'binary' );
-        res.end();
-      }
-    );
+    fs.readFile( './app/bg.gif', 'binary', function( err, data ){
+      res.writeHead( 200, {'Content-Type': 'image/gif',
+                           'Access-Control-Allow-Origin': '*' } );
+      res.write( data, 'binary' );
+      res.end();
+    });
   break;
   case '/jQueryRotate.js':
-    fs.readFile( './app/js_lib/jQueryRotate.js', 'UTF-8',
-      function( err, data ){
-        res.writeHead( 200, {'Content-Type': 'application/javascript',
-                             'Access-Control-Allow-Origin': '*'
-                      } );
-        res.write( data );
-        res.end();
-      }
-    );
+    fs.readFile( './app/js_lib/jQueryRotate.js', 'UTF-8', function( err, data ){
+      res.writeHead( 200, {'Content-Type': 'application/javascript',
+                           'Access-Control-Allow-Origin': '*' } );
+      res.write( data );
+      res.end();
+    });
   break;
   case '/tmp/picture.jpg':
-    fs.readFile( './tmp/picture.jpg', 'binary',
-      function( err, data ){
-        res.writeHead( 200, {'Content-Type': 'image/jpg',
-                             'Access-Control-Allow-Origin': '*'
-                      } );
-        res.write( data, 'binary' );
-        res.end();
-      }
-    );
+    fs.readFile( './tmp/picture.jpg', 'binary', function( err, data ){
+      res.writeHead( 200, {'Content-Type': 'image/jpg',
+                           'Access-Control-Allow-Origin': '*' } );
+      res.write( data, 'binary' );
+      res.end();
+    });
   break;
   }
 }
@@ -127,25 +105,17 @@ var io = socketio.listen( server );
 //-----------------------------------------------------------------------------
 // 起動の処理関数
 //-----------------------------------------------------------------------------
-var timerFlg;
-
-var sen_names = [ 'sa_acc_x', 'sa_acc_y', 'sa_acc_z',
-                  'sa_gyro_g1', 'sa_gyro_g2',
-                  'si_bme280_atmos', 'si_bme280_humi', 'si_bme280_temp',
-                  'si_gp2y0e03',
-                  'si_lps25h_atmos', 'si_lps25h_temp',
-                  'si_tsl2561_lux'
-                ];
-var sensors = new DataSensors();
-
-var docomo  = new Docomo();
+var g_apiCmn        = new ApiCmn();
+var g_apiFileSystem = new ApiFileSystem();
+var g_docomo  = new Docomo();
+var g_sensors = new Array();
 
 
 startSystem();
 
 
 /**
- * システムを開始する
+ * システムを開始する。
  * @param {void}
  * @return {void}
  * @example
@@ -154,24 +124,133 @@ startSystem();
 function startSystem() {
   console.log( "[main.js] startSystem()" );
 
-  var job01;
-  var job02;
-  var job03;
+  createSensorObjects();
 
-  sensors.initData30s( sen_names );
+  var timerFlg  = setInterval( function(){ getSensorData30s(); }, 10000 );
 
-  timerFlg  = setInterval( function(){
-                getSensorData30s( 'sudo ./board.out --sensors' );
-              }, 10000 );
-
-  job01 = runBoard(       '30 7      * * *', 'sudo ./board.out --relay on'  );
-  job02 = runBoard(       '45 7      * * *', 'sudo ./board.out --relay off' );
-  job03 = runBoardSensor( ' 0 0-23/1 * * *', 'sudo ./board.out --sensors'   );
+  var job01 = runBoard(       '30  7      * * *', 'sudo ./board.out --relay on'  );
+  var job02 = runBoard(       '45  7      * * *', 'sudo ./board.out --relay off' );
+  var job03 = runBoardSensor( ' 0  0-23/1 * * *', 'sudo ./board.out --sensors'   );
+  var job04 = storeSensor(    ' 5 23 * * *'                                      );
 };
 
 
 /**
- * node-schedule の Job を登録する
+ * センサ・オブジェクトを生成する。
+ * @param {void}
+ * @return {void}
+ * @example
+ * startSystem();
+*/
+function createSensorObjects() {
+  console.log( "[main.js] createSensorObjects()" );
+  g_sensors[ 'sa_acc_x' ] = new DataSensor( 'sa_acc_x' );
+  g_sensors[ 'sa_acc_y' ] = new DataSensor( 'sa_acc_y' );
+  g_sensors[ 'sa_acc_z' ] = new DataSensor( 'sa_acc_z' );
+
+  g_sensors[ 'sa_gyro_g1' ] = new DataSensor( 'sa_gyro_g1' );
+  g_sensors[ 'sa_gyro_g2' ] = new DataSensor( 'sa_gyro_g2' );
+
+  g_sensors[ 'si_bme280_atmos' ] = new DataSensor( 'si_bme280_atmos' );
+  g_sensors[ 'si_bme280_humi' ] = new DataSensor( 'si_bme280_humi' );
+  g_sensors[ 'si_bme280_temp' ] = new DataSensor( 'si_bme280_temp' );
+
+  g_sensors[ 'si_gp2y0e03' ] = new DataSensor( 'si_gp2y0e03' );
+
+  g_sensors[ 'si_lps25h_atmos' ] = new DataSensor( 'si_lps25h_atmos' );
+  g_sensors[ 'si_lps25h_temp' ] = new DataSensor( 'si_lps25h_temp' );
+
+  g_sensors[ 'si_tsl2561_lux' ] = new DataSensor( 'si_tsl2561_lux' );
+}
+
+/**
+ * 全センサの値を取得して 30s 間のデータを更新する。
+ * @return {void}
+ * @example
+ * getSensorData30s();
+*/
+function getSensorData30s(){
+  console.log( "[main.js] getSensorData30s()" );
+
+  var cmd = 'sudo ./board.out --sensors';
+  var exec = require( 'child_process' ).exec;
+  var ret  = exec( cmd, function( err, stdout, stderr ){
+    console.log( "[main.js] stdout = " + stdout );
+    console.log( "[main.js] stderr = " + stderr );
+    if(err){
+      console.log( "[main.js] " + err );
+    }
+
+    var jsonObj = (new Function( 'return ' + stdout ))();
+
+    // 各センサ・オブジェクトの data30s を更新する
+    for( key in jsonObj ){
+      g_sensors[ key ].updateData30s( jsonObj[key] );
+    }
+
+    // 全センサの 30s 間の値の JSON オブジェクト配列を作成する
+    var data = new Array();
+    for( key in g_sensors ){
+      data.push( {sensor: key, values: g_sensors[key].data30s} );
+    }
+
+    // data を送る
+    io.sockets.emit( 'S_to_C_SENSOR_30S', data );
+
+    // "10秒前" と" 今" の値に大きな差があるか？をチェックする
+    var diff = checkDiff();
+    if( diff == true ){
+      talkAlert();
+    }
+  });
+}
+
+
+/**
+ * 加速度センサとジャイロセンサの "10秒前" と" 今" の値に大きな差があるか？をチェックする。
+ * @return {bool} ret - 大きな差があればれ true を返す
+ * @example
+ * checkDiff();
+*/
+function checkDiff(){
+  console.log( "[main.js] checkDiff()" );
+  var ret = false;
+
+  var diff_sa_acc_x   = g_sensors[ 'sa_acc_x'   ].isLarge();
+  var diff_sa_acc_y   = g_sensors[ 'sa_acc_y'   ].isLarge();
+  var diff_sa_acc_z   = g_sensors[ 'sa_acc_z'   ].isLarge();
+  var diff_sa_gyro_g1 = g_sensors[ 'sa_gyro_g1' ].isLarge();
+  var diff_sa_gyro_g2 = g_sensors[ 'sa_gyro_g2' ].isLarge();
+
+  if( diff_sa_acc_x   == true || diff_sa_acc_z   == true || diff_sa_gyro_g1 == true || diff_sa_gyro_g2 == true ){
+    ret = true;
+  } else {
+    ret = false;
+  }
+
+  return ret;
+}
+
+
+/**
+ * cmnt の内容を話す。
+ * @return {void}
+ * @example
+ * talkAlert();
+*/
+function talkAlert(){
+  console.log( "[main.js] talkAlert()" );
+  var cmnt = '10秒以上の揺れを検出しました';
+
+  g_docomo.update( 'nozomi', 'hello' );
+  g_docomo.talk( cmnt, function(){
+    io.sockets.emit( 'S_to_C_TALK_CB', {value:true} )
+  });
+}
+
+
+/**
+ * node-schedule の Job を登録する。
  * @param {string} when - Job を実行する時間
  * @param {string} cmd - 実行するコマンド
  * @return {object} job - node-schedule に登録した job
@@ -203,12 +282,12 @@ function runBoard( when, cmd ) {
 
 
 /**
- * node-schedule の Job を登録する
+ * node-schedule の Job を登録する。
  * @param {string} when - Job を実行する時間
  * @param {string} cmd - 実行するコマンド
  * @return {object} job - node-schedule に登録した job
  * @example
- * runBoard( '30 7 * * *', "sudo ./board.out --sensors" );
+ * runBoardSensor( ' 0 0-23/1 * * *', 'sudo ./board.out --sensors' );
 */
 function runBoardSensor( when, cmd ) {
   console.log( "[main.js] runBoardSensor()" );
@@ -227,10 +306,12 @@ function runBoardSensor( when, cmd ) {
           console.log( "[main.js] " + err );
         }
 
+        // stdout の文字列は以下のような感じ
+        // { "sa_acc_x":2019, "sa_acc_y":2854,"sa_acc_z":1934, "sa_gyro_g1":1783, "sa_gyro_g2":1771, "si_bme280_atmos":718.53, "si_bme280_humi":38.84, "si_bme280_temp":29.82, "si_gp2y0e03":63.00, "si_lps25h_atmos":1018.34, "si_lps25h_temp":30.42, "si_tsl2561_lux":57.00 }
         var jsonObj = (new Function( 'return ' + stdout ))();
-        var hour = hhmmss().substr(0,5);      // hh:mm:ss から hh:mm を取り出して hour にセット
-        console.log( "[main.js] " + hour );
-        sensors.createDoc( yyyymmdd(), hour, jsonObj );
+        for( key in jsonObj ){
+          g_sensors[ key ].updateData1day( jsonObj[key] );
+        }
       }
     );
   });
@@ -239,63 +320,32 @@ function runBoardSensor( when, cmd ) {
 };
 
 
-//-----------------------------------------------------------------------------
-// クライアントからコネクションが来た時の処理関数 ( Express )
-//-----------------------------------------------------------------------------
-ex_app.get("/api/sensors", function(req, res, next){
+/**
+ * node-schedule の Job を登録する。
+ * @param {string} when - Job を実行する時間
+ * @return {object} job - node-schedule に登録した job
+ * @example
+ * runBoardSensor( ' 0 0-23/1 * * *' );
+*/
+function storeSensor( when ) {
+  console.log( "[main.js] storeSensor()" );
+  console.log( "[main.js] when = " + when );
 
-  var exec = require( 'child_process' ).exec;
-  var ret  = exec( 'sudo ./board.out --sensors',
-    function( err, stdout, stderr ){
-      console.log( "[main.js] stdout = " + stdout );
-      console.log( "[main.js] stderr = " + stderr );
-      if( err ){
-        console.log( "[main.js] " + err );
-      }
+  var job = schedule.scheduleJob(when, function(){
+    console.log( "[main.js] node-schedule で fs.writeFileSync() が実行されました" );
 
-      var jsonObj = (new Function( 'return ' + stdout ))();
-      res.json( jsonObj );
+    // 全センサの 1day の値の JSON オブジェクト配列を作成する
+    var data = new Array();
+    for( key in g_sensors ){
+      data.push( {sensor: key, values: g_sensors[key].data1day} );
     }
-  );
-});
 
+    var date = g_apiCmn.yyyymmdd();
+    g_apiFileSystem.write( '/media/pi/USBDATA/' +  date + '_sensor.txt', data );
+  });
 
-ex_app.get("/api/sensors/:sensorId", function(req, res, next){
-
-  var target = req.params.sensorId;
-
-  var exec = require( 'child_process' ).exec;
-  var ret  = exec( 'sudo ./board.out --' + target + '=json',
-    function( err, stdout, stderr ){
-      console.log( "[main.js] stdout = " + stdout );
-      console.log( "[main.js] stderr = " + stderr );
-      if( err ){
-        console.log( "[main.js] " + err );
-      }
-
-      var jsonObj = (new Function( 'return ' + stdout ))();
-      res.json( jsonObj );
-    }
-  );
-});
-
-
-ex_app.get("/api/time", function(req, res, next){
-
-  var exec = require( 'child_process' ).exec;
-  var ret  = exec( 'sudo ./board.out --time=json',
-    function( err, stdout, stderr ){
-      console.log( "[main.js] stdout = " + stdout );
-      console.log( "[main.js] stderr = " + stderr );
-      if( err ){
-        console.log( "[main.js] " + err );
-      }
-
-      var jsonObj = (new Function( 'return ' + stdout ))();
-      res.json( jsonObj );
-    }
-  );
-});
+  return job;
+};
 
 
 //-----------------------------------------------------------------------------
@@ -339,15 +389,13 @@ io.sockets.on( 'connection', function( socket ){
   });
 
 
-  socket.on( 'C_to_S_SENSOR_DAILY', function( data ){
-    console.log( "[main.js] " + 'C_to_S_SENSOR_DAILY' );
+  socket.on( 'C_to_S_GET_SENSOR_DAILY', function( data ){
+    console.log( "[main.js] " + 'C_to_S_GET_SENSOR_DAILY' );
     console.log( "[main.js] data.date   = " + data.date );
     console.log( "[main.js] data.sensor = " + data.sensor );
 
-    sensors.getOneDay( data.date, data.sensor, function( err, data ){
-//      console.log( data );
-      io.sockets.emit( 'S_to_C_SENSOR_DAILY', {ret:err, value:data} );
-    });
+    var data = g_sensors[ data.sensor ].data1day;
+    io.sockets.emit( 'S_to_C_SENSOR_DAILY', {ret:true, value:data} );
   });
 
 
@@ -367,135 +415,6 @@ io.sockets.on( 'connection', function( socket ){
   });
 
 
-  socket.on( 'C_to_S_TALK', function( cmnt ){
-    console.log( "[main.js] " + 'C_to_S_TALK' );
-    console.log( "[main.js] cmnt = " + cmnt );
-
-    docomo.update( 'nozomi', 'hello' );
-    docomo.talk( cmnt, function(){
-      io.sockets.emit( 'S_to_C_TALK_CB', {value:true} )
-    });
-  });
-
-
-  socket.on( 'C_to_S_TALK_W_NAME', function( data ){
-    console.log( "[main.js] " + 'C_to_S_TALK_W_NAME' );
-    console.log( "[main.js] data = " + data );
-    console.log( "[main.js] data.talker = " + data.talker );
-    console.log( "[main.js] data.cmnt   = " + data.cmnt );
-
-    docomo.update( data.talker , 'hello' );
-    docomo.talk( data.cmnt, function(){
-    });
-  });
-
-
 });
-
-
-/**
- * 全センサの値を取得する
- * @param {string} cmd - 実行するコマンド
- * @return {void}
- * @example
- * getSensorData30s();
-*/
-function getSensorData30s( cmd ){
-  console.log( "[main.js] getSensorData30s()" );
-  console.log( "[main.js] cmd = " + cmd );
-  var exec = require( 'child_process' ).exec;
-  var ret  = exec( cmd,
-    function( err, stdout, stderr ){
-      console.log( "[main.js] stdout = " + stdout );
-      console.log( "[main.js] stderr = " + stderr );
-      if(err){
-        console.log( "[main.js] " + err );
-      }
-
-      var jsonObj = (new Function( 'return ' + stdout ))();
-      var data = sensors.updateData30s( jsonObj );
-      console.log( "[main.js] data = " + JSON.stringify(data) );
-
-      // 加速度センサとジャイロセンサの "10秒前" と" 今" の値に大きな差があるか？をチェック
-      var diff_sa_acc_x   = sensors.isLarge( 'sa_acc_x' );
-      var diff_sa_acc_y   = sensors.isLarge( 'sa_acc_y' );
-      var diff_sa_acc_z   = sensors.isLarge( 'sa_acc_z' );
-      var diff_sa_gyro_g1 = sensors.isLarge( 'sa_gyro_g1' );
-      var diff_sa_gyro_g2 = sensors.isLarge( 'sa_gyro_g2' );
-
-      var diff_all = false;
-      if( diff_sa_acc_x   == true || diff_sa_acc_z   == true ||
-          diff_sa_gyro_g1 == true || diff_sa_gyro_g2 == true ){
-        diff_all = true;
-        console.log( "10秒前の値と今の値が 500 以上差があります。" );
-      } else {
-        console.log( "10秒前の値と今の値が 500 以上差がありません。" );
-      }
-
-      console.log( "[main.js] diff_all = " + diff_all );
-      io.sockets.emit( 'S_to_C_SENSOR_30S', {diff:diff_all, value:data} );
-    }
-  );
-}
-
-
-/**
- * 数字が 1 桁の場合に 0 埋めで 2 桁にする
- * @param {number} num - 数値
- * @return {number} num - 0 埋めされた 2 桁の数値
- * @example
- * toDoubleDigits( 8 );
-*/
-var toDoubleDigits = function( num ){
-//  console.log( "[main.js] toDoubleDigits()" );
-//  console.log( "[main.js] num = " + num );
-  num += '';
-  if( num.length === 1 ){
-    num = '0' + num;
-  }
-  return num;
-};
-
-
-/**
- * 現在の日付を YYYY-MM-DD 形式で取得する
- * @param {void}
- * @return {string} day - 日付
- * @example
- * yyyymmdd();
-*/
-var yyyymmdd = function(){
-  console.log( "[main.js] yyyymmdd()" );
-  var date = new Date();
-
-  var yyyy = date.getFullYear();
-  var mm   = toDoubleDigits( date.getMonth() + 1 );
-  var dd   = toDoubleDigits( date.getDate() );
-
-  var day = yyyy + '-' + mm + '-' + dd;
-  console.log( "[main.js] day = " + day );
-  return day;
-};
-
-
-/**
- * 現在の時刻を HH:MM:SS 形式で取得する
- * @param {void}
- * @return {string} time - 時刻
- * @example
- * hhmmss();
-*/
-var hhmmss = function(){
-  console.log( "[main.js] hhmmss()" );
-  var date = new Date();
-
-  var hour = toDoubleDigits( date.getHours() );
-  var min  = toDoubleDigits( date.getMinutes() );
-  var sec  = toDoubleDigits( date.getSeconds() );
-
-  var time = hour + ':' + min + ':' + sec;
-  console.log( "[main.js] time = " + time );
-  return time;
-};
 
 
