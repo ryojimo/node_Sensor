@@ -131,12 +131,12 @@ function startSystem() {
   var job01 = runBoard(       '30  7      * * *', 'sudo ./board.out --relay on'  );
   var job02 = runBoard(       '45  7      * * *', 'sudo ./board.out --relay off' );
   var job03 = runBoardSensor( ' 0  0-23/1 * * *', 'sudo ./board.out --sensors'   );
-  var job04 = storeSensor(    ' 5 23      * * *'                                 );
+  var job04 = runStoreSensor( ' 5  23     * * *'                                 );
 };
 
 
 /**
- * センサ・オブジェクトを生成する。
+ * 全センサのオブジェクトを生成して、オブジェクト配列 g_sensors[] へセットする。
  * @param {void}
  * @return {void}
  * @example
@@ -162,6 +162,24 @@ function createSensorObjects() {
 
   g_sensors[ 'si_tsl2561_lux' ] = new DataSensor( 'si_tsl2561_lux' );
 }
+
+/**
+ * 全センサの 1day の値の JSON オブジェクト配列を /media/pi/USBDATA/ に txt ファイルで保存する。
+ * @example
+ * storeSensorObjects();
+*/
+function storeSensorObjects() {
+  console.log( "[main.js] storeSensorObjects()" );
+
+  var data = new Array();
+  for( key in g_sensors ){
+    data.push( {sensor: key, values: g_sensors[key].data1day} );
+  }
+
+  var filename = g_apiCmn.yyyymmdd() + '_sensor.txt';
+  g_apiFileSystem.write( '/media/pi/USBDATA/' +  filename, data );
+};
+
 
 /**
  * 全センサの値を取得して 30s 間のデータを更新する。
@@ -325,23 +343,17 @@ function runBoardSensor( when, cmd ) {
  * @param {string} when - Job を実行する時間
  * @return {object} job - node-schedule に登録した job
  * @example
- * storeSensor( ' 0 0-23/1 * * *' );
+ * runStoreSensor( ' 0 0-23/1 * * *' );
 */
-function storeSensor( when ) {
-  console.log( "[main.js] storeSensor()" );
+function runStoreSensor( when ) {
+  console.log( "[main.js] runStoreSensor()" );
   console.log( "[main.js] when = " + when );
 
   var job = schedule.scheduleJob(when, function(){
     console.log( "[main.js] node-schedule で fs.writeFileSync() が実行されました" );
 
-    // 全センサの 1day の値の JSON オブジェクト配列を作成する
-    var data = new Array();
-    for( key in g_sensors ){
-      data.push( {sensor: key, values: g_sensors[key].data1day} );
-    }
-
-    var filename = g_apiCmn.yyyymmdd() + '_sensor.txt';
-    g_apiFileSystem.write( '/media/pi/USBDATA/' +  filename, data );
+    // 全センサ・オブジェクトの 1day の値の JSON オブジェクト配列を /media/pi/USBDATA/ に txt ファイルとして保存する
+    storeSensorObjects();
   });
 
   return job;
@@ -424,6 +436,13 @@ io.sockets.on( 'connection', function( socket ){
         console.log( "[main.js] " + err );
       }
     });
+  });
+
+
+  socket.on( 'C_to_S_STORE', function(){
+    console.log( "[main.js] " + 'C_to_S_STORE' );
+    // 全センサ・オブジェクトの 1day の値の JSON オブジェクト配列を /media/pi/USBDATA/ に txt ファイルとして保存する
+    storeSensorObjects();
   });
 
 

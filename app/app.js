@@ -442,6 +442,20 @@ function sendSetCmdServo( cmd ){
 
 
 /**
+ * 今日、保存している 1 時間ごとの各センサ値を保存するためのコマンドを送る。
+ * @param {string} cmd - コマンドの文字列
+ * @return {void}
+ * @example
+ * sendStore();
+*/
+function sendStore(){
+  console.log( "[app.js] sendStore()" );
+  console.log( "[app.js] server.emit(" + 'C_to_S_STORE' + ")" );
+  server.emit( 'C_to_S_STORE' );
+}
+
+
+/**
  * 撮影している画を回す
  * @param {string} value - 回す角度
  * @return {void}
