@@ -409,9 +409,9 @@ io.sockets.on( 'connection', function( socket ){
     var filename = data.date + '_sensor.txt';
     var jsonObj = g_apiFileSystem.read( '/media/pi/USBDATA/' +  filename );
 
-    if( jsonObj == NULL )
+    if( jsonObj == null )
     {
-      io.sockets.emit( 'S_to_C_SENSOR_DAILY', {ret:false, value:NULL} );
+      io.sockets.emit( 'S_to_C_SENSOR_DAILY', {ret:false, value:null} );
     } else{
       for( var i=0; i<jsonObj.length; i++ ){
         if( data.sensor == jsonObj[i].sensor ){
