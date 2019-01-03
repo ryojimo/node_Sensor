@@ -13,10 +13,10 @@ require('date-utils');
 let schedule = require('node-schedule');
 
 const ApiCmn        = require('./js/ApiCmn');
+const ApiDocomo     = require('./js/ApiDocomo');
 const ApiFileSystem = require('./js/ApiFileSystem');
 
 const DataSensor = require('./js/DataSensor');
-const Docomo     = require('./js/Docomo');
 
 
 // Ver. 表示
@@ -106,8 +106,8 @@ let io = socketio.listen(server);
 // 起動の処理関数
 //-----------------------------------------------------------------------------
 let g_apiCmn        = new ApiCmn();
+let g_apiDocomo     = new ApiDocomo();
 let g_apiFileSystem = new ApiFileSystem();
-let g_docomo  = new Docomo();
 let g_sensors = new Array();
 
 
@@ -260,8 +260,8 @@ function talkAlert() {
   console.log("[main.js] talkAlert()");
   let cmnt = '10秒以上の揺れを検出しました';
 
-  g_docomo.update('nozomi', 'hello');
-  g_docomo.talk(cmnt, function() {
+  g_apiDocomo.update('nozomi', 'hello');
+  g_apiDocomo.talk(cmnt, function() {
     io.sockets.emit('S_to_C_TALK_CB', {value:true})
   });
 }

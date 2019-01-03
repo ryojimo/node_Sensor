@@ -12,13 +12,13 @@ let request = require('request');
 
 
 /**
- * Docomo class
+ * API class
  * @param {void}
  * @constructor
  * @example
- * let obj = new Docomo();
+ * let obj = new ApiDocomo();
 */
-class Docomo {
+class ApiDocomo {
 
   constructor() {
     /**
@@ -175,6 +175,6 @@ class Docomo {
 };
 
 
-module.exports = Docomo;
+module.exports = ApiDocomo;
 
 
