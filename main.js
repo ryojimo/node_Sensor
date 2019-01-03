@@ -5,93 +5,93 @@
 */
 
 // 必要なライブラリをロード
-var http     = require( 'http' );
-var socketio = require( 'socket.io' );
-var fs       = require( 'fs' );
-var colors   = require( 'colors' );
-require( 'date-utils' );
-var schedule = require( 'node-schedule' );
+let http     = require('http');
+let socketio = require('socket.io');
+let fs       = require('fs');
+let colors   = require('colors');
+require('date-utils');
+let schedule = require('node-schedule');
 
-const ApiCmn        = require( './js/ApiCmn' );
-const ApiFileSystem = require( './js/ApiFileSystem' );
+const ApiCmn        = require('./js/ApiCmn');
+const ApiFileSystem = require('./js/ApiFileSystem');
 
-const DataSensor = require( './js/DataSensor' );
-const Docomo     = require( './js/Docomo' );
+const DataSensor = require('./js/DataSensor');
+const Docomo     = require('./js/Docomo');
 
 
 // Ver. 表示
-var now = new Date();
-console.log( "[main.js] " + now.toFormat("YYYY年MM月DD日 HH24時MI分SS秒").rainbow );
-console.log( "[main.js] " + "ver.01 : app.js".rainbow );
-console.log( "[main.js] " + "access to http://localhost:3000" );
+let now = new Date();
+console.log("[main.js] " + now.toFormat("YYYY年MM月DD日 HH24時MI分SS秒").rainbow);
+console.log("[main.js] " + "ver.01 : app.js".rainbow);
+console.log("[main.js] " + "access to http://localhost:3000");
 
 // サーバー・オブジェクトを生成
-var server = http.createServer();
+let server = http.createServer();
 
 // request イベント処理関数をセット
-server.on( 'request', doRequest );
+server.on('request', doRequest);
 
 // 待ち受けスタート
-server.listen( process.env.VMC_APP_PORT || 3000 );
-console.log( "[main.js] Server running!" );
+server.listen(process.env.VMC_APP_PORT || 3000);
+console.log("[main.js] Server running!");
 
 // request イベント処理
 function doRequest(
   req,    // http.IncomingMessage オブジェクト : クライアントからのリクエストに関する機能がまとめられている
   res     // http.serverResponse  オブジェクト : サーバーからクライアントへ戻されるレスポンスに関する機能がまとめられている
 ){
-  switch( req.url ){
+  switch(req.url) {
   case '/':
-    fs.readFile( './app/app.html', 'UTF-8', function( err, data ){
-      if( err ){
-        res.writeHead( 404, {'Content-Type': 'text/html'} );
-        res.write( 'File Not Found.' );
+    fs.readFile('./app/app.html', 'UTF-8', function(err, data) {
+      if(err) {
+        res.writeHead(404, {'Content-Type': 'text/html'});
+        res.write('File Not Found.');
         res.end();
         return;
       }
-      res.writeHead( 200, {'Content-Type': 'text/html',
-                           'Access-Control-Allow-Origin': '*' } );
-      res.write( data );
+      res.writeHead(200, {'Content-Type': 'text/html',
+                          'Access-Control-Allow-Origin': '*'});
+      res.write(data);
       res.end();
     });
   break;
   case '/app.js':
-    fs.readFile( './app/app.js', 'UTF-8', function( err, data ){
-      res.writeHead( 200, {'Content-Type': 'application/javascript',
-                           'Access-Control-Allow-Origin': '*' } );
-      res.write( data );
+    fs.readFile('./app/app.js', 'UTF-8', function(err, data) {
+      res.writeHead(200, {'Content-Type': 'application/javascript',
+                          'Access-Control-Allow-Origin': '*'});
+      res.write(data);
       res.end();
     });
   break;
   case '/style.css':
-    fs.readFile( './app/style.css', 'UTF-8', function( err, data ){
-      res.writeHead( 200, {'Content-Type': 'text/css',
-                           'Access-Control-Allow-Origin': '*' } );
-      res.write( data );
+    fs.readFile('./app/style.css', 'UTF-8', function(err, data) {
+      res.writeHead(200, {'Content-Type': 'text/css',
+                          'Access-Control-Allow-Origin': '*'});
+      res.write(data);
       res.end();
     });
   break;
   case '/bg.gif':
-    fs.readFile( './app/bg.gif', 'binary', function( err, data ){
-      res.writeHead( 200, {'Content-Type': 'image/gif',
-                           'Access-Control-Allow-Origin': '*' } );
-      res.write( data, 'binary' );
+    fs.readFile('./app/bg.gif', 'binary', function(err, data) {
+      res.writeHead(200, {'Content-Type': 'image/gif',
+                          'Access-Control-Allow-Origin': '*'});
+      res.write(data, 'binary');
       res.end();
     });
   break;
   case '/jQueryRotate.js':
-    fs.readFile( './app/js_lib/jQueryRotate.js', 'UTF-8', function( err, data ){
-      res.writeHead( 200, {'Content-Type': 'application/javascript',
-                           'Access-Control-Allow-Origin': '*' } );
-      res.write( data );
+    fs.readFile('./app/js_lib/jQueryRotate.js', 'UTF-8', function(err, data) {
+      res.writeHead(200, {'Content-Type': 'application/javascript',
+                          'Access-Control-Allow-Origin': '*'});
+      res.write(data);
       res.end();
     });
   break;
   case '/tmp/picture.jpg':
-    fs.readFile( './tmp/picture.jpg', 'binary', function( err, data ){
-      res.writeHead( 200, {'Content-Type': 'image/jpg',
-                           'Access-Control-Allow-Origin': '*' } );
-      res.write( data, 'binary' );
+    fs.readFile('./tmp/picture.jpg', 'binary', function(err, data) {
+      res.writeHead(200, {'Content-Type': 'image/jpg',
+                          'Access-Control-Allow-Origin': '*'});
+      res.write(data, 'binary');
       res.end();
     });
   break;
@@ -99,16 +99,16 @@ function doRequest(
 }
 
 
-var io = socketio.listen( server );
+let io = socketio.listen(server);
 
 
 //-----------------------------------------------------------------------------
 // 起動の処理関数
 //-----------------------------------------------------------------------------
-var g_apiCmn        = new ApiCmn();
-var g_apiFileSystem = new ApiFileSystem();
-var g_docomo  = new Docomo();
-var g_sensors = new Array();
+let g_apiCmn        = new ApiCmn();
+let g_apiFileSystem = new ApiFileSystem();
+let g_docomo  = new Docomo();
+let g_sensors = new Array();
 
 
 startSystem();
@@ -122,16 +122,16 @@ startSystem();
  * startSystem();
 */
 function startSystem() {
-  console.log( "[main.js] startSystem()" );
+  console.log("[main.js] startSystem()");
 
   createSensorObjects();
 
-  var timerFlg  = setInterval( function(){ getSensorData30s(); }, 10000 );
+  let timerFlg  = setInterval(function(){ getSensorData30s(); }, 10000);
 
-  var job01 = runBoard(       '30  7      * * *', 'sudo ./board.out --relay on'  );
-  var job02 = runBoard(       '45  7      * * *', 'sudo ./board.out --relay off' );
-  var job03 = runBoardSensor( ' 0  0-23/1 * * *', 'sudo ./board.out --sensors'   );
-  var job04 = runStoreSensor( ' 5  23     * * *'                                 );
+  let job01 = runBoard(      '30  7      * * *', 'sudo ./board.out --relay on' );
+  let job02 = runBoard(      '45  7      * * *', 'sudo ./board.out --relay off');
+  let job03 = runBoardSensor(' 0  0-23/1 * * *', 'sudo ./board.out --sensors'  );
+  let job04 = runStoreSensor(' 5  23     * * *'                                );
 };
 
 
@@ -143,24 +143,24 @@ function startSystem() {
  * startSystem();
 */
 function createSensorObjects() {
-  console.log( "[main.js] createSensorObjects()" );
-  g_sensors[ 'sa_acc_x' ] = new DataSensor( 'sa_acc_x' );
-  g_sensors[ 'sa_acc_y' ] = new DataSensor( 'sa_acc_y' );
-  g_sensors[ 'sa_acc_z' ] = new DataSensor( 'sa_acc_z' );
+  console.log("[main.js] createSensorObjects()");
+  g_sensors['sa_acc_x'] = new DataSensor('sa_acc_x');
+  g_sensors['sa_acc_y'] = new DataSensor('sa_acc_y');
+  g_sensors['sa_acc_z'] = new DataSensor('sa_acc_z');
 
-  g_sensors[ 'sa_gyro_g1' ] = new DataSensor( 'sa_gyro_g1' );
-  g_sensors[ 'sa_gyro_g2' ] = new DataSensor( 'sa_gyro_g2' );
+  g_sensors['sa_gyro_g1'] = new DataSensor('sa_gyro_g1');
+  g_sensors['sa_gyro_g2'] = new DataSensor('sa_gyro_g2');
 
-  g_sensors[ 'si_bme280_atmos' ] = new DataSensor( 'si_bme280_atmos' );
-  g_sensors[ 'si_bme280_humi' ] = new DataSensor( 'si_bme280_humi' );
-  g_sensors[ 'si_bme280_temp' ] = new DataSensor( 'si_bme280_temp' );
+  g_sensors['si_bme280_atmos'] = new DataSensor('si_bme280_atmos');
+  g_sensors['si_bme280_humi'] = new DataSensor('si_bme280_humi');
+  g_sensors['si_bme280_temp'] = new DataSensor('si_bme280_temp');
 
-  g_sensors[ 'si_gp2y0e03' ] = new DataSensor( 'si_gp2y0e03' );
+  g_sensors['si_gp2y0e03'] = new DataSensor('si_gp2y0e03');
 
-  g_sensors[ 'si_lps25h_atmos' ] = new DataSensor( 'si_lps25h_atmos' );
-  g_sensors[ 'si_lps25h_temp' ] = new DataSensor( 'si_lps25h_temp' );
+  g_sensors['si_lps25h_atmos'] = new DataSensor('si_lps25h_atmos');
+  g_sensors['si_lps25h_temp'] = new DataSensor('si_lps25h_temp');
 
-  g_sensors[ 'si_tsl2561_lux' ] = new DataSensor( 'si_tsl2561_lux' );
+  g_sensors['si_tsl2561_lux'] = new DataSensor('si_tsl2561_lux');
 }
 
 /**
@@ -169,15 +169,15 @@ function createSensorObjects() {
  * storeSensorObjects();
 */
 function storeSensorObjects() {
-  console.log( "[main.js] storeSensorObjects()" );
+  console.log("[main.js] storeSensorObjects()");
 
-  var data = new Array();
-  for( key in g_sensors ){
-    data.push( {sensor: key, values: g_sensors[key].data1day} );
+  let data = new Array();
+  for(key in g_sensors) {
+    data.push({sensor: key, values: g_sensors[key].data1day});
   }
 
-  var filename = g_apiCmn.yyyymmdd() + '_sensor.txt';
-  g_apiFileSystem.write( '/media/pi/USBDATA/' +  filename, data );
+  let filename = g_apiCmn.yyyymmdd() + '_sensor.txt';
+  g_apiFileSystem.write('/media/pi/USBDATA/' +  filename, data);
 };
 
 
@@ -187,37 +187,37 @@ function storeSensorObjects() {
  * @example
  * getSensorData30s();
 */
-function getSensorData30s(){
-  console.log( "[main.js] getSensorData30s()" );
+function getSensorData30s() {
+  console.log("[main.js] getSensorData30s()");
 
-  var cmd = 'sudo ./board.out --sensors';
-  var exec = require( 'child_process' ).exec;
-  var ret  = exec( cmd, function( err, stdout, stderr ){
-    console.log( "[main.js] stdout = " + stdout );
-    console.log( "[main.js] stderr = " + stderr );
-    if(err){
-      console.log( "[main.js] " + err );
+  let cmd = 'sudo ./board.out --sensors';
+  let exec = require('child_process').exec;
+  let ret  = exec(cmd, function(err, stdout, stderr) {
+    console.log("[main.js] stdout = " + stdout);
+    console.log("[main.js] stderr = " + stderr);
+    if(err) {
+      console.log("[main.js] " + err);
     }
 
-    var jsonObj = (new Function( 'return ' + stdout ))();
+    let jsonObj = (new Function('return ' + stdout))();
 
     // 各センサ・オブジェクトの data30s を更新する
-    for( key in jsonObj ){
-      g_sensors[ key ].updateData30s( jsonObj[key] );
+    for(key in jsonObj) {
+      g_sensors[key].updateData30s(jsonObj[key]);
     }
 
     // 全センサの 30s 間の値の JSON オブジェクト配列を作成する
-    var data = new Array();
-    for( key in g_sensors ){
-      data.push( {sensor: key, values: g_sensors[key].data30s} );
+    let data = new Array();
+    for(key in g_sensors) {
+      data.push({sensor: key, values: g_sensors[key].data30s});
     }
 
     // data を送る
-    io.sockets.emit( 'S_to_C_SENSOR_30S', data );
+    io.sockets.emit('S_to_C_SENSOR_30S', data);
 
     // "10秒前" と" 今" の値に大きな差があるか？をチェックする
-    var diff = checkDiff();
-    if( diff == true ){
+    let diff = checkDiff();
+    if(diff == true) {
       talkAlert();
     }
   });
@@ -230,17 +230,17 @@ function getSensorData30s(){
  * @example
  * checkDiff();
 */
-function checkDiff(){
-  console.log( "[main.js] checkDiff()" );
-  var ret = false;
+function checkDiff() {
+  console.log("[main.js] checkDiff()");
+  let ret = false;
 
-  var diff_sa_acc_x   = g_sensors[ 'sa_acc_x'   ].isLarge();
-  var diff_sa_acc_y   = g_sensors[ 'sa_acc_y'   ].isLarge();
-  var diff_sa_acc_z   = g_sensors[ 'sa_acc_z'   ].isLarge();
-  var diff_sa_gyro_g1 = g_sensors[ 'sa_gyro_g1' ].isLarge();
-  var diff_sa_gyro_g2 = g_sensors[ 'sa_gyro_g2' ].isLarge();
+  let diff_sa_acc_x   = g_sensors['sa_acc_x'  ].isLarge();
+  let diff_sa_acc_y   = g_sensors['sa_acc_y'  ].isLarge();
+  let diff_sa_acc_z   = g_sensors['sa_acc_z'  ].isLarge();
+  let diff_sa_gyro_g1 = g_sensors['sa_gyro_g1'].isLarge();
+  let diff_sa_gyro_g2 = g_sensors['sa_gyro_g2'].isLarge();
 
-  if( diff_sa_acc_x   == true || diff_sa_acc_z   == true || diff_sa_gyro_g1 == true || diff_sa_gyro_g2 == true ){
+  if(diff_sa_acc_x == true || diff_sa_acc_z == true || diff_sa_gyro_g1 == true || diff_sa_gyro_g2 == true) {
     ret = true;
   } else {
     ret = false;
@@ -256,13 +256,13 @@ function checkDiff(){
  * @example
  * talkAlert();
 */
-function talkAlert(){
-  console.log( "[main.js] talkAlert()" );
-  var cmnt = '10秒以上の揺れを検出しました';
+function talkAlert() {
+  console.log("[main.js] talkAlert()");
+  let cmnt = '10秒以上の揺れを検出しました';
 
-  g_docomo.update( 'nozomi', 'hello' );
-  g_docomo.talk( cmnt, function(){
-    io.sockets.emit( 'S_to_C_TALK_CB', {value:true} )
+  g_docomo.update('nozomi', 'hello');
+  g_docomo.talk(cmnt, function() {
+    io.sockets.emit('S_to_C_TALK_CB', {value:true})
   });
 }
 
@@ -275,21 +275,20 @@ function talkAlert(){
  * @example
  * runBoard( '30 7 * * *', 'sudo ./board.out --relay on' );
 */
-function runBoard( when, cmd ) {
-  console.log( "[main.js] runBoard()" );
-  console.log( "[main.js] when = " + when );
-  console.log( "[main.js] cmd  = " + cmd );
+function runBoard(when, cmd) {
+  console.log("[main.js] runBoard()");
+  console.log("[main.js] when = " + when);
+  console.log("[main.js] cmd  = " + cmd);
 
-  var job = schedule.scheduleJob(when, function(){
-    console.log( "[main.js] node-schedule で " + cmd + "が実行されました" );
+  let job = schedule.scheduleJob(when, function() {
+    console.log("[main.js] node-schedule で " + cmd + "が実行されました");
 
-    var exec = require( 'child_process' ).exec;
-    var ret  = exec( cmd,
-      function( err, stdout, stderr ){
-        console.log( "[main.js] stdout = " + stdout );
-        console.log( "[main.js] stderr = " + stderr );
-        if( err ){
-          console.log( "[main.js] " + err );
+    let exec = require('child_process').exec;
+    let ret  = exec(cmd, function(err, stdout, stderr) {
+        console.log("[main.js] stdout = " + stdout);
+        console.log("[main.js] stderr = " + stderr);
+        if(err) {
+          console.log("[main.js] " + err);
         }
       }
     );
@@ -307,28 +306,27 @@ function runBoard( when, cmd ) {
  * @example
  * runBoardSensor( ' 0 0-23/1 * * *', 'sudo ./board.out --sensors' );
 */
-function runBoardSensor( when, cmd ) {
-  console.log( "[main.js] runBoardSensor()" );
-  console.log( "[main.js] when = " + when );
-  console.log( "[main.js] cmd  = " + cmd );
+function runBoardSensor(when, cmd) {
+  console.log("[main.js] runBoardSensor()");
+  console.log("[main.js] when = " + when);
+  console.log("[main.js] cmd  = " + cmd);
 
-  var job = schedule.scheduleJob(when, function(){
-    console.log( "[main.js] node-schedule で " + cmd + " が実行されました" );
+  let job = schedule.scheduleJob(when, function() {
+    console.log("[main.js] node-schedule で " + cmd + " が実行されました");
 
-    var exec = require( 'child_process' ).exec;
-    var ret  = exec( cmd,
-      function( err, stdout, stderr ){
-        console.log( "[main.js] stdout = " + stdout );
-        console.log( "[main.js] stderr = " + stderr );
-        if( err ){
-          console.log( "[main.js] " + err );
+    let exec = require('child_process').exec;
+    let ret  = exec(cmd, function(err, stdout, stderr) {
+        console.log("[main.js] stdout = " + stdout);
+        console.log("[main.js] stderr = " + stderr);
+        if(err) {
+          console.log("[main.js] " + err);
         }
 
         // stdout の文字列は以下のような感じ
         // { "sa_acc_x":2019, "sa_acc_y":2854,"sa_acc_z":1934, "sa_gyro_g1":1783, "sa_gyro_g2":1771, "si_bme280_atmos":718.53, "si_bme280_humi":38.84, "si_bme280_temp":29.82, "si_gp2y0e03":63.00, "si_lps25h_atmos":1018.34, "si_lps25h_temp":30.42, "si_tsl2561_lux":57.00 }
-        var jsonObj = (new Function( 'return ' + stdout ))();
-        for( key in jsonObj ){
-          g_sensors[ key ].updateData1day( jsonObj[key] );
+        let jsonObj = (new Function( 'return ' + stdout ))();
+        for(key in jsonObj) {
+          g_sensors[ key ].updateData1day(jsonObj[key]);
         }
       }
     );
@@ -345,12 +343,12 @@ function runBoardSensor( when, cmd ) {
  * @example
  * runStoreSensor( ' 0 0-23/1 * * *' );
 */
-function runStoreSensor( when ) {
-  console.log( "[main.js] runStoreSensor()" );
-  console.log( "[main.js] when = " + when );
+function runStoreSensor(when) {
+  console.log("[main.js] runStoreSensor()");
+  console.log("[main.js] when = " + when);
 
-  var job = schedule.scheduleJob(when, function(){
-    console.log( "[main.js] node-schedule で fs.writeFileSync() が実行されました" );
+  let job = schedule.scheduleJob(when, function() {
+    console.log("[main.js] node-schedule で fs.writeFileSync() が実行されました");
 
     // 全センサ・オブジェクトの 1day の値の JSON オブジェクト配列を /media/pi/USBDATA/ に txt ファイルとして保存する
     storeSensorObjects();
@@ -363,84 +361,83 @@ function runStoreSensor( when ) {
 //-----------------------------------------------------------------------------
 // クライアントからコネクションが来た時の処理関数
 //-----------------------------------------------------------------------------
-io.sockets.on( 'connection', function( socket ){
+io.sockets.on('connection', function(socket) {
 
   // 切断したときに送信
-  socket.on( 'disconnect', function(){
-    console.log( "[main.js] " + 'disconnect' );
+  socket.on('disconnect', function() {
+    console.log("[main.js] " + 'disconnect');
 //  io.sockets.emit('S_to_C_DATA', {value:'user disconnected'});
   });
 
 
   // Client to Server
-  socket.on( 'C_to_S_NEW', function( data ){
-    console.log( "[main.js] " + 'C_to_S_NEW' );
+  socket.on('C_to_S_NEW', function(data) {
+    console.log("[main.js] " + 'C_to_S_NEW');
   });
 
 
-  socket.on( 'C_to_S_DELETE', function( data ){
-    console.log( "[main.js] " + 'C_to_S_DELETE' );
+  socket.on('C_to_S_DELETE', function(data) {
+    console.log("[main.js] " + 'C_to_S_DELETE');
   });
 
 
-  socket.on( 'C_to_S_GET', function( data ){
-    console.log( "[main.js] " + 'C_to_S_GET' );
-    console.log( "[main.js] data = " + data );
+  socket.on('C_to_S_GET', function(data) {
+    console.log("[main.js] " + 'C_to_S_GET');
+    console.log("[main.js] data = " + data);
 
-    var exec = require( 'child_process' ).exec;
-    var ret  = exec( data, function( err, stdout, stderr ){
-      console.log( "[main.js] stdout = " + stdout );
-      console.log( "[main.js] stderr = " + stderr );
-      if( err ){
-        console.log( "[main.js] " + err );
+    let exec = require('child_process').exec;
+    let ret  = exec(data, function(err, stdout, stderr) {
+      console.log("[main.js] stdout = " + stdout);
+      console.log("[main.js] stderr = " + stderr);
+      if(err) {
+        console.log("[main.js] " + err);
       }
 
-      io.sockets.emit( 'S_to_C_DATA', {value:stdout} );
+      io.sockets.emit('S_to_C_DATA', {value:stdout});
     });
   });
 
 
-  socket.on( 'C_to_S_GET_SENSOR_DAILY', function( data ){
-    console.log( "[main.js] " + 'C_to_S_GET_SENSOR_DAILY' );
-    console.log( "[main.js] data.date   = " + data.date );
-    console.log( "[main.js] data.sensor = " + data.sensor );
+  socket.on('C_to_S_GET_SENSOR_DAILY', function(data) {
+    console.log("[main.js] " + 'C_to_S_GET_SENSOR_DAILY');
+    console.log("[main.js] data.date   = " + data.date);
+    console.log("[main.js] data.sensor = " + data.sensor);
 
-    var ret = {};
-    var filename = data.date + '_sensor.txt';
-    var jsonObj = g_apiFileSystem.read( '/media/pi/USBDATA/' +  filename );
+    let ret = {};
+    let filename = data.date + '_sensor.txt';
+    let jsonObj = g_apiFileSystem.read('/media/pi/USBDATA/' +  filename);
 
-    if( jsonObj == null )
-    {
-      io.sockets.emit( 'S_to_C_SENSOR_DAILY', {ret:false, value:null} );
-    } else{
-      for( var i=0; i<jsonObj.length; i++ ){
-        if( data.sensor == jsonObj[i].sensor ){
+    if(jsonObj == null) {
+      io.sockets.emit('S_to_C_SENSOR_DAILY', {ret:false, value:null});
+    } else {
+      for(let i=0; i<jsonObj.length; i++) {
+        if(data.sensor == jsonObj[i].sensor) {
           ret = jsonObj[i].values;
           break;
         }
       }
-      io.sockets.emit( 'S_to_C_SENSOR_DAILY', {ret:true, value:ret} );
+      io.sockets.emit('S_to_C_SENSOR_DAILY', {ret:true, value:ret});
     }
   });
 
 
-  socket.on( 'C_to_S_SET', function( data ){
-    console.log( "[main.js] " + 'C_to_S_SET' );
-    console.log( "[main.js] data = " + data );
+  socket.on('C_to_S_SET', function(data) {
+    console.log("[main.js] " + 'C_to_S_SET');
+    console.log("[main.js] data = " + data);
 
-    var exec = require( 'child_process' ).exec;
-    var ret  = exec( data, function( err, stdout, stderr ){
-      console.log( "[main.js] stdout = " + stdout );
-      console.log( "[main.js] stderr = " + stderr );
-      if( err ){
-        console.log( "[main.js] " + err );
+    let exec = require('child_process').exec;
+    let ret  = exec(data, function( err, stdout, stderr) {
+      console.log("[main.js] stdout = " + stdout);
+      console.log("[main.js] stderr = " + stderr);
+      if(err) {
+        console.log("[main.js] " + err);
       }
     });
   });
 
 
-  socket.on( 'C_to_S_STORE', function(){
-    console.log( "[main.js] " + 'C_to_S_STORE' );
+  socket.on('C_to_S_STORE', function() {
+    console.log("[main.js] " + 'C_to_S_STORE');
     // 全センサ・オブジェクトの 1day の値の JSON オブジェクト配列を /media/pi/USBDATA/ に txt ファイルとして保存する
     storeSensorObjects();
   });

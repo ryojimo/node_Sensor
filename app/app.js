@@ -3,44 +3,44 @@
  * @author       Ryoji Morita
  * @version      0.0.1
 */
-//var sv_ip   = 'sensor.rp.lfx.sony.co.jp';   // node.js server の IP アドレス
-//var sv_ip   = '43.2.100.152';               // node.js server の IP アドレス
-var sv_ip   = '192.168.91.11';                // node.js server の IP アドレス
-var sv_port = 3000;                           // node.js server の port 番号
+//let sv_ip   = 'sensor.rp.lfx.sony.co.jp';   // node.js server の IP アドレス
+//let sv_ip   = '43.2.100.152';               // node.js server の IP アドレス
+let sv_ip   = '192.168.91.11';                // node.js server の IP アドレス
+let sv_port = 3000;                           // node.js server の port 番号
 
-var server = io.connect( 'http://' + sv_ip + ':' + sv_port ); //ローカル
+let server = io.connect('http://' + sv_ip + ':' + sv_port); //ローカル
 
 
 //-----------------------------------------------------------------------------
 //-------------------------------------
-var obj_sa_acc_x        = {name:'sa_acc_x',        chart:null, data:null, type:'area', color:'#E64A19', minimum:0,   title:'加速度(x)',      unit:'[?]'};
-var obj_sa_acc_y        = {name:'sa_acc_y',        chart:null, data:null, type:'area', color:'#E64A19', minimum:0,   title:'加速度(y)',      unit:'[?]'};
-var obj_sa_acc_z        = {name:'sa_acc_z',        chart:null, data:null, type:'area', color:'#E64A19', minimum:0,   title:'加速度(z)',      unit:'[?]'};
-var obj_sa_gyro_g1      = {name:'sa_gyro_g1',      chart:null, data:null, type:'area', color:'#FFA000', minimum:0,   title:'ジャイロ(g1)',   unit:'[?]'};
-var obj_sa_gyro_g2      = {name:'sa_gyro_g2',      chart:null, data:null, type:'area', color:'#FFA000', minimum:0,   title:'ジャイロ(g2)',   unit:'[?]'};
+let obj_sa_acc_x        = {name:'sa_acc_x',        chart:null, data:null, type:'area', color:'#E64A19', minimum:0,   title:'加速度(x)',      unit:'[?]'};
+let obj_sa_acc_y        = {name:'sa_acc_y',        chart:null, data:null, type:'area', color:'#E64A19', minimum:0,   title:'加速度(y)',      unit:'[?]'};
+let obj_sa_acc_z        = {name:'sa_acc_z',        chart:null, data:null, type:'area', color:'#E64A19', minimum:0,   title:'加速度(z)',      unit:'[?]'};
+let obj_sa_gyro_g1      = {name:'sa_gyro_g1',      chart:null, data:null, type:'area', color:'#FFA000', minimum:0,   title:'ジャイロ(g1)',   unit:'[?]'};
+let obj_sa_gyro_g2      = {name:'sa_gyro_g2',      chart:null, data:null, type:'area', color:'#FFA000', minimum:0,   title:'ジャイロ(g2)',   unit:'[?]'};
 
-var obj_si_bme280_atmos = {name:'si_bme280_atmos', chart:null, data:null, type:'area', color:'#1976D2', minimum:500, title:'気圧(bme280)',   unit:'[hPa]'};
-var obj_si_bme280_humi  = {name:'si_bme280_humi',  chart:null, data:null, type:'area', color:'#00796B', minimum:0,   title:'湿度(bme280)',   unit:'[%]'};
-var obj_si_bme280_temp  = {name:'si_bme280_temp',  chart:null, data:null, type:'area', color:'#C2185B', minimum:0,   title:'温度(bme280)',   unit:'[℃]'};
-var obj_si_gp2y0e03     = {name:'si_gp2y0e03',     chart:null, data:null, type:'area', color:'#455A64', minimum:0,   title:'距離(gp2y0e03)', unit:'[cm]'};
-var obj_si_lps25h_atmos = {name:'si_lps25h_atmos', chart:null, data:null, type:'area', color:'#1976D2', minimum:500, title:'気圧(lps25h)',   unit:'[hPa]'};
-var obj_si_lps25h_temp  = {name:'si_lps25h_temp',  chart:null, data:null, type:'area', color:'#C2185B', minimum:0,   title:'温度(lps25h)',   unit:'[℃]'};
-var obj_si_tsl2561_lux  = {name:'si_tsl2561_lux',  chart:null, data:null, type:'area', color:'#AFB42B', minimum:0,   title:'照度(tsl2561)',  unit:'[LUX]'};
+let obj_si_bme280_atmos = {name:'si_bme280_atmos', chart:null, data:null, type:'area', color:'#1976D2', minimum:500, title:'気圧(bme280)',   unit:'[hPa]'};
+let obj_si_bme280_humi  = {name:'si_bme280_humi',  chart:null, data:null, type:'area', color:'#00796B', minimum:0,   title:'湿度(bme280)',   unit:'[%]'};
+let obj_si_bme280_temp  = {name:'si_bme280_temp',  chart:null, data:null, type:'area', color:'#C2185B', minimum:0,   title:'温度(bme280)',   unit:'[℃]'};
+let obj_si_gp2y0e03     = {name:'si_gp2y0e03',     chart:null, data:null, type:'area', color:'#455A64', minimum:0,   title:'距離(gp2y0e03)', unit:'[cm]'};
+let obj_si_lps25h_atmos = {name:'si_lps25h_atmos', chart:null, data:null, type:'area', color:'#1976D2', minimum:500, title:'気圧(lps25h)',   unit:'[hPa]'};
+let obj_si_lps25h_temp  = {name:'si_lps25h_temp',  chart:null, data:null, type:'area', color:'#C2185B', minimum:0,   title:'温度(lps25h)',   unit:'[℃]'};
+let obj_si_tsl2561_lux  = {name:'si_tsl2561_lux',  chart:null, data:null, type:'area', color:'#AFB42B', minimum:0,   title:'照度(tsl2561)',  unit:'[LUX]'};
 
-var obj_sensors_daily   = {name:'sensors_daily',   chart:null, data:null, type:'area', color:'#1E88E5', minimum:0,   title:'一日のデータ', unit:''};
+let obj_sensors_daily   = {name:'sensors_daily',   chart:null, data:null, type:'area', color:'#1E88E5', minimum:0,   title:'一日のデータ', unit:''};
 
 
 // ブラウザオブジェクトから受け取るイベント
-window.onload = function(){
-  console.log( "[app.js] window.onloaded" );
+window.onload = function() {
+  console.log("[app.js] window.onloaded");
   initChartSensor30s();
   initChartSensorDaily();
   initTableSensorNow();
 };
 
 
-window.onunload = function(){
-  console.log( "[app.js] window.onunloaded" );
+window.onunload = function() {
+  console.log("[app.js] window.onunloaded");
 };
 
 
@@ -51,21 +51,21 @@ window.onunload = function(){
  * @example
  * initChartSensor30s();
 */
-function initChartSensor30s(){
-  console.log( "[app.js] initChartSensor30s()" );
+function initChartSensor30s() {
+  console.log("[app.js] initChartSensor30s()");
 
-  makeChartSensor30s( obj_sa_acc_x        );
-  makeChartSensor30s( obj_sa_acc_y        );
-  makeChartSensor30s( obj_sa_acc_z        );
-  makeChartSensor30s( obj_sa_gyro_g1      );
-  makeChartSensor30s( obj_sa_gyro_g2      );
-  makeChartSensor30s( obj_si_bme280_atmos );
-  makeChartSensor30s( obj_si_bme280_humi  );
-  makeChartSensor30s( obj_si_bme280_temp  );
-  makeChartSensor30s( obj_si_gp2y0e03     );
-  makeChartSensor30s( obj_si_lps25h_atmos );
-  makeChartSensor30s( obj_si_lps25h_temp  );
-  makeChartSensor30s( obj_si_tsl2561_lux  );
+  makeChartSensor30s(obj_sa_acc_x       );
+  makeChartSensor30s(obj_sa_acc_y       );
+  makeChartSensor30s(obj_sa_acc_z       );
+  makeChartSensor30s(obj_sa_gyro_g1     );
+  makeChartSensor30s(obj_sa_gyro_g2     );
+  makeChartSensor30s(obj_si_bme280_atmos);
+  makeChartSensor30s(obj_si_bme280_humi );
+  makeChartSensor30s(obj_si_bme280_temp );
+  makeChartSensor30s(obj_si_gp2y0e03    );
+  makeChartSensor30s(obj_si_lps25h_atmos);
+  makeChartSensor30s(obj_si_lps25h_temp );
+  makeChartSensor30s(obj_si_tsl2561_lux );
 
   obj_sa_acc_x.chart.render();
   obj_sa_acc_x.chart.render();
@@ -91,10 +91,10 @@ function initChartSensor30s(){
  * @example
  * initChartSensorDaily();
 */
-function initChartSensorDaily(){
-  console.log( "[app.js] initChartSensorDaily()" );
+function initChartSensorDaily() {
+  console.log("[app.js] initChartSensorDaily()");
 
-  makeChartSensorDaily( obj_sensors_daily );
+  makeChartSensorDaily(obj_sensors_daily);
   obj_sensors_daily.chart.render();
   return;
 };
@@ -107,18 +107,18 @@ function initChartSensorDaily(){
  * @example
  * initTableSensorNow();
 */
-function initTableSensorNow(){
-  console.log( "[app.js] initTableSensorNow()" );
+function initTableSensorNow() {
+  console.log("[app.js] initTableSensorNow()");
 
-  $("#tabulator-table-10sec").tabulator({
-    layout:"fitData",
-    tooltips:true,
-    addRowPos:"top",
-    history:true,
-    pagination:"local",
-    paginationSize:15,
-    movableColumns:true,
-    initialSort:[
+  $("#tabulator-table-10sec").tabulator( {
+    layout: "fitData",
+    tooltips: true,
+    addRowPos: "top",
+    history: true,
+    pagination: "local",
+    paginationSize: 15,
+    movableColumns: true,
+    initialSort: [
       {column:"title", dir:"asc"},
     ],
     columns:[
@@ -136,34 +136,36 @@ function initTableSensorNow(){
  * @param {object} obj - グラフ化する対象のオブジェクト
  * @return {void}
  * @example
- * makeChartSensor30s( obj_sa_acc_x );
+ * makeChartSensor30s(obj_sa_acc_x);
 */
-function makeChartSensor30s( obj ){
-  console.log( "[app.js] makeChartSensor30s()" );
+function makeChartSensor30s(obj) {
+  console.log("[app.js] makeChartSensor30s()");
 
-  var data = new Array({label:'30秒前', y:0}, {label:'20秒前', y:0}, {label:'10秒前', y:0}, {label:'今', y:0});
+  let data = new Array({label:'30秒前', y:0}, {label:'20秒前', y:0}, {label:'10秒前', y:0}, {label:'今', y:0});
 
-  var domid = 'cid_' + obj.name;
-  console.log( "[app.js] domid = " + domid );
+  let domid = 'cid_' + obj.name;
+  console.log("[app.js] domid = " + domid);
 
-  var chart = new CanvasJS.Chart(domid, {
-    animationEnabled: true,
+  let chart = new CanvasJS.Chart(domid, {
+    animationEnabled:  true,
     animationDuration: 2000,
-    title:{text: obj.title,
-           fontColor: '#222',
-           fontSize: 16,
+    title: {
+      text:      obj.title,
+      fontColor: '#222',
+      fontSize:  16,
     },
-    subtitles:[{text: '単位: ' + obj.unit,
-                fontColor: '#555',
-                fontSize: 12,
-               }
-    ],
-    axisX: { labelAngle:-45, labelFontSize:14, labelFontColor:'#222' },
-    axisY: { minimum: obj.minimum, labelFontSize:14, labelFontColor:'#222' },
-    data: [{type: obj.type,           // グラフの種類 (area, bar, bubble, column, stackedColumn )
-            color: obj.color,
-            cursor: 'pointer',
-            dataPoints: data        // グラフに描画するデータ
+    subtitles: [{
+      text:      '単位: ' + obj.unit,
+      fontColor: '#555',
+      fontSize:  12,
+    }],
+    axisX: {labelAngle:-45, labelFontSize:14, labelFontColor:'#222'},
+    axisY: {minimum: obj.minimum, labelFontSize:14, labelFontColor:'#222'},
+    data: [{
+      type:       obj.type,           // グラフの種類 (area, bar, bubble, column, stackedColumn )
+      color:      obj.color,
+      cursor:     'pointer',
+      dataPoints: data        // グラフに描画するデータ
     }]
   });
 
@@ -178,12 +180,12 @@ function makeChartSensor30s( obj ){
  * @param {object} obj - グラフ化する対象のオブジェクト
  * @return {void}
  * @example
- * makeChartSensorDaily( obj_sensors_daily );
+ * makeChartSensorDaily(obj_sensors_daily);
 */
-function makeChartSensorDaily( obj ){
-  console.log( "[app.js] makeChartSensorDaily()" );
+function makeChartSensorDaily(obj) {
+  console.log("[app.js] makeChartSensorDaily()");
 
-  var data = new Array({label:'00-00', y:0}, {label:'01-00', y:0}, {label:'02-00', y:0}, {label:'03-00', y:0},
+  let data = new Array({label:'00-00', y:0}, {label:'01-00', y:0}, {label:'02-00', y:0}, {label:'03-00', y:0},
                        {label:'04-00', y:0}, {label:'05-00', y:0}, {label:'06-00', y:0}, {label:'07-00', y:0},
                        {label:'08-00', y:0}, {label:'09-00', y:0}, {label:'10-00', y:0}, {label:'11-00', y:0},
                        {label:'12-00', y:0}, {label:'13-00', y:0}, {label:'14-00', y:0}, {label:'15-00', y:0},
@@ -191,27 +193,29 @@ function makeChartSensorDaily( obj ){
                        {label:'20-00', y:0}, {label:'21-00', y:0}, {label:'22-00', y:0}, {label:'23-00', y:0}
                       );
 
-  var domid = 'cid_' + obj.name;
-  console.log( "[app.js] domid = " + domid );
+  let domid = 'cid_' + obj.name;
+  console.log("[app.js] domid = " + domid);
 
-  var chart = new CanvasJS.Chart(domid, {
-    animationEnabled: true,
+  let chart = new CanvasJS.Chart(domid, {
+    animationEnabled:  true,
     animationDuration: 2000,
-    title:{text: obj.title,
-           fontColor: '#222',
-           fontSize: 16,
+    title: {
+      text:      obj.title,
+      fontColor: '#222',
+      fontSize:  16,
     },
-    subtitles:[{text: '単位: ' + obj.unit,
-                fontColor: '#555',
-                fontSize: 12,
-               }
-    ],
-    axisX: { labelAngle:-45, labelFontSize:14, labelFontColor:'#222' },
-    axisY: { minimum: obj.minimum, labelFontSize:14, labelFontColor:'#222' },
-    data: [{type: obj.type,           // グラフの種類 (area, bar, bubble, column, stackedColumn )
-            color: obj.color,
-            cursor: 'pointer',
-            dataPoints: data        // グラフに描画するデータ
+    subtitles: [{
+      text:      '単位: ' + obj.unit,
+      fontColor: '#555',
+      fontSize:  12,
+    }],
+    axisX: {labelAngle:-45, labelFontSize:14, labelFontColor:'#222'},
+    axisY: {minimum: obj.minimum, labelFontSize:14, labelFontColor:'#222'},
+    data: [{
+      type:       obj.type,           // グラフの種類 (area, bar, bubble, column, stackedColumn )
+      color:      obj.color,
+      cursor:     'pointer',
+      dataPoints: data        // グラフに描画するデータ
     }]
   });
 
@@ -223,55 +227,55 @@ function makeChartSensorDaily( obj ){
 
 //-----------------------------------------------------------------------------
 // サーバから受け取るイベント
-server.on( 'connect', function(){               // 接続時
-  console.log( "[app.js] " + 'connected' );
+server.on('connect', function() {               // 接続時
+  console.log("[app.js] " + 'connected');
 });
 
 
-server.on( 'disconnect', function( client ){    // 切断時
-  console.log( "[app.js] " + 'disconnected' );
+server.on('disconnect', function(client) {    // 切断時
+  console.log("[app.js] " + 'disconnected');
 });
 
 
-server.on( 'S_to_C_DATA', function( data ){
-  console.log( "[app.js] " + 'S_to_C_DATA' );
-  console.log( "[app.js] data = " + data.value );
+server.on('S_to_C_DATA', function(data) {
+  console.log("[app.js] " + 'S_to_C_DATA');
+  console.log("[app.js] data = " + data.value);
 //  window.alert( 'コマンドを送信しました。\n\r' + data.value );
 
   document.getElementById('val_sensor').innerHTML = data.value; // 数値を表示
 });
 
 
-server.on( 'S_to_C_SENSOR_30S', function( data ){
-  console.log( "[app.js] " + 'S_to_C_SENSOR_30S' );
+server.on('S_to_C_SENSOR_30S', function(data) {
+  console.log("[app.js] " + 'S_to_C_SENSOR_30S');
 //  console.log( "[app.js] data.value = " + JSON.stringify(data) );
 
 //  obj = (new Function( 'return ' + data.value ))();
 
   // グラフ表示
-  updateChartSensor30s( data );
+  updateChartSensor30s(data);
 
   // テーブル表示
-  updateTableSensorNow( data );
+  updateTableSensorNow(data);
 });
 
 
-server.on( 'S_to_C_SENSOR_DAILY', function( data ){
-  console.log( "[app.js] " + 'S_to_C_SENSOR_DAILY' );
-  console.log( "[app.js] data = " + JSON.stringify(data) );
+server.on('S_to_C_SENSOR_DAILY', function(data) {
+  console.log("[app.js] " + 'S_to_C_SENSOR_DAILY');
+  console.log("[app.js] data = " + JSON.stringify(data));
 
-  if( data.ret == false ){
-    alert( 'データがありません。\n\r' );
+  if(data.ret == false) {
+    alert('データがありません。\n\r');
   }
 
   // グラフ表示
-  updateChartSensorDaily( data.value );
+  updateChartSensorDaily(data.value);
 });
 
 
-server.on( 'S_to_C_TALK_CB', function(){
-  console.log( "[app.js] " + 'S_to_C_TALK_CB' );
-//    window.alert( 'play  ****.wav が完了しました。\n\r' );
+server.on('S_to_C_TALK_CB', function() {
+  console.log("[app.js] " + 'S_to_C_TALK_CB');
+//    window.alert('play  ****.wav が完了しました。\n\r');
   recognition.start();
 });
 
@@ -282,20 +286,20 @@ server.on( 'S_to_C_TALK_CB', function(){
  * @param {object} obj - グラフに表示するデータ
  * @return {void}
  * @example
- * updateChartSensor30s( obj );
+ * updateChartSensor30s(obj);
 */
-function updateChartSensor30s( obj ){
-  console.log( "[app.js] updateChartSensor30s()" );
-//  console.log( "[app.js] obj = " + JSON.stringify(obj) );
+function updateChartSensor30s(obj) {
+  console.log("[app.js] updateChartSensor30s()");
+//  console.log("[app.js] obj = " + JSON.stringify(obj));
 
-  for( var i=0; i<obj.length; i++ ){
-//    console.log( "[app.js] data.value[ " + i + " ].sensor = " + obj[i].sensor );
-//    console.log( "[app.js] data.value[ " + i + " ].values = " + JSON.stringify(obj[i].values) );
+  for(let i=0; i<obj.length; i++) {
+//    console.log("[app.js] data.value[" + i + "].sensor = " + obj[i].sensor);
+//    console.log("[app.js] data.value[" + i + "].values = " + JSON.stringify(obj[i].values));
 
-    var name = 'obj_' + obj[i].sensor;
+    let name = 'obj_' + obj[i].sensor;
 
-    var cnt = 0;
-    for( var key in obj[i].values ){
+    let cnt = 0;
+    for(let key in obj[i].values) {
       window[name].data[cnt].label = key;
       window[name].data[cnt].y     = obj[i].values[key];
       cnt++;
@@ -313,16 +317,16 @@ function updateChartSensor30s( obj ){
  * @param {object} obj - グラフに表示するデータ
  * @return {void}
  * @example
- * updateChartSensorDaily( obj );
+ * updateChartSensorDaily(obj);
 */
-function updateChartSensorDaily( obj ){
-  console.log( "[app.js] updateChartSensorDaily()" );
-//  console.log( "[app.js] obj = " + JSON.stringify(obj) );
+function updateChartSensorDaily(obj) {
+  console.log("[app.js] updateChartSensorDaily()");
+//  console.log("[app.js] obj = " + JSON.stringify(obj));
 
-  var name = 'obj_sensors_daily';
+  let name = 'obj_sensors_daily';
 
-  var cnt = 0;
-  for( var key in obj ){
+  let cnt = 0;
+  for(let key in obj) {
     window[name].data[cnt].label = key;
     window[name].data[cnt].y     = obj[key];
     cnt++;
@@ -339,23 +343,23 @@ function updateChartSensorDaily( obj ){
  * @param {object} obj - テーブルに表示するデータ
  * @return {void}
  * @example
- * updateTableSensorNow( obj );
+ * updateTableSensorNow(obj);
 */
-function updateTableSensorNow( obj ){
-  console.log( "[app.js] updateTableSensorNow()" );
-//  console.log( "[app.js] obj = " + JSON.stringify(obj) );
+function updateTableSensorNow(obj) {
+  console.log("[app.js] updateTableSensorNow()");
+//  console.log("[app.js] obj = " + JSON.stringify(obj));
 
-  var data = [];
+  let data = [];
 
-  for( var i = 0; i < obj.length; i++ ){
-    var name = 'obj_' + obj[i].sensor;
-    var unit = window[name].unit;
+  for(let i = 0; i < obj.length; i++) {
+    let name = 'obj_' + obj[i].sensor;
+    let unit = window[name].unit;
 
-    data[i] = {sensor: obj[i].sensor, unit: unit, value: obj[i].values['今'] };
+    data[i] = {sensor: obj[i].sensor, unit: unit, value: obj[i].values['今']};
   }
 
 //  console.log( "[app.js] data = " + JSON.stringify(data) );
-  $("#tabulator-table-10sec").tabulator( "setData", data );
+  $("#tabulator-table-10sec").tabulator("setData", data);
   return;
 };
 
@@ -370,14 +374,14 @@ function updateTableSensorNow( obj ){
  * @param {string} cmd - コマンドの文字列
  * @return {void}
  * @example
- * sendGetCmd( 'sudo ./board.out --sa_pm' );
+ * sendGetCmd('sudo ./board.out --sa_pm');
 */
-function sendGetCmd( cmd ){
-  console.log( "[app.js] sendGetCmd()" );
-  console.log( "[app.js] cmd = " + cmd );
+function sendGetCmd(cmd) {
+  console.log("[app.js] sendGetCmd()");
+  console.log("[app.js] cmd = " + cmd);
 
-  console.log( "[app.js] server.emit(" + 'C_to_S_GET' + ")" );
-  server.emit( 'C_to_S_GET', cmd );
+  console.log("[app.js] server.emit(" + 'C_to_S_GET' + ")");
+  server.emit('C_to_S_GET', cmd);
 }
 
 
@@ -387,20 +391,20 @@ function sendGetCmd( cmd ){
  * @example
  * sendGetCmdSensorOneDay();
 */
-function sendGetCmdSensorOneDay(){
-  console.log( "[app.js] sendGetCmdSensorOneDay()" );
+function sendGetCmdSensorOneDay() {
+  console.log("[app.js] sendGetCmdSensorOneDay()");
 
-  var date   = $('#val_date_sensor').val();
-  var sensor = $('#val_which').val();
-  console.log( "[app.js] date   = " + date );
-  console.log( "[app.js] sensor = " + sensor );
+  let date   = $('#val_date_sensor').val();
+  let sensor = $('#val_which').val();
+  console.log("[app.js] date   = " + date);
+  console.log("[app.js] sensor = " + sensor);
 
-  if( date < '2018-08-01' ){
-    alert( '2018/08/01 以降を指定してください。' );
+  if(date < '2018-08-01') {
+    alert('2018/08/01 以降を指定してください。');
   } else {
-    var obj = { date:date, sensor:sensor };
-    console.log( "[app.js] server.emit(" + 'C_to_S_GET_SENSOR_DAILY' + ")" );
-    server.emit( 'C_to_S_GET_SENSOR_DAILY', obj );
+    let obj = {date:date, sensor:sensor};
+    console.log("[app.js] server.emit(" + 'C_to_S_GET_SENSOR_DAILY' + ")");
+    server.emit('C_to_S_GET_SENSOR_DAILY', obj);
   }
 }
 
@@ -410,14 +414,14 @@ function sendGetCmdSensorOneDay(){
  * @param {string} cmd - コマンドの文字列
  * @return {void}
  * @example
- * sendSetCmd( 'sudo ./board.out --relay on' );
+ * sendSetCmd('sudo ./board.out --relay on');
 */
-function sendSetCmd( cmd ){
-  console.log( "[app.js] sendSetCmd()" );
-  console.log( "[app.js] cmd = " + cmd );
+function sendSetCmd(cmd) {
+  console.log("[app.js] sendSetCmd()");
+  console.log("[app.js] cmd = " + cmd);
 
-  console.log( "[app.js] server.emit(" + 'C_to_S_SET' + ")" );
-  server.emit( 'C_to_S_SET', cmd );
+  console.log("[app.js] server.emit(" + 'C_to_S_SET' + ")");
+  server.emit('C_to_S_SET', cmd);
 }
 
 
@@ -426,18 +430,18 @@ function sendSetCmd( cmd ){
  * @param {string} cmd - コマンドの文字列
  * @return {void}
  * @example
- * sendSetCmdServo( 'sudo ./board.out --motorsv ' + 30 );
+ * sendSetCmdServo('sudo ./board.out --motorsv ' + 30);
 */
-function sendSetCmdServo( cmd ){
-  console.log( "[app.js] sendSetCmdServo()" );
-  console.log( "[app.js] cmd = " + cmd );
+function sendSetCmdServo(cmd) {
+  console.log("[app.js] sendSetCmdServo()");
+  console.log("[app.js] cmd = " + cmd);
 
-  var str = $('#val_range').val();
-  console.log( "[app.js] str = " + str );
+  let str = $('#val_range').val();
+  console.log("[app.js] str = " + str);
 
-  document.getElementById('val_servo').innerHTML = str.match( /\d+/ ); // 数値を表示
+  document.getElementById('val_servo').innerHTML = str.match(/\d+/); // 数値を表示
 
-  sendSetCmd( cmd );
+  sendSetCmd(cmd);
 }
 
 
@@ -448,10 +452,10 @@ function sendSetCmdServo( cmd ){
  * @example
  * sendStore();
 */
-function sendStore(){
-  console.log( "[app.js] sendStore()" );
-  console.log( "[app.js] server.emit(" + 'C_to_S_STORE' + ")" );
-  server.emit( 'C_to_S_STORE' );
+function sendStore() {
+  console.log("[app.js] sendStore()");
+  console.log("[app.js] server.emit(" + 'C_to_S_STORE' + ")");
+  server.emit('C_to_S_STORE');
 }
 
 
@@ -460,15 +464,15 @@ function sendStore(){
  * @param {string} value - 回す角度
  * @return {void}
  * @example
- * rotateScreen( 90 );
+ * rotateScreen(90);
 */
-function rotateScreen( which, value ){
-  console.log( "[app.js] rotateScreen()" );
-  console.log( "[app.js] which = " + which );
-  console.log( "[app.js] value = " + value );
+function rotateScreen(which, value) {
+  console.log("[app.js] rotateScreen()");
+  console.log("[app.js] which = " + which);
+  console.log("[app.js] value = " + value);
 
-  document.getElementById( 'val_rotate' ).innerHTML = value.match( /\d+/ );
-  $( '#' + which + ' img').rotate( {angle:Number(value)} );
+  document.getElementById('val_rotate').innerHTML = value.match(/\d+/);
+  $('#' + which + ' img').rotate({angle:Number(value)});
 }
 
 

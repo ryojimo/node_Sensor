@@ -7,7 +7,7 @@
 'use strict';
 
 // 必要なライブラリをロード
-require( 'date-utils' );
+require('date-utils');
 
 
 /**
@@ -15,51 +15,51 @@ require( 'date-utils' );
  * @param {void}
  * @constructor
  * @example
- * var obj = new ApiCmn();
+ * let obj = new ApiCmn();
 */
-var ApiCmn = function(){
-};
+class ApiCmn {
+  /**
+   * 現在の日付を YYYY-MM-DD 形式で取得する
+   * @param {void}
+   * @return {string} ret - 日付
+   * @example
+   * yyyymmdd();
+  */
+  yyyymmdd(){
+    console.log("[ApiCmn.js] yyyymmdd()");
+    let date = new Date();
+
+    let yyyy = date.getFullYear();
+    let mm   = ('0' + (date.getMonth() + 1)).slice(-2);
+    let dd   = ('0' +  date.getDate()      ).slice(-2);
+
+    let ret = yyyy + '-' + mm + '-' + dd;
+    console.log("[ApiCmn.js] ret = " + ret);
+    return ret;
+  };
 
 
-/**
- * 現在の日付を YYYY-MM-DD 形式で取得する
- * @param {void}
- * @return {string} ret - 日付
- * @example
- * yyyymmdd();
-*/
-ApiCmn.prototype.yyyymmdd = function(){
-  console.log( "[ApiCmn.js] yyyymmdd()" );
-  var date = new Date();
+  /**
+   * 現在の時刻を HH:MM:SS 形式で取得する
+   * @param {void}
+   * @return {string} ret - 時刻
+   * @example
+   * hhmmss();
+  */
+  hhmmss(){
+    console.log("[main.js] hhmmss()");
+    let date = new Date();
 
-  var yyyy = date.getFullYear();
-  var mm   = ('0' + (date.getMonth() + 1)).slice(-2);
-  var dd   = ('0' +  date.getDate()      ).slice(-2);
+    let hour = ('0' + date.getHours()   ).slice(-2);  // 現在の時間を 2 桁表記で取得
+    let min  = ('0' + date.getMinutes() ).slice(-2);  // 現在の  分を 2 桁表記で取得
+    let sec  = ('0' + date.getSeconds() ).slice(-2);  // 現在の  秒を 2 桁表記で取得
 
-  var ret = yyyy + '-' + mm + '-' + dd;
-  console.log( "[ApiCmn.js] ret = " + ret );
-  return ret;
-};
+    let ret = hour + ':' + min + ':' + sec;
+    console.log("[main.js] ret = " + ret);
+    return ret;
+  };
 
 
-/**
- * 現在の時刻を HH:MM:SS 形式で取得する
- * @param {void}
- * @return {string} ret - 時刻
- * @example
- * hhmmss();
-*/
-ApiCmn.prototype.hhmmss = function(){
-  console.log( "[main.js] hhmmss()" );
-  var date = new Date();
-
-  var hour = ('0' + date.getHours()   ).slice(-2);  // 現在の時間を 2 桁表記で取得
-  var min  = ('0' + date.getMinutes() ).slice(-2);  // 現在の  分を 2 桁表記で取得
-  var sec  = ('0' + date.getSeconds() ).slice(-2);  // 現在の  秒を 2 桁表記で取得
-
-  var ret = hour + ':' + min + ':' + sec;
-  console.log( "[main.js] ret = " + ret );
-  return ret;
 };
 
 
