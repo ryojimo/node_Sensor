@@ -31,10 +31,12 @@ class ApiFileSystem {
     console.log("[ApiFileSystem.js] file = " + file);
 
     let ret = null;
+    let jsonObj = null;
+
     try {
       fs.statSync(file);
-      let ret = fs.readFileSync(file, 'utf8');
-      let jsonObj = (new Function("return " + ret))();
+      ret = fs.readFileSync(file, 'utf8');
+      jsonObj = (new Function("return " + ret))();
   //    console.log( "[ApiFileSystem.js] jsonObj = " + JSON.stringify(jsonObj) );
       ret = jsonObj;
     } catch(err) {
