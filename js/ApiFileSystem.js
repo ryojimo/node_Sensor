@@ -22,9 +22,9 @@ class ApiFileSystem {
    * 引数の file からデータを読み出して JSON オブジェクトにして返す。
    * @note ファイルの中に書かれている文字が JSON 形式である必要があります。
    * @param {string} file - 対象のファイル ( フルパス )
-   * @return {Object} ret - file から読み出した JSON 形式のデータ
+   * @return {object} ret - file から読み出した JSON 形式のデータ
    * @example
-   * let obj = read( '/media/pi/USBDATA/2018-01-23_sensor.txt' );
+   * let obj = read('/media/pi/USBDATA/2018-01-23_sensor.txt');
   */
   read(file) {
     console.log("[ApiFileSystem.js] read()");
@@ -37,7 +37,7 @@ class ApiFileSystem {
       fs.statSync(file);
       ret = fs.readFileSync(file, 'utf8');
       jsonObj = (new Function("return " + ret))();
-  //    console.log( "[ApiFileSystem.js] jsonObj = " + JSON.stringify(jsonObj) );
+  //    console.log("[ApiFileSystem.js] jsonObj = " + JSON.stringify(jsonObj));
       ret = jsonObj;
     } catch(err) {
       if(err.code === 'ENOENT') {
@@ -56,7 +56,7 @@ class ApiFileSystem {
    * @param {object} jsonObj - 付け加える json 形式のデータ
    * @return {void}
    * @example
-   * append( "/media/pi/USBDATA/2018-01-23_sensor.txt", {} );
+   * append("/media/pi/USBDATA/2018-01-23_sensor.txt", {});
   */
   append(file, jsonObj) {
     console.log("[ApiFileSystem.js] append()");
@@ -84,7 +84,7 @@ class ApiFileSystem {
    * @param {object} jsonObj - 書き込む json 形式のデータ
    * @return {void}
    * @example
-   * write( "/media/pi/USBDATA/2018-01-23_sensor.txt", {} );
+   * write("/media/pi/USBDATA/2018-01-23_sensor.txt", {});
   */
   write(file, jsonObj) {
     console.log("[ApiFileSystem.js] write()");
@@ -99,6 +99,27 @@ class ApiFileSystem {
       if(err.code === 'ENOENT') {
         console.log("[ApiFileSystem.js] file does not exist.");
       }
+    }
+
+    this.cnt = 0;
+  }
+
+
+  /**
+   * 引数の file を削除する。
+   * @param {string} file - 対象のファイル ( フルパス )
+   * @return {void}
+   * @example
+   * delete("/media/pi/USBDATA/2018-01-23_sensor.txt");
+  */
+  delete(file) {
+    console.log("[ApiFileSystem.js] delete()");
+    console.log("[ApiFileSystem.js] file = " + file);
+
+    try {
+      fs.unlinkSync(file);
+    } catch(err) {
+      console.log("[ApiFileSystem.js] error happens.");
     }
 
     this.cnt = 0;

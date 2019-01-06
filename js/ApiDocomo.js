@@ -96,8 +96,8 @@ class ApiDocomo {
 
   /**
    * wav データを request POST して play する
-   * @param {string} httpData- POST する HTTP データ
-   * @param {function} callback- play  ****.wav した後に呼び出すコールバック関数
+   * @param {string} httpData - POST する HTTP データ
+   * @param {function} callback - play  ****.wav した後に呼び出すコールバック関数
    * @return {void}
    * @example
    * requestAndPlay(options, function);
@@ -140,8 +140,8 @@ class ApiDocomo {
 
   /**
    * cmnt の文字列を話す
-   * @param {string} cmnt- 話す文字列
-   * @param {function} callback- play  ****.wav した後に呼び出すコールバック関数
+   * @param {string} cmnt - 話す文字列
+   * @param {function} callback - play  ****.wav した後に呼び出すコールバック関数
    * @return {void}
    * @example
    * talk("こんにちは", function);

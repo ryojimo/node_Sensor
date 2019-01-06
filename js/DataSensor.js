@@ -47,6 +47,7 @@ class DataSensor {
   /**
    * data30s プロパティを更新する。
    * @param {number} data - 現在のセンサ値
+   * @return {void}
    * @example
    * updateData30s( 28.4 );
   */
@@ -63,6 +64,7 @@ class DataSensor {
   /**
    * data1day プロパティを更新する。
    * @param {number} data - 現在のセンサ値
+   * @return {void}
    * @example
    * updateData1day('15:00', 28.4);
   */
@@ -78,6 +80,7 @@ class DataSensor {
 
   /**
    * this.data30s プロパティで "10秒前" と "今" の値に大きな差があるか？チェックする。
+   * @param {void}
    * @return {bool} ret - 500 以上の差があれば true を返す
    * @example
    * isLarge();
