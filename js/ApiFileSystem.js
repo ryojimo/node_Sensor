@@ -71,6 +71,11 @@ class ApiFileSystem {
     } catch(err) {
       if(err.code === 'ENOENT') {
         console.log("[ApiFileSystem.js] file does not exist.");
+        try {
+          this.write(file, str);
+        } catch(err) {
+          console.log("[ApiFileSystem.js] error happens.");
+        }
       }
     }
 

@@ -9,14 +9,13 @@ let http     = require('http');
 let socketio = require('socket.io');
 let fs       = require('fs');
 let colors   = require('colors');
-require('date-utils');
 let schedule = require('node-schedule');
+require('date-utils');
 
 const ApiCmn        = require('./js/ApiCmn');
 const ApiDocomo     = require('./js/ApiDocomo');
 const ApiFileSystem = require('./js/ApiFileSystem');
-
-const DataSensor = require('./js/DataSensor');
+const DataSensor    = require('./js/DataSensor');
 
 
 // Ver. 表示
@@ -108,7 +107,7 @@ let io = socketio.listen(server);
 let g_apiCmn        = new ApiCmn();
 let g_apiDocomo     = new ApiDocomo();
 let g_apiFileSystem = new ApiFileSystem();
-let g_sensors = new Array();
+let g_sensors       = new Array();
 
 
 startSystem();
@@ -126,7 +125,7 @@ function startSystem() {
 
   createSensorObjects();
 
-  let timerFlg  = setInterval(function(){ getSensorData30s(); }, 10000);
+  let timerFlg  = setInterval(function(){getSensorData30s();}, 10000);
 
   let job01 = runBoard(      '30  7      * * *', 'sudo ./board.out --relay on' );
   let job02 = runBoard(      '45  7      * * *', 'sudo ./board.out --relay off');
