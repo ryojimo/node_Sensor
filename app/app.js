@@ -110,21 +110,21 @@ function initChartSensorDaily() {
 function initTableSensorNow() {
   console.log("[app.js] initTableSensorNow()");
 
-  $("#tabulator-table-10sec").tabulator( {
-    layout: "fitData",
+  $('#tabulator-table-10sec').tabulator( {
+    layout: 'fitData',
     tooltips: true,
-    addRowPos: "top",
+    addRowPos: 'top',
     history: true,
-    pagination: "local",
+    pagination: 'local',
     paginationSize: 15,
     movableColumns: true,
     initialSort: [
-      {column:"title", dir:"asc"},
+      {column:'title', dir:'asc'},
     ],
     columns:[
-      {title:"センサ", field:"sensor", align:"left",  width:"150", sortable:"true", sorter:"string", formatter:"plaintext", editable:false,                                  },
-      {title:"値",     field:"value",  align:"right", width:"100", sortable:"true", sorter:"number", formatter:"plaintext", editable:false, cssClass:"tabulator-background", },
-      {title:"単位",   field:"unit",   align:"left",  width:"100", sortable:"true", sorter:"string", formatter:"plaintext", editable:false,                                  },
+      {title:'センサ', field:'sensor', align:'left',  width:'150', sortable:'true', sorter:'string', formatter:'plaintext', editable:false,                                  },
+      {title:'値',     field:'value',  align:'right', width:'100', sortable:'true', sorter:'number', formatter:'plaintext', editable:false, cssClass:'tabulator-background', },
+      {title:'単位',   field:'unit',   align:'left',  width:'100', sortable:'true', sorter:'string', formatter:'plaintext', editable:false,                                  },
     ],
   });
   return;
@@ -359,7 +359,7 @@ function updateTableSensorNow(obj) {
   }
 
 //  console.log( "[app.js] data = " + JSON.stringify(data) );
-  $("#tabulator-table-10sec").tabulator("setData", data);
+  $('#tabulator-table-10sec').tabulator('setData', data);
   return;
 };
 
