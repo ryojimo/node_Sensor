@@ -22,7 +22,6 @@ const DataSensor    = require('./js/DataSensor');
 let now = new Date();
 console.log("[main.js] " + now.toFormat("YYYY年MM月DD日 HH24時MI分SS秒").rainbow);
 console.log("[main.js] " + "ver.01 : app.js".rainbow);
-console.log("[main.js] " + "access to http://localhost:3000");
 
 // サーバー・オブジェクトを生成
 let server = http.createServer();
@@ -31,7 +30,9 @@ let server = http.createServer();
 server.on('request', doRequest);
 
 // 待ち受けスタート
-server.listen(process.env.VMC_APP_PORT || 3000);
+const PORT = 3000;
+server.listen(process.env.VMC_APP_PORT || PORT);
+console.log("[main.js] access to http://localhost:" + PORT);
 console.log("[main.js] Server running!");
 
 // request イベント処理
@@ -272,7 +273,7 @@ function talkAlert() {
  * @param {string} cmd - 実行するコマンド
  * @return {object} job - node-schedule に登録した job
  * @example
- * runBoard( '30 7 * * *', 'sudo ./board.out --relay on' );
+ * runBoard( '30 7 * * *', 'sudo ./board.out --relay on');
 */
 function runBoard(when, cmd) {
   console.log("[main.js] runBoard()");
@@ -303,7 +304,7 @@ function runBoard(when, cmd) {
  * @param {string} cmd - 実行するコマンド
  * @return {object} job - node-schedule に登録した job
  * @example
- * runBoardSensor( ' 0 0-23/1 * * *', 'sudo ./board.out --sensors' );
+ * runBoardSensor( ' 0 0-23/1 * * *', 'sudo ./board.out --sensors');
 */
 function runBoardSensor(when, cmd) {
   console.log("[main.js] runBoardSensor()");
@@ -323,7 +324,7 @@ function runBoardSensor(when, cmd) {
 
         // stdout の文字列は以下のような感じ
         // { "sa_acc_x":2019, "sa_acc_y":2854,"sa_acc_z":1934, "sa_gyro_g1":1783, "sa_gyro_g2":1771, "si_bme280_atmos":718.53, "si_bme280_humi":38.84, "si_bme280_temp":29.82, "si_gp2y0e03":63.00, "si_lps25h_atmos":1018.34, "si_lps25h_temp":30.42, "si_tsl2561_lux":57.00 }
-        let jsonObj = (new Function( 'return ' + stdout ))();
+        let jsonObj = (new Function( 'return ' + stdout))();
         for(key in jsonObj) {
           g_sensors[ key ].updateData1day(jsonObj[key]);
         }
@@ -340,7 +341,7 @@ function runBoardSensor(when, cmd) {
  * @param {string} when - Job を実行する時間
  * @return {object} job - node-schedule に登録した job
  * @example
- * runStoreSensor( ' 0 0-23/1 * * *' );
+ * runStoreSensor( ' 0 0-23/1 * * *');
 */
 function runStoreSensor(when) {
   console.log("[main.js] runStoreSensor()");
