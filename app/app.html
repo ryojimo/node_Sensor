@@ -114,11 +114,38 @@
                 <div class="col-sm-12">
                   ・サーボモータ・コントロール：
                   <!-- SERVO Motor Control bar -->
-                  <span id="val_servo">50</span> %
-                  <input class="slider-width" type="range" width="40%" name="num" min="20" max="70" step="2" value="50" onchange="sendSetCmdServo( 'sudo ./board.out --motorsv ' + (90 - this.value) )" id="val_range">
+                  <span id="val_servo00">50</span> %
+                  <input class="slider-width" type="range" width="40%" name="num" min="20" max="70" step="2" value="50" onchange="sendSetCmdServo( 0, 'sudo ./board.out --i2cpca9685 0 ' + this.value )" id="val_range00">
                   <!-- <input type="submit" class="button" onclick="sendSetCmdServo( 'sudo ./board.out --motorsv auto' );" value="AUTO" /> -->
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="well" style="background:rgba(0,0,0,0.2);">
+              <div class="row">
+                <div class="col-sm-12">
+                  ・サーボモータ・コントロール：
+                  <!-- SERVO Motor Control bar -->
+                  <span id="val_servo01">0</span> %
+                  <input class="slider-width" type="range" width="40%" name="num" min="3" max="12" step="1" value="0" onchange="sendSetCmdServo( 1, 'sudo ./board.out --i2cpca9685 1 ' + this.value )" id="val_range01">
+                  <!-- <input type="submit" class="button" onclick="sendSetCmdServo( 'sudo ./board.out --motorsv auto' );" value="AUTO" /> -->
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12">
+                  ・サーボモータ・コントロール：
+                  <!-- SERVO Motor Control bar -->
+                  <span id="val_servo02">0</span> %
+                  <input class="slider-width" type="range" width="40%" name="num" min="3" max="12" step="1" value="0" onchange="sendSetCmdServo( 2, 'sudo ./board.out --i2cpca9685 2 ' + this.value )" id="val_range02">
+                  <!-- <input type="submit" class="button" onclick="sendSetCmdServo( 'sudo ./board.out --motorsv auto' );" value="AUTO" /> -->
+                </div>
+              </div>
+
             </div>
           </div>
         </div>

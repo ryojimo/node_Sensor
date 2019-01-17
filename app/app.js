@@ -430,16 +430,28 @@ function sendSetCmd(cmd) {
  * @param {string} cmd - コマンドの文字列
  * @return {void}
  * @example
- * sendSetCmdServo('sudo ./board.out --motorsv ' + 30);
+ * sendSetCmdServo(0, 'sudo ./board.out --motorsv ' + 30);
 */
-function sendSetCmdServo(cmd) {
+function sendSetCmdServo(tgt, cmd) {
   console.log("[app.js] sendSetCmdServo()");
+  console.log("[app.js] tgt = " + tgt);
   console.log("[app.js] cmd = " + cmd);
 
-  let str = $('#val_range').val();
-  console.log("[app.js] str = " + str);
+  let str = '';
 
-  document.getElementById('val_servo').innerHTML = str.match(/\d+/); // 数値を表示
+  if(tgt == 0) {
+    str = $('#val_range00').val();
+    console.log("[app.js] str = " + str);
+    document.getElementById('val_servo00').innerHTML = str.match(/\d+/); // 数値を表示
+  } else if(tgt == 1) {
+    str = $('#val_range01').val();
+    console.log("[app.js] str = " + str);
+    document.getElementById('val_servo01').innerHTML = str.match(/\d+/); // 数値を表示
+  } else if(tgt == 2) {
+    str = $('#val_range02').val();
+    console.log("[app.js] str = " + str);
+    document.getElementById('val_servo02').innerHTML = str.match(/\d+/); // 数値を表示
+  }
 
   sendSetCmd(cmd);
 }
