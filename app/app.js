@@ -442,15 +442,15 @@ function sendSetCmdServo(tgt, cmd) {
   if(tgt == 0) {
     str = $('#val_range00').val();
     console.log("[app.js] str = " + str);
-    document.getElementById('val_servo00').innerHTML = str.match(/\d+/); // 数値を表示
+    document.getElementById('val_servo00').innerHTML = str;
   } else if(tgt == 1) {
     str = $('#val_range01').val();
     console.log("[app.js] str = " + str);
-    document.getElementById('val_servo01').innerHTML = str.match(/\d+/); // 数値を表示
+    document.getElementById('val_servo01').innerHTML = str;
   } else if(tgt == 2) {
     str = $('#val_range02').val();
     console.log("[app.js] str = " + str);
-    document.getElementById('val_servo02').innerHTML = str.match(/\d+/); // 数値を表示
+    document.getElementById('val_servo02').innerHTML = str;
   }
 
   sendSetCmd(cmd);
