@@ -114,8 +114,8 @@
                 <div class="col-sm-12">
                   ・サーボモータ・コントロール：
                   <!-- SERVO Motor Control bar -->
-                  <span id="val_servo00">4</span> %
-                  <input class="slider-width" type="range" width="40%" name="num" min="4" max="10" step="0.1" value="0" onchange="sendSetCmdServo( 0, 'sudo ./board.out --i2cpca9685 --ch=0 --rate=' + this.value )" id="val_range00">
+                  <span id="val_servo00">2.8</span> %
+                  <input class="slider-width" type="range" width="40%" name="num" min="2.8" max="12.5" step="0.1" value="0" onchange="sendSetCmdServo( 0, 'sudo ./board.out --i2cpca9685 --ch=0 --rate=' + this.value )" id="val_range00">
                   <!-- <input type="submit" class="button" onclick="sendSetCmdServo( 'sudo ./board.out --motorsv auto' );" value="AUTO" /> -->
                 </div>
               </div>
@@ -130,8 +130,8 @@
                 <div class="col-sm-12">
                   ・サーボモータ・コントロール：
                   <!-- SERVO Motor Control bar -->
-                  <span id="val_servo01">4</span> %
-                  <input class="slider-width" type="range" width="40%" name="num" min="4" max="10" step="0.1" value="0" onchange="sendSetCmdServo( 1, 'sudo ./board.out --i2cpca9685 --ch=1 --rate=' + this.value )" id="val_range01">
+                  <span id="val_servo01">2.8</span> %
+                  <input class="slider-width" type="range" width="40%" name="num" min="2.8" max="12.5" step="0.1" value="0" onchange="sendSetCmdServo( 1, 'sudo ./board.out --i2cpca9685 --ch=1 --rate=' + this.value )" id="val_range01">
                   <!-- <input type="submit" class="button" onclick="sendSetCmdServo( 'sudo ./board.out --motorsv auto' );" value="AUTO" /> -->
                 </div>
               </div>
@@ -140,8 +140,8 @@
                 <div class="col-sm-12">
                   ・サーボモータ・コントロール：
                   <!-- SERVO Motor Control bar -->
-                  <span id="val_servo02">4</span> %
-                  <input class="slider-width" type="range" width="40%" name="num" min="4" max="10" step="0.1" value="0" onchange="sendSetCmdServo( 2, 'sudo ./board.out --i2cpca9685 --ch=2 --rate=' + this.value )" id="val_range02">
+                  <span id="val_servo02">2.8</span> %
+                  <input class="slider-width" type="range" width="40%" name="num" min="2.8" max="12.5" step="0.1" value="0" onchange="sendSetCmdServo( 2, 'sudo ./board.out --i2cpca9685 --ch=2 --rate=' + this.value )" id="val_range02">
                   <!-- <input type="submit" class="button" onclick="sendSetCmdServo( 'sudo ./board.out --motorsv auto' );" value="AUTO" /> -->
                 </div>
               </div>
@@ -154,8 +154,8 @@
           <div class="col-sm-12">
             <div class="well" style="background:rgba(0,0,0,0.2);">
               Light　　
-              <button type="button" class="btn btn-default btn-lg" onclick="sendSetCmd( 'sudo ./board.out --relay on' );">ON</button>　　
-              <button type="button" class="btn btn-default btn-lg" onclick="sendSetCmd( 'sudo ./board.out --relay off' );">OFF</button>
+              <button type="button" class="btn btn-default btn-lg" onclick="sendSetCmd( 'sudo ./board.out --relay --on' );">ON</button>　　
+              <button type="button" class="btn btn-default btn-lg" onclick="sendSetCmd( 'sudo ./board.out --relay --off' );">OFF</button>
             </div>
           </div>
         </div>
@@ -171,18 +171,18 @@
 <div id="section_sensor_now" class="container-fluid">
 <section>
   <h1>Sensor Now</h1>
-  <button type="button" class="btn btn-default btn-lg" onclick="sendGetCmd('sudo ./board.out --sa_acc x');">加速度(x) [?]</button>
-  <button type="button" class="btn btn-default btn-lg" onclick="sendGetCmd('sudo ./board.out --sa_acc y');">加速度(y) [?]</button>
-  <button type="button" class="btn btn-default btn-lg" onclick="sendGetCmd('sudo ./board.out --sa_acc z');">加速度(z) [?]</button>
-  <button type="button" class="btn btn-default btn-lg" onclick="sendGetCmd('sudo ./board.out --sa_gyro g1');">ジャイロ(g1) [?]</button>
-  <button type="button" class="btn btn-default btn-lg" onclick="sendGetCmd('sudo ./board.out --sa_gyro g2');">ジャイロ(g2) [?]</button>
-  <button type="button" class="btn btn-default btn-lg" onclick="sendGetCmd('sudo ./board.out --si_bme280 atmos');">気圧(BME280) [hPa]</button>
-  <button type="button" class="btn btn-default btn-lg" onclick="sendGetCmd('sudo ./board.out --si_bme280 humi');">湿度(BME280) [%]</button>
-  <button type="button" class="btn btn-default btn-lg" onclick="sendGetCmd('sudo ./board.out --si_bme280 temp');">温度(BME280) [℃]</button>
-  <button type="button" class="btn btn-default btn-lg" onclick="sendGetCmd('sudo ./board.out --si_gp2y0e03');">距離 [cm]</button>
-  <button type="button" class="btn btn-default btn-lg" onclick="sendGetCmd('sudo ./board.out --si_lps25h atmos');">気圧(LPS25H) [hPa]</button>
-  <button type="button" class="btn btn-default btn-lg" onclick="sendGetCmd('sudo ./board.out --si_lps25h temp');">温度(LPS25H) [℃]</button>
-  <button type="button" class="btn btn-default btn-lg" onclick="sendGetCmd('sudo ./board.out --si_tsl2561 lux');">照度 [ルクス]</button>
+  <button type="button" class="btn btn-default btn-lg" onclick="sendGetCmd('sudo ./board.out --sa_acc      --x');">加速度(x) [?]</button>
+  <button type="button" class="btn btn-default btn-lg" onclick="sendGetCmd('sudo ./board.out --sa_acc      --y');">加速度(y) [?]</button>
+  <button type="button" class="btn btn-default btn-lg" onclick="sendGetCmd('sudo ./board.out --sa_acc      --z');">加速度(z) [?]</button>
+  <button type="button" class="btn btn-default btn-lg" onclick="sendGetCmd('sudo ./board.out --sa_gyro     --g1');">ジャイロ(g1) [?]</button>
+  <button type="button" class="btn btn-default btn-lg" onclick="sendGetCmd('sudo ./board.out --sa_gyro     --g2');">ジャイロ(g2) [?]</button>
+  <button type="button" class="btn btn-default btn-lg" onclick="sendGetCmd('sudo ./board.out --si_bme280   --atmos');">気圧(BME280) [hPa]</button>
+  <button type="button" class="btn btn-default btn-lg" onclick="sendGetCmd('sudo ./board.out --si_bme280   --humi');">湿度(BME280) [%]</button>
+  <button type="button" class="btn btn-default btn-lg" onclick="sendGetCmd('sudo ./board.out --si_bme280   --temp');">温度(BME280) [℃]</button>
+  <button type="button" class="btn btn-default btn-lg" onclick="sendGetCmd('sudo ./board.out --si_gp2y0e03 --data');">距離 [cm]</button>
+  <button type="button" class="btn btn-default btn-lg" onclick="sendGetCmd('sudo ./board.out --si_lps25h   --atmos');">気圧(LPS25H) [hPa]</button>
+  <button type="button" class="btn btn-default btn-lg" onclick="sendGetCmd('sudo ./board.out --si_lps25h   --temp');">温度(LPS25H) [℃]</button>
+  <button type="button" class="btn btn-default btn-lg" onclick="sendGetCmd('sudo ./board.out --si_tsl2561  --lux');">照度 [ルクス]</button>
 
   <h3>現在値：<span id="val_sensor">--</span></h3>
 </section>
