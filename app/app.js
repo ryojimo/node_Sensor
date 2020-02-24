@@ -410,6 +410,22 @@ function sendGetCmdSensorOneDay() {
 
 
 /**
+ * Image をリロードする
+ * @param {string} cmd - コマンドの文字列
+ * @return {void}
+ * @example
+ * sendSetCmd('sudo ./board.out --relay on');
+*/
+function reloadImg() {
+  console.log("[app.js] reloadImg()");
+  let id = document.getElementById("val_image").src;
+  console.log("[app.js] id = " + id);
+
+  location.reload();
+}
+
+
+/**
  * Set コマンドを送る。
  * @param {string} cmd - コマンドの文字列
  * @return {void}

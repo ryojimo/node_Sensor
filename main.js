@@ -88,7 +88,7 @@ function doRequest(
     });
   break;
   case '/capture.jpg':
-    fs.readFile('./data/capture.jpg', 'binary', function(err, data) {
+    fs.readFile('./app/capture.jpg', 'binary', function(err, data) {
       res.writeHead(200, {'Content-Type': 'image/jpg',
                           'Access-Control-Allow-Origin': '*'});
       res.write(data, 'binary');

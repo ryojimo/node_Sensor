@@ -92,7 +92,7 @@
         <!-- Screen -->
         <center>
         <div id="cam_screen0">
-          <img class="img-thumbnail" alt="" width="80%" src="capture.jpg">
+          <img id="val_image" class="img-thumbnail" alt="" width="80%" src="capture.jpg">
         </div>
         </center>
       </div>
@@ -103,7 +103,8 @@
             <div class="well" style="background:rgba(0,0,0,0.2);">
               <div class="row">
                 <div class="col-sm-12">
-                  <button type="button" class="btn btn-default btn-sm" onclick="sendSetCmd( 'raspistill -rot 90 -o ./data/capture.jpg' );">Capture</button>
+                  <button type="button" class="btn btn-default btn-sm" onclick="sendSetCmd( 'raspistill -rot 90 -o ./app/capture.jpg' );">Capture</button>
+                  <button type="button" class="btn btn-default btn-sm" onclick="reloadImg();">Reload</button>
                 </div>
               </div>
 
