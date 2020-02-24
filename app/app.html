@@ -92,7 +92,7 @@
         <!-- Screen -->
         <center>
         <div id="cam_screen0">
-          <img class="img-thumbnail" alt="" height="100%" src="http://192.168.91.11:8080/?action=stream">
+          <img class="img-thumbnail" alt="" width="80%" src="capture.jpg">
         </div>
         </center>
       </div>
@@ -101,6 +101,12 @@
         <div class="row">
           <div class="col-sm-12">
             <div class="well" style="background:rgba(0,0,0,0.2);">
+              <div class="row">
+                <div class="col-sm-12">
+                  <button type="button" class="btn btn-default btn-sm" onclick="sendSetCmd( 'raspistill -rot 90 -o ./data/capture.jpg' );">Capture</button>
+                </div>
+              </div>
+
               <div class="row">
                 <div class="col-sm-12">
                   ・画面回転：
@@ -154,8 +160,8 @@
           <div class="col-sm-12">
             <div class="well" style="background:rgba(0,0,0,0.2);">
               Light　　
-              <button type="button" class="btn btn-default btn-lg" onclick="sendSetCmd( 'sudo ./board.out --relay --on' );">ON</button>　　
-              <button type="button" class="btn btn-default btn-lg" onclick="sendSetCmd( 'sudo ./board.out --relay --off' );">OFF</button>
+              <button type="button" class="btn btn-default btn-sm" onclick="sendSetCmd( 'sudo ./board.out --relay --on' );">ON</button>　　　　
+              <button type="button" class="btn btn-default btn-sm" onclick="sendSetCmd( 'sudo ./board.out --relay --off' );">OFF</button>
             </div>
           </div>
         </div>
