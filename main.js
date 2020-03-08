@@ -128,10 +128,12 @@ function startSystem() {
 
   let timerFlg  = setInterval(function(){getSensorData30s();}, 10000);
 
-  let job01 = runBoard(      '30  7      * * *', 'sudo ./board.out --relay on' );
-  let job02 = runBoard(      '45  7      * * *', 'sudo ./board.out --relay off');
-  let job03 = runBoardSensor(' 0  0-23/1 * * *', 'sudo ./board.out --sensors'  );
-  let job04 = runStoreSensor(' 5  23     * * *'                                );
+  let job01 = runBoard(      '30  7      * * *', 'sudo ./board.out --relay --on' );
+  let job02 = runBoard(      '31  7      * * *', 'sudo ./board.out --relay --off');
+  let job03 = runBoard(      ' 0  8      * * *', 'sudo ./board.out --relay --on' );
+  let job04 = runBoard(      ' 1  8      * * *', 'sudo ./board.out --relay --off');
+  let job05 = runBoardSensor(' 0  0-23/1 * * *', 'sudo ./board.out --sensors'  );
+  let job06 = runStoreSensor(' 5  23     * * *'                                );
 };
 
 

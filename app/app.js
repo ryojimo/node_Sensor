@@ -5,8 +5,8 @@
 */
 //const SV_IP   = 'sensor.rp.lfx.sony.co.jp';   // node.js server の IP アドレス
 //const SV_IP   = '43.2.100.152';               // node.js server の IP アドレス
-const SV_IP   = '192.168.91.128';              // node.js server の IP アドレス
-const SV_PORT = 3000;                         // node.js server の port 番号
+const SV_IP   = '192.168.91.10';                // node.js server の IP アドレス
+const SV_PORT = 3000;                           // node.js server の port 番号
 
 let server = io.connect('http://' + SV_IP + ':' + SV_PORT); //ローカル
 
