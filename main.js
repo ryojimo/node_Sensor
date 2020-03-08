@@ -12,6 +12,7 @@ let colors   = require('colors');
 let schedule = require('node-schedule');
 require('date-utils');
 
+const ApiAws        = require('./js/ApiAws');
 const ApiCmn        = require('./js/ApiCmn');
 const ApiDocomo     = require('./js/ApiDocomo');
 const ApiFileSystem = require('./js/ApiFileSystem');
@@ -105,6 +106,7 @@ let io = socketio.listen(server);
 //-----------------------------------------------------------------------------
 // 起動の処理関数
 //-----------------------------------------------------------------------------
+let g_apiAws        = new ApiAws();
 let g_apiCmn        = new ApiCmn();
 let g_apiDocomo     = new ApiDocomo();
 let g_apiFileSystem = new ApiFileSystem();
@@ -142,7 +144,7 @@ function startSystem() {
  * @param {void}
  * @return {void}
  * @example
- * startSystem();
+ * createSensorObjects();
 */
 function createSensorObjects() {
   console.log("[main.js] createSensorObjects()");
@@ -180,6 +182,19 @@ function storeSensorObjects() {
 
   let filename = g_apiCmn.yyyymmdd() + '_sensor.txt';
   g_apiFileSystem.write('/media/pi/USBDATA/sensor/' +  filename, data);
+};
+
+
+/**
+ * 全センサの 1day の値を AWS S3 へ upload する。
+ * @example
+ * uploadSensorObjects();
+*/
+function uploadSensorObjects() {
+  console.log("[main.js] uploadSensorObjects()");
+
+  let filename = g_apiCmn.yyyymmdd() + '_sensor.txt';
+  g_apiAws.upload('/media/pi/USBDATA/sensor/', filename, 'uz.sensor');
 };
 
 
@@ -354,6 +369,7 @@ function runStoreSensor(when) {
 
     // 全センサ・オブジェクトの 1day の値の JSON オブジェクト配列を /media/pi/USBDATA/sensor/ に txt ファイルとして保存する
     storeSensorObjects();
+    uploadSensorObjects();
   });
 
   return job;
