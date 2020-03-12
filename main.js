@@ -424,6 +424,8 @@ io.sockets.on('connection', function(socket) {
     let ret = {};
     let filename = data.date + '_sensor.txt';
     let jsonObj = g_apiFileSystem.read('/media/pi/USBDATA/sensor/' +  filename);
+//    g_apiAws.download('/home/pi/workspace/node_Sensor/data/', filename, 'uz.sensor');
+//    let jsonObj = g_apiFileSystem.read('/home/pi/workspace/node_Sensor/data/' +  filename);
 
     if(jsonObj == null) {
       io.sockets.emit('S_to_C_SENSOR_DAILY', {ret:false, value:null});

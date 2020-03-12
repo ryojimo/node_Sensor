@@ -88,7 +88,7 @@ class ApiAws {
    * @param {string} bucket - upload 先のバケット
    * @return {void}
    * @example
-   * upload();
+   * upload('/media/pi/USBDATA/sensor/', '2020-03-08_sensor.txt', 'uz.sensor');
   */
   upload(path, filename, bucket) {
     console.log("[Aws.js] upload()");
@@ -107,6 +107,37 @@ class ApiAws {
         console.log("Error", err);
       } if (data) {
         console.log("Upload Success", data.Location);
+      }
+    });
+  }
+
+
+  /**
+   * ファイルを download する
+   * @param {string} path - 対象のファイルが置かれている PATH
+   * @param {string} filename - ファイル名
+   * @param {string} bucket - upload 先のバケット
+   * @return {void}
+   * @example
+   * download('/home/pi/workspace/node_Sensor/data/', '2020-03-08_sensor.txt', 'uz.sensor');
+  */
+  download(path, filename, bucket) {
+    console.log("[Aws.js] download()");
+    console.log("[Aws.js] path     = " + path);
+    console.log("[Aws.js] filename = " + filename);
+    console.log("[Aws.js] bucket   = " + bucket);
+
+    var params = {
+      Bucket: bucket,   // バケット名
+      Key: filename     // ダウンロード後のファイル名
+    };
+
+    this.s3.getObject(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+      } if (data) {
+        console.log("Download Success");
+        fs.writeFileSync(path + filename, data.Body.toString());
       }
     });
   }
