@@ -51,7 +51,8 @@ function doRequest(
         return;
       }
       res.writeHead(200, {'Content-Type': 'text/html',
-                          'Access-Control-Allow-Origin': '*'});
+                          'Access-Control-Allow-Origin': '*'
+                    });
       res.write(data);
       res.end();
     });
@@ -59,7 +60,8 @@ function doRequest(
   case '/app.js':
     fs.readFile('./app/app.js', 'UTF-8', function(err, data) {
       res.writeHead(200, {'Content-Type': 'application/javascript',
-                          'Access-Control-Allow-Origin': '*'});
+                          'Access-Control-Allow-Origin': '*'
+                    });
       res.write(data);
       res.end();
     });
@@ -67,7 +69,8 @@ function doRequest(
   case '/style.css':
     fs.readFile('./app/style.css', 'UTF-8', function(err, data) {
       res.writeHead(200, {'Content-Type': 'text/css',
-                          'Access-Control-Allow-Origin': '*'});
+                          'Access-Control-Allow-Origin': '*'
+                    });
       res.write(data);
       res.end();
     });
@@ -75,7 +78,8 @@ function doRequest(
   case '/bg.gif':
     fs.readFile('./app/bg.gif', 'binary', function(err, data) {
       res.writeHead(200, {'Content-Type': 'image/gif',
-                          'Access-Control-Allow-Origin': '*'});
+                          'Access-Control-Allow-Origin': '*'
+                    });
       res.write(data, 'binary');
       res.end();
     });
@@ -83,7 +87,8 @@ function doRequest(
   case '/jQueryRotate.js':
     fs.readFile('./app/js_lib/jQueryRotate.js', 'UTF-8', function(err, data) {
       res.writeHead(200, {'Content-Type': 'application/javascript',
-                          'Access-Control-Allow-Origin': '*'});
+                          'Access-Control-Allow-Origin': '*'
+                    });
       res.write(data);
       res.end();
     });
@@ -91,7 +96,8 @@ function doRequest(
   case '/capture.jpg':
     fs.readFile('./app/capture.jpg', 'binary', function(err, data) {
       res.writeHead(200, {'Content-Type': 'image/jpg',
-                          'Access-Control-Allow-Origin': '*'});
+                          'Access-Control-Allow-Origin': '*'
+                    });
       res.write(data, 'binary');
       res.end();
     });
@@ -166,36 +172,6 @@ function createSensorObjects() {
 
   g_sensors['si_tsl2561_lux'] = new DataSensor('si_tsl2561_lux');
 }
-
-/**
- * 全センサの 1day の値の JSON オブジェクト配列を /media/pi/USBDATA/sensor/ に txt ファイルで保存する。
- * @example
- * storeSensorObjects();
-*/
-function storeSensorObjects() {
-  console.log("[main.js] storeSensorObjects()");
-
-  let data = new Array();
-  for(key in g_sensors) {
-    data.push({sensor: key, values: g_sensors[key].data1day});
-  }
-
-  let filename = g_apiCmn.yyyymmdd() + '_sensor.txt';
-  g_apiFileSystem.write('/media/pi/USBDATA/sensor/' +  filename, data);
-};
-
-
-/**
- * 全センサの 1day の値を AWS S3 へ upload する。
- * @example
- * uploadSensorObjects();
-*/
-function uploadSensorObjects() {
-  console.log("[main.js] uploadSensorObjects()");
-
-  let filename = g_apiCmn.yyyymmdd() + '_sensor.txt';
-  g_apiAws.upload('/media/pi/USBDATA/sensor/', filename, 'uz.sensor');
-};
 
 
 /**
@@ -343,7 +319,7 @@ function runBoardSensor(when, cmd) {
         // { "sa_acc_x":2019, "sa_acc_y":2854,"sa_acc_z":1934, "sa_gyro_g1":1783, "sa_gyro_g2":1771, "si_bme280_atmos":718.53, "si_bme280_humi":38.84, "si_bme280_temp":29.82, "si_gp2y0e03":63.00, "si_lps25h_atmos":1018.34, "si_lps25h_temp":30.42, "si_tsl2561_lux":57.00 }
         let jsonObj = (new Function( 'return ' + stdout))();
         for(key in jsonObj) {
-          g_sensors[ key ].updateData1day(jsonObj[key]);
+          g_sensors[key].updateData1day(jsonObj[key]);
         }
       }
     );
@@ -373,6 +349,37 @@ function runStoreSensor(when) {
   });
 
   return job;
+};
+
+
+/**
+ * 全センサの 1day の値の JSON オブジェクト配列を /media/pi/USBDATA/sensor/ に txt ファイルで保存する。
+ * @example
+ * storeSensorObjects();
+*/
+function storeSensorObjects() {
+  console.log("[main.js] storeSensorObjects()");
+
+  let data = new Array();
+  for(key in g_sensors) {
+    data.push({sensor: key, values: g_sensors[key].data1day});
+  }
+
+  let filename = g_apiCmn.yyyymmdd() + '_sensor.txt';
+  g_apiFileSystem.write('/media/pi/USBDATA/sensor/' +  filename, data);
+};
+
+
+/**
+ * 全センサの 1day の値を AWS S3 へ upload する。
+ * @example
+ * uploadSensorObjects();
+*/
+function uploadSensorObjects() {
+  console.log("[main.js] uploadSensorObjects()");
+
+  let filename = g_apiCmn.yyyymmdd() + '_sensor.txt';
+  g_apiAws.upload('/media/pi/USBDATA/sensor/', filename, 'uz.sensor');
 };
 
 
