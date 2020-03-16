@@ -141,7 +141,7 @@ function startSystem() {
   let job03 = runBoard(      ' 0  8      * * *', 'sudo ./board.out --relay --on' );
   let job04 = runBoard(      ' 1  8      * * *', 'sudo ./board.out --relay --off');
   let job05 = runBoardSensor(' 0  0-23/1 * * *', 'sudo ./board.out --sensors'  );
-  let job06 = runStoreSensor(' 5  23     * * *'                                );
+  let job06 = runBoardSensorStore(' 5  23     * * *'                                );
 };
 
 
@@ -334,10 +334,10 @@ function runBoardSensor(when, cmd) {
  * @param {string} when - Job を実行する時間
  * @return {object} job - node-schedule に登録した job
  * @example
- * runStoreSensor( ' 0 0-23/1 * * *');
+ * runBoardSensorStore(' 5  23     * * *');
 */
-function runStoreSensor(when) {
-  console.log("[main.js] runStoreSensor()");
+function runBoardSensorStore(when) {
+  console.log("[main.js] runBoardSensorStore()");
   console.log("[main.js] when = " + when);
 
   let job = schedule.scheduleJob(when, function() {
@@ -346,6 +346,9 @@ function runStoreSensor(when) {
     // 全センサ・オブジェクトの 1day の値の JSON オブジェクト配列を /media/pi/USBDATA/sensor/ に txt ファイルとして保存する
     storeSensorObjects();
     uploadSensorObjects();
+
+    // 全センサ・オブジェクトの 1day の値をクリアする
+    clearSensorObjects();
   });
 
   return job;
@@ -380,6 +383,20 @@ function uploadSensorObjects() {
 
   let filename = g_apiCmn.yyyymmdd() + '_sensor.txt';
   g_apiAws.upload('/media/pi/USBDATA/sensor/', filename, 'uz.sensor');
+};
+
+
+/**
+ * 全センサの 1day の値の JSON オブジェクト配列の値をクリアする
+ * @example
+ * clearSensorObjects();
+*/
+function clearSensorObjects() {
+  console.log("[main.js] clearSensorObjects()");
+
+  for(key in g_sensors) {
+    g_sensors[key].clearData1day();
+  }
 };
 
 

@@ -53,7 +53,6 @@ class DataSensor {
   */
   updateData30s(data) {
   //  console.log("[DataSensor.js] updateData30s()");
-
     this.data30s['30秒前'] = this.data30s['20秒前'];
     this.data30s['20秒前'] = this.data30s['10秒前'];
     this.data30s['10秒前'] = this.data30s['今'];
@@ -70,11 +69,24 @@ class DataSensor {
   */
   updateData1day(data) {
     console.log("[DataSensor.js] updateData30s()");
-
     let date = new Date();
     let hour = ('0' + date.getHours()).slice(-2); // 現在の時間を 2 桁表記で取得
-
     this.data1day[hour + ':00'] = data;
+  }
+
+
+  /**
+   * data1day プロパティをクリアする。
+   * @param {void}
+   * @return {void}
+   * @example
+   * clearData1day();
+  */
+  clearData1day() {
+    console.log("[DataSensor.js] clearData1day()");
+    for(key in this.data1day) {
+      this.data1day[key] = 0;
+    }
   }
 
 
