@@ -45,7 +45,6 @@
   }
   #section_screen       {padding-top:30px;/*height:700px*/;color: #fff; background-color: #B0BEC5;}
   #section_sensor_now   {padding-top:30px;/*height:200px;*/color: #fff; background-color: #80CBC4;}
-  #section_sensor_today {padding-top:30px;/*height:100px;*/color: #fff; background-color: #4DB6AC;}
   #section_sensor_10sec {padding-top:30px;/*height:300px;*/color: #fff; background-color: #26C6DA;}
   #section_sensor_30sec {padding-top:30px;/*height:600px;*/color: #fff; background-color: #03A9F4;}
   #section_sensor_daily {padding-top:30px;/*height:600px;*/color: #fff; background-color: #1E88E5;}
@@ -69,7 +68,6 @@
         <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Sensor<span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="#section_sensor_now">Sensor Now</a></li>
-            <li><a href="#section_sensor_today">Sensor Today</a></li>
             <li><a href="#section_sensor_10sec">Sensor 10sec</a></li>
             <li><a href="#section_sensor_30sec">Sensor 30sec</a></li>
             <li><a href="#section_sensor_daily">Sensor Daily</a></li>
@@ -88,7 +86,7 @@
   <h1>Screen</h1>
   <div class="container">
     <div class="row">
-      <div class="col-sm-8">
+      <div class="col-sm-6">
         <!-- Screen -->
         <center>
         <div id="cam_screen0">
@@ -97,13 +95,13 @@
         </center>
       </div>
 
-      <div class="col-sm-4">
+      <div class="col-sm-6">
         <div class="row">
           <div class="col-sm-12">
             <div class="well" style="background:rgba(0,0,0,0.2);">
               <div class="row">
                 <div class="col-sm-12">
-                  <button type="button" class="btn btn-default btn-sm" onclick="sendSetCmd( 'raspistill -rot 90 -o ./app/capture.jpg' );">Capture</button>
+                  <button type="button" class="btn btn-default btn-sm" onclick="sendSetCmdReload( 'raspistill -rot 90 -o ./app/capture.jpg' );">Capture</button>
                   <button type="button" class="btn btn-default btn-sm" onclick="reloadImg();">Reload</button>
                 </div>
               </div>
@@ -160,9 +158,18 @@
         <div class="row">
           <div class="col-sm-12">
             <div class="well" style="background:rgba(0,0,0,0.2);">
-              Light　　
+              ・Light　　
               <button type="button" class="btn btn-default btn-sm" onclick="sendSetCmd( 'sudo ./board.out --relay --on' );">ON</button>　　　　
               <button type="button" class="btn btn-default btn-sm" onclick="sendSetCmd( 'sudo ./board.out --relay --off' );">OFF</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="well" style="background:rgba(0,0,0,0.2);">
+              ・今日の 1 時間ごとの各センサ値を保存　　
+              <button type="button" class="btn btn-default btn-sm" onclick="sendStore();">保存</button>
             </div>
           </div>
         </div>
@@ -212,18 +219,6 @@
   <button type="button" class="btn btn-default btn-sm" onclick="sendGetCmd('sudo ./board.out --si_tsl2561  --lux');">照度 [ルクス]</button>
 
   <h3>現在値：<span id="val_sensor">--</span></h3>
-</section>
-<br/>
-</div>
-
-
-<!-- Sensor today -->
-<div id="section_sensor_today" class="container-fluid">
-<section>
-  <h1>Sensor Today</h1>
-  <p>今日、保存している 1 時間ごとの各センサ値を保存します。</p>
-
-  <button type="button" class="btn btn-default btn-lg" onclick="sendStore();">保存</button>
 </section>
 <br/>
 </div>

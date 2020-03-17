@@ -410,22 +410,6 @@ function sendGetCmdSensorOneDay() {
 
 
 /**
- * Image をリロードする
- * @param {string} cmd - コマンドの文字列
- * @return {void}
- * @example
- * sendSetCmd('sudo ./board.out --relay on');
-*/
-function reloadImg() {
-  console.log("[app.js] reloadImg()");
-  let id = document.getElementById("val_image").src;
-  console.log("[app.js] id = " + id);
-
-  location.reload();
-}
-
-
-/**
  * Set コマンドを送る。
  * @param {string} cmd - コマンドの文字列
  * @return {void}
@@ -438,6 +422,43 @@ function sendSetCmd(cmd) {
 
   console.log("[app.js] server.emit(" + 'C_to_S_SET' + ")");
   server.emit('C_to_S_SET', cmd);
+}
+
+
+/**
+ * Set コマンドを送り、画面をリロードする。
+ * @param {string} cmd - コマンドの文字列
+ * @return {void}
+ * @example
+ * sendSetCmdReload('raspistill -rot 90 -o ./app/capture.jpg');
+*/
+function sendSetCmdReload(cmd) {
+  console.log("[app.js] sendSetCmdReload()");
+  console.log("[app.js] cmd = " + cmd);
+
+  console.log("[app.js] server.emit(" + 'C_to_S_SET' + ")");
+  server.emit('C_to_S_SET', cmd);
+
+  setTimeout(function(){
+    reloadImg();
+  }, 8000);
+}
+
+
+/**
+ * Image をリロードする
+ * @param {string} cmd - コマンドの文字列
+ * @return {void}
+ * @example
+ * reloadImg();
+*/
+function reloadImg() {
+  console.log("[app.js] reloadImg()");
+  let id = document.getElementById("val_image").src;
+  console.log("[app.js] id = " + id);
+
+  location.reload();
+//  id = id + '?' + new Date().getTime();
 }
 
 
