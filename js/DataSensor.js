@@ -46,32 +46,32 @@ class DataSensor {
 
   /**
    * data30s プロパティを更新する。
-   * @param {number} data - 現在のセンサ値
+   * @param {number} value - 現在のセンサ値
    * @return {void}
    * @example
    * updateData30s( 28.4 );
   */
-  updateData30s(data) {
+  updateData30s(value) {
   //  console.log("[DataSensor.js] updateData30s()");
     this.data30s['30秒前'] = this.data30s['20秒前'];
     this.data30s['20秒前'] = this.data30s['10秒前'];
     this.data30s['10秒前'] = this.data30s['今'];
-    this.data30s['今'    ] = data;
+    this.data30s['今'    ] = value;
   }
 
 
   /**
    * data1day プロパティを更新する。
-   * @param {number} data - 現在のセンサ値
+   * @param {number} value - 現在のセンサ値
    * @return {void}
    * @example
-   * updateData1day('15:00', 28.4);
+   * updateData1day(28.4);
   */
-  updateData1day(data) {
+  updateData1day(value) {
     console.log("[DataSensor.js] updateData30s()");
     let date = new Date();
     let hour = ('0' + date.getHours()).slice(-2); // 現在の時間を 2 桁表記で取得
-    this.data1day[hour + ':00'] = data;
+    this.data1day[hour + ':00'] = value;
   }
 
 
@@ -84,8 +84,25 @@ class DataSensor {
   */
   clearData1day() {
     console.log("[DataSensor.js] clearData1day()");
-    for(key in this.data1day) {
+    for(let key in this.data1day) {
       this.data1day[key] = 0;
+    }
+  }
+
+
+  /**
+   * data1day プロパティのすべてに値をセットする。
+   * @param {object} jsonObj - すべての時間のデータ
+   * @return {void}
+   * @example
+   * setData1day();
+  */
+  setData1day(jsonObj) {
+    console.log("[DataSensor.js] setData1day()");
+    console.log("[ApiFileSystem.js] jsonObj = " + JSON.stringify(jsonObj));
+
+    for(let key in jsonObj) {
+      this.data1day[key] = jsonObj[key];
     }
   }
 

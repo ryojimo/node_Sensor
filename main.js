@@ -363,12 +363,27 @@ function runBoardSensorStore(when) {
 function storeSensorObjects() {
   console.log("[main.js] storeSensorObjects()");
 
+  let filename = g_apiCmn.yyyymmdd() + '_sensor.txt';
+
+  // 既にファイルが存在するかを確認する
+  let jsonObj = g_apiFileSystem.read('/media/pi/USBDATA/sensor/' +  filename);
+
+  // ファイルが存在する場合は g_sensors を更新する
+  if(jsonObj != null) {
+    // g_sensors を更新する
+    for(let i=0; i<jsonObj.length; i++) {
+      let name = jsonObj[i].sensor;
+      let value = jsonObj[i].values;
+      g_sensors[name].setData1day(value);
+    }
+  }
+
+  // ファイルに書き込む
   let data = new Array();
   for(key in g_sensors) {
     data.push({sensor: key, values: g_sensors[key].data1day});
   }
 
-  let filename = g_apiCmn.yyyymmdd() + '_sensor.txt';
   g_apiFileSystem.write('/media/pi/USBDATA/sensor/' +  filename, data);
 };
 
