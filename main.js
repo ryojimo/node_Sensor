@@ -196,7 +196,7 @@ function getSensorData30s() {
 
     // 各センサ・オブジェクトの data30s を更新する
     for(key in jsonObj) {
-      g_sensors[key].updateData30s(jsonObj[key]);
+      g_sensors[key].setData30s(jsonObj[key]);
     }
 
     // 全センサの 30s 間の値の JSON オブジェクト配列を作成する
@@ -318,8 +318,12 @@ function runBoardSensor(when, cmd) {
         // stdout の文字列は以下のような感じ
         // { "sa_acc_x":2019, "sa_acc_y":2854,"sa_acc_z":1934, "sa_gyro_g1":1783, "sa_gyro_g2":1771, "si_bme280_atmos":718.53, "si_bme280_humi":38.84, "si_bme280_temp":29.82, "si_gp2y0e03":63.00, "si_lps25h_atmos":1018.34, "si_lps25h_temp":30.42, "si_tsl2561_lux":57.00 }
         let jsonObj = (new Function( 'return ' + stdout))();
+        let date = new Date();
+        let hour = ('0' + date.getHours()).slice(-2); // 現在の時間を 2 桁表記で取得
+        hour = hour + ':00';
+
         for(key in jsonObj) {
-          g_sensors[key].updateData1day(jsonObj[key]);
+          g_sensors[key].setData1day(hour, jsonObj[key]);
         }
       }
     );
@@ -364,6 +368,9 @@ function storeSensorObjects() {
   console.log("[main.js] storeSensorObjects()");
 
   let filename = g_apiCmn.yyyymmdd() + '_sensor.txt';
+  let date = new Date();
+  let hour = ('0' + date.getHours()).slice(-2); // 現在の時刻の「  時  」を 2 桁表記で取得
+  hour = (hour - 1) + ':00';                    // 現在の時刻の 1 h 前の値をセットする
 
   // 既にファイルが存在するかを確認する
   let jsonObj = g_apiFileSystem.read('/media/pi/USBDATA/sensor/' +  filename);
@@ -374,7 +381,9 @@ function storeSensorObjects() {
     for(let i=0; i<jsonObj.length; i++) {
       let name = jsonObj[i].sensor;
       let value = jsonObj[i].values;
-      g_sensors[name].setData1day(value);
+
+      // 過去の時刻の情報を上書きする
+      g_sensors[name].updateData1day(hour, value);
     }
   }
 
@@ -440,7 +449,7 @@ io.sockets.on('connection', function(socket) {
 
   socket.on('C_to_S_GET', function(data) {
     console.log("[main.js] " + 'C_to_S_GET');
-    console.log("[main.js] data = " + data);
+    console.log("[main.js] data = " + data);    // 例) data = sudo ./board.out --si_bme280   --temp
 
     let exec = require('child_process').exec;
     let ret  = exec(data, function(err, stdout, stderr) {
@@ -450,7 +459,36 @@ io.sockets.on('connection', function(socket) {
         console.log("[main.js] " + err);
       }
 
-      io.sockets.emit('S_to_C_DATA', {value:stdout});
+      // センサ値を取り出して value 配列にセットする
+      // センサ値は value[0] に格納されている
+      let value = stdout.split(/\s+/);    // 空白文字で分割する
+      console.log("[main.js] value[0] = " + value[0]);
+
+      io.sockets.emit('S_to_C_DATA', {value:Number(value[0])});
+
+      // 対象のセンサ名を取り出して key にセットする
+      let key;
+      let cmd = data.split(/\s+/);              // 空白文字で分割する
+      let sensor_name     = cmd[2].substr(2);   // '--si_bme280' の先頭 2 文字 (= '--' 部分 ) を除いて 'si_bme280' を取り出す
+      let sensor_name_sub = cmd[3].substr(2);   // '--temp'      の先頭 2 文字 (= '--' 部分 ) を除いて 'temp'      を取り出す
+      console.log("[main.js] sensor_name     = " + sensor_name);
+      console.log("[main.js] sensor_name_sub = " + sensor_name_sub);
+
+      // sensor_name_sub が 'data' の場合は無視
+      if(sensor_name_sub == 'data') {
+        key = sensor_name;
+      } else {
+        key = sensor_name + '_' + sensor_name_sub;
+      }
+      console.log("[main.js] key = " + key);
+
+      // 時間を取得して hour にセットする
+      let date = new Date();
+      let hour = ('0' + date.getHours()).slice(-2); // 現在の時間を 2 桁表記で取得
+      hour = hour + ':00';
+
+      // 各センサ・オブジェクトの data1day[hour] を更新する
+      g_sensors[key].setData1day(hour, Number(value[0]));
     });
   });
 

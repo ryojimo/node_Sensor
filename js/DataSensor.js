@@ -49,10 +49,10 @@ class DataSensor {
    * @param {number} value - 現在のセンサ値
    * @return {void}
    * @example
-   * updateData30s( 28.4 );
+   * setData30s(28.4);
   */
-  updateData30s(value) {
-  //  console.log("[DataSensor.js] updateData30s()");
+  setData30s(value) {
+  //  console.log("[DataSensor.js] setData30s()");
     this.data30s['30秒前'] = this.data30s['20秒前'];
     this.data30s['20秒前'] = this.data30s['10秒前'];
     this.data30s['10秒前'] = this.data30s['今'];
@@ -61,22 +61,23 @@ class DataSensor {
 
 
   /**
-   * data1day プロパティを更新する。
+   * this.data1day プロパティの hour に value をセットする。
+   * @param {string} hour - 現在の時間 ( Ex. '14:00' )
    * @param {number} value - 現在のセンサ値
    * @return {void}
    * @example
-   * updateData1day(28.4);
+   * setData1day('13:00', 28.4);
   */
-  updateData1day(value) {
-    console.log("[DataSensor.js] updateData30s()");
-    let date = new Date();
-    let hour = ('0' + date.getHours()).slice(-2); // 現在の時間を 2 桁表記で取得
-    this.data1day[hour + ':00'] = value;
+  setData1day(hour, value) {
+    console.log("[DataSensor.js] setData1day()");
+    console.log("[DataSensor.js] hour  = " + hour);
+    console.log("[DataSensor.js] value = " + value);
+    this.data1day[hour] = value;
   }
 
 
   /**
-   * data1day プロパティをクリアする。
+   * this.data1day プロパティをクリアする。
    * @param {void}
    * @return {void}
    * @example
@@ -91,18 +92,23 @@ class DataSensor {
 
 
   /**
-   * data1day プロパティのすべてに値をセットする。
-   * @param {object} jsonObj - すべての時間のデータ
+   *  this.data1day の key が hour までの値を jsonObj の値に上書きする。
+   * @param {string} hour - 時間情報 ( Ex. '14:00' )
+   * @param {object} jsonObj - すべての時間のデータ ( Ex. {'00:00': 0, '01:00': 0, …} )
    * @return {void}
    * @example
-   * setData1day();
+   * updateData1day('13:00', {});
   */
-  setData1day(jsonObj) {
-    console.log("[DataSensor.js] setData1day()");
-    console.log("[ApiFileSystem.js] jsonObj = " + JSON.stringify(jsonObj));
+  updateData1day(hour, jsonObj) {
+    console.log("[DataSensor.js] updateData1day()");
+    console.log("[DataSensor.js] hour    = " + hour);
+    console.log("[DataSensor.js] jsonObj = " + JSON.stringify(jsonObj));
 
     for(let key in jsonObj) {
       this.data1day[key] = jsonObj[key];
+      if(key == hour) {
+        break;
+      }
     }
   }
 
