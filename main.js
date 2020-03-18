@@ -368,9 +368,6 @@ function storeSensorObjects() {
   console.log("[main.js] storeSensorObjects()");
 
   let filename = g_apiCmn.yyyymmdd() + '_sensor.txt';
-  let date = new Date();
-  let hour = ('0' + date.getHours()).slice(-2); // 現在の時刻の「  時  」を 2 桁表記で取得
-  hour = (hour - 1) + ':00';                    // 現在の時刻の 1 h 前の値をセットする
 
   // 既にファイルが存在するかを確認する
   let jsonObj = g_apiFileSystem.read('/media/pi/USBDATA/sensor/' +  filename);
@@ -383,7 +380,7 @@ function storeSensorObjects() {
       let value = jsonObj[i].values;
 
       // 過去の時刻の情報を上書きする
-      g_sensors[name].updateData1day(hour, value);
+      g_sensors[name].updateData1day(value);
     }
   }
 

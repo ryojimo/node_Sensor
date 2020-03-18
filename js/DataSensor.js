@@ -92,22 +92,19 @@ class DataSensor {
 
 
   /**
-   *  this.data1day の key が hour までの値を jsonObj の値に上書きする。
-   * @param {string} hour - 時間情報 ( Ex. '14:00' )
+   *  this.data1day の値が 0 の場合は jsonObj の値に上書きする。
    * @param {object} jsonObj - すべての時間のデータ ( Ex. {'00:00': 0, '01:00': 0, …} )
    * @return {void}
    * @example
-   * updateData1day('13:00', {});
+   * updateData1day({});
   */
-  updateData1day(hour, jsonObj) {
+  updateData1day(jsonObj) {
     console.log("[DataSensor.js] updateData1day()");
-    console.log("[DataSensor.js] hour    = " + hour);
     console.log("[DataSensor.js] jsonObj = " + JSON.stringify(jsonObj));
 
     for(let key in jsonObj) {
-      this.data1day[key] = jsonObj[key];
-      if(key == hour) {
-        break;
+      if(this.data1day[key] == 0) {
+        this.data1day[key] = jsonObj[key];
       }
     }
   }
