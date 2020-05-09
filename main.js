@@ -112,10 +112,15 @@ let io = socketio.listen(server);
 //-----------------------------------------------------------------------------
 // 起動の処理関数
 //-----------------------------------------------------------------------------
-let g_path = '/home/pi/workspace/';
-//let g_path = '/home/ec2-user/workspace/';
+let g_path_top       = '/home/pi/workspace/node_Sensor/';
+let g_path_storage   = '/media/pi/USBDATA/sensor/';
+//let g_path_top     = '/home/ec2-user/workspace/node_Sensor/';
+//let g_path_storage = '/home/ec2-user/workspace/node_Sensor/';
+let g_aws_key        = './data/aws_rootkey_bt.json';
+let g_aws_region     = 'ap-northeast-1';
+let g_aws_s3_sensor  = 'uz.sensor.2020';
 
-let g_apiAws        = new ApiAws();
+let g_apiAws        = new ApiAws(g_aws_key, g_aws_region);
 let g_apiCmn        = new ApiCmn();
 let g_apiDocomo     = new ApiDocomo();
 let g_apiFileSystem = new ApiFileSystem();
@@ -350,7 +355,7 @@ function runBoardSensorStore(when) {
   let job = schedule.scheduleJob(when, function() {
     console.log("[main.js] node-schedule で fs.writeFileSync() が実行されました");
 
-    // 全センサ・オブジェクトの 1day の値の JSON オブジェクト配列を /media/pi/USBDATA/sensor/ に txt ファイルとして保存する
+    // 全センサ・オブジェクトの 1day の値の JSON オブジェクト配列を g_path_storage ディレクトリに txt ファイルとして保存する
     storeSensorObjects();
     uploadSensorObjects();
 
@@ -363,7 +368,7 @@ function runBoardSensorStore(when) {
 
 
 /**
- * 全センサの 1day の値の JSON オブジェクト配列を /media/pi/USBDATA/sensor/ に txt ファイルで保存する。
+ * 全センサの 1day の値の JSON オブジェクト配列を g_path_storage ディレクトリに txt ファイルで保存する。
  * @example
  * storeSensorObjects();
 */
@@ -373,7 +378,7 @@ function storeSensorObjects() {
   let filename = g_apiCmn.yyyymmdd() + '_sensor.txt';
 
   // 既にファイルが存在するかを確認する
-  let jsonObj = g_apiFileSystem.read('/media/pi/USBDATA/sensor/' +  filename);
+  let jsonObj = g_apiFileSystem.read(g_path_storage +  filename);
 
   // ファイルが存在する場合は g_sensors を更新する
   if(jsonObj != null) {
@@ -393,7 +398,7 @@ function storeSensorObjects() {
     data.push({sensor: key, values: g_sensors[key].data1day});
   }
 
-  g_apiFileSystem.write('/media/pi/USBDATA/sensor/' +  filename, data);
+  g_apiFileSystem.write(g_path_storage +  filename, data);
 };
 
 
@@ -406,7 +411,7 @@ function uploadSensorObjects() {
   console.log("[main.js] uploadSensorObjects()");
 
   let filename = g_apiCmn.yyyymmdd() + '_sensor.txt';
-  g_apiAws.upload('/media/pi/USBDATA/sensor/', filename, 'uz.sensor');
+  g_apiAws.upload(g_path_storage, filename, g_aws_s3_sensor);
 };
 
 
@@ -500,9 +505,9 @@ io.sockets.on('connection', function(socket) {
 
     let ret = {};
     let filename = data.date + '_sensor.txt';
-    let jsonObj = g_apiFileSystem.read('/media/pi/USBDATA/sensor/' +  filename);
-//    g_apiAws.download(g_path + 'node_Sensor/data/', filename, 'uz.sensor');
-//    let jsonObj = g_apiFileSystem.read(g_path + 'node_Sensor/data/' +  filename);
+    let jsonObj = g_apiFileSystem.read(g_path_storage +  filename);
+//    g_apiAws.download(g_path_top + 'data/', filename, g_aws_s3_sensor);
+//    let jsonObj = g_apiFileSystem.read(g_path_top + 'data/' +  filename);
 
     if(jsonObj == null) {
       io.sockets.emit('S_to_C_SENSOR_DAILY', {ret:false, value:null});
@@ -535,7 +540,7 @@ io.sockets.on('connection', function(socket) {
 
   socket.on('C_to_S_STORE', function() {
     console.log("[main.js] " + 'C_to_S_STORE');
-    // 全センサ・オブジェクトの 1day の値の JSON オブジェクト配列を /media/pi/USBDATA/sensor/ に txt ファイルとして保存する
+    // 全センサ・オブジェクトの 1day の値の JSON オブジェクト配列を g_path_storage ディレクトリに txt ファイルとして保存する
     storeSensorObjects();
   });
 
