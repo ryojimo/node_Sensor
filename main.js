@@ -112,6 +112,9 @@ let io = socketio.listen(server);
 //-----------------------------------------------------------------------------
 // 起動の処理関数
 //-----------------------------------------------------------------------------
+let g_path = '/home/pi/workspace/';
+//let g_path = '/home/ec2-user/workspace/';
+
 let g_apiAws        = new ApiAws();
 let g_apiCmn        = new ApiCmn();
 let g_apiDocomo     = new ApiDocomo();
@@ -498,8 +501,8 @@ io.sockets.on('connection', function(socket) {
     let ret = {};
     let filename = data.date + '_sensor.txt';
     let jsonObj = g_apiFileSystem.read('/media/pi/USBDATA/sensor/' +  filename);
-//    g_apiAws.download('/home/pi/workspace/node_Sensor/data/', filename, 'uz.sensor');
-//    let jsonObj = g_apiFileSystem.read('/home/pi/workspace/node_Sensor/data/' +  filename);
+//    g_apiAws.download(g_path + 'node_Sensor/data/', filename, 'uz.sensor');
+//    let jsonObj = g_apiFileSystem.read(g_path + 'node_Sensor/data/' +  filename);
 
     if(jsonObj == null) {
       io.sockets.emit('S_to_C_SENSOR_DAILY', {ret:false, value:null});
