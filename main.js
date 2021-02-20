@@ -6,15 +6,15 @@
 
 // 必要なライブラリをロード
 let http     = require('http');
-let socketio = require('socket.io');
+let socketio = require('socket.io')();
 let fs       = require('fs');
 let colors   = require('colors');
 let schedule = require('node-schedule');
 require('date-utils');
 
-const ApiAws        = require('./js/ApiAws');
+//const ApiAws        = require('./js/ApiAws');
 const ApiCmn        = require('./js/ApiCmn');
-const ApiDocomo     = require('./js/ApiDocomo');
+//const ApiDocomo     = require('./js/ApiDocomo');
 const ApiFileSystem = require('./js/ApiFileSystem');
 const DataSensor    = require('./js/DataSensor');
 
@@ -113,16 +113,17 @@ let io = socketio.listen(server);
 // 起動の処理関数
 //-----------------------------------------------------------------------------
 let g_path_top       = '/home/pi/workspace/node_Sensor/';
-let g_path_storage   = '/media/pi/USBDATA/sensor/';
+let g_path_storage   = '/home/pi/workspace/node_Sensor/data/';
 //let g_path_top     = '/home/ec2-user/workspace/node_Sensor/';
 //let g_path_storage = '/home/ec2-user/workspace/node_Sensor/';
-let g_aws_key        = './data/aws_rootkey_bt.json';
-let g_aws_region     = 'ap-northeast-1';
-let g_aws_s3_sensor  = 'uz.sensor.2020';
+//let g_path_storage = '/media/pi/USBDATA/sensor/';
+//let g_aws_key        = './data/aws_rootkey_bt.json';
+//let g_aws_region     = 'ap-northeast-1';
+//let g_aws_s3_sensor  = 'uz.sensor.2020';
 
-let g_apiAws        = new ApiAws(g_aws_key, g_aws_region);
+//let g_apiAws        = new ApiAws(g_aws_key, g_aws_region);
 let g_apiCmn        = new ApiCmn();
-let g_apiDocomo     = new ApiDocomo();
+//let g_apiDocomo     = new ApiDocomo();
 let g_apiFileSystem = new ApiFileSystem();
 let g_sensors       = new Array();
 
@@ -261,10 +262,10 @@ function talkAlert() {
   console.log("[main.js] talkAlert()");
   let cmnt = '10秒以上の揺れを検出しました';
 
-  g_apiDocomo.update('nozomi', 'hello');
-  g_apiDocomo.talk(cmnt, function() {
-    io.sockets.emit('S_to_C_TALK_CB', {value:true})
-  });
+//  g_apiDocomo.update('nozomi', 'hello');
+//  g_apiDocomo.talk(cmnt, function() {
+//    io.sockets.emit('S_to_C_TALK_CB', {value:true})
+//  });
 }
 
 
@@ -375,7 +376,7 @@ function runBoardSensorStore(when) {
 function storeSensorObjects() {
   console.log("[main.js] storeSensorObjects()");
 
-  let filename = g_apiCmn.yyyymmdd() + '_sensor.txt';
+  let filename = g_apiCmn.yyyymmdd() + '_sensor.json';
 
   // 既にファイルが存在するかを確認する
   let jsonObj = g_apiFileSystem.read(g_path_storage +  filename);
@@ -410,8 +411,8 @@ function storeSensorObjects() {
 function uploadSensorObjects() {
   console.log("[main.js] uploadSensorObjects()");
 
-  let filename = g_apiCmn.yyyymmdd() + '_sensor.txt';
-  g_apiAws.upload(g_path_storage, filename, g_aws_s3_sensor);
+  let filename = g_apiCmn.yyyymmdd() + '_sensor.json';
+//  g_apiAws.upload(g_path_storage, filename, g_aws_s3_sensor);
 };
 
 
@@ -504,7 +505,7 @@ io.sockets.on('connection', function(socket) {
     console.log("[main.js] data.sensor = " + data.sensor);
 
     let ret = {};
-    let filename = data.date + '_sensor.txt';
+    let filename = data.date + '_sensor.json';
     let jsonObj = g_apiFileSystem.read(g_path_storage +  filename);
 //    g_apiAws.download(g_path_top + 'data/', filename, g_aws_s3_sensor);
 //    let jsonObj = g_apiFileSystem.read(g_path_top + 'data/' +  filename);

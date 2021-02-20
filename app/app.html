@@ -90,7 +90,8 @@
         <!-- Screen -->
         <center>
         <div id="cam_screen0">
-          <img id="val_image" class="img-thumbnail" alt="" width="80%" src="capture.jpg">
+          <img id="val_image" class="img-thumbnail" alt="" width="100%" src="http://192.168.91.135:8080/?action=stream">
+          <!-- <img id="val_image" class="img-thumbnail" alt="" width="80%" src="capture.jpg"> -->
         </div>
         </center>
       </div>
@@ -120,7 +121,8 @@
                   ・サーボモータ・コントロール：
                   <!-- SERVO Motor Control bar -->
                   <span id="val_servo00">2.8</span> %
-                  <input class="slider-width" type="range" width="40%" name="num" min="2.8" max="12.5" step="0.1" value="0" onchange="sendSetCmdServo( 0, 'sudo ./board.out --i2cpca9685 --ch=0 --rate=' + this.value )" id="val_range00">
+                  <input class="slider-width" type="range" width="40%" name="num" min="20" max="45" step="1" value="0" onchange="sendSetCmdServo( 0, 'sudo ./board.out --motorsv --rate=' + this.value )" id="val_range00">
+                  <!-- <input class="slider-width" type="range" width="40%" name="num" min="2.8" max="12.5" step="0.1" value="0" onchange="sendSetCmdServo( 0, 'sudo ./board.out --i2cpca9685 --ch=0 --rate=' + this.value )" id="val_range00"> -->
                   <!-- <input type="submit" class="button" onclick="sendSetCmdServo( 'sudo ./board.out --motorsv auto' );" value="AUTO" /> -->
                 </div>
               </div>
