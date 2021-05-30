@@ -4,8 +4,8 @@
  * @version      0.0.1
 */
 //const SV_IP   = 'sensor.rp.lfx.sony.co.jp';   // node.js server の IP アドレス
-//const SV_IP   = '43.2.100.152';               // node.js server の IP アドレス
-const SV_IP   = '192.168.91.135';                // node.js server の IP アドレス
+const SV_IP   = '43.2.100.152';               // node.js server の IP アドレス
+//const SV_IP   = '192.168.91.135';                // node.js server の IP アドレス
 const SV_PORT = 3000;                           // node.js server の port 番号
 
 let server = io.connect('http://' + SV_IP + ':' + SV_PORT); //ローカル
@@ -399,8 +399,8 @@ function sendGetCmdSensorOneDay() {
   console.log("[app.js] date   = " + date);
   console.log("[app.js] sensor = " + sensor);
 
-  if(date < '2018-08-01') {
-    alert('2018/08/01 以降を指定してください。');
+  if(date < '2021-02-25') {
+    alert('2021/02/25 以降を指定してください。');
   } else {
     let obj = {date:date, sensor:sensor};
     console.log("[app.js] server.emit(" + 'C_to_S_GET_SENSOR_DAILY' + ")");
