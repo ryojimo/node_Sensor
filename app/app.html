@@ -45,7 +45,6 @@
   }
   #section_screen       {padding-top:30px;/*height:700px*/;color: #fff; background-color: #B0BEC5;}
   #section_sensor_now   {padding-top:30px;/*height:200px;*/color: #fff; background-color: #80CBC4;}
-  #section_sensor_10sec {padding-top:30px;/*height:300px;*/color: #fff; background-color: #26C6DA;}
   #section_sensor_30sec {padding-top:30px;/*height:600px;*/color: #fff; background-color: #03A9F4;}
   #section_sensor_daily {padding-top:30px;/*height:600px;*/color: #fff; background-color: #1E88E5;}
   </style>
@@ -68,7 +67,6 @@
         <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Sensor<span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="#section_sensor_now">Sensor Now</a></li>
-            <li><a href="#section_sensor_10sec">Sensor 10sec</a></li>
             <li><a href="#section_sensor_30sec">Sensor 30sec</a></li>
             <li><a href="#section_sensor_daily">Sensor Daily</a></li>
           </ul>
@@ -90,9 +88,9 @@
         <!-- Screen -->
         <center>
         <div id="cam_screen0">
-          <img id="val_image" class="img-thumbnail" alt="" width="100%" src="http://43.2.100.152:8080/?action=stream">
+          <!-- <img id="val_image" class="img-thumbnail" alt="" width="100%" src="http://43.2.100.152:8080/?action=stream"> -->
           <!-- <img id="val_image" class="img-thumbnail" alt="" width="100%" src="http://sensor.rp.lfx.sony.co.jp:8080/?action=stream"> -->
-          <!-- <img id="val_image" class="img-thumbnail" alt="" width="100%" src="http://192.168.91.135:8080/?action=stream"> -->
+          <img id="val_image" class="img-thumbnail" alt="" width="100%" src="http://192.168.1.138:8080/?action=stream">
           <!-- <img id="val_image" class="img-thumbnail" alt="" width="80%" src="capture.jpg"> -->
         </div>
         </center>
@@ -102,12 +100,6 @@
         <div class="row">
           <div class="col-sm-12">
             <div class="well" style="background:rgba(0,0,0,0.2);">
-              <div class="row">
-                <div class="col-sm-12">
-                  <!-- <button type="button" class="btn btn-default btn-sm" onclick="sendSetCmdReload( 'raspistill -rot 90 -o ./app/capture.jpg' );">Capture</button> -->
-                  <!-- <button type="button" class="btn btn-default btn-sm" onclick="reloadImg();">Reload</button> -->
-                </div>
-              </div>
 
               <div class="row">
                 <div class="col-sm-12">
@@ -201,18 +193,6 @@
 </div>
 
 
-<!-- Sensor 10sec -->
-<div id="section_sensor_10sec" class="container-fluid">
-<section>
-  <h1>Sensor 10sec</h1>
-  <p>10sec ごとのセンサ値を表示します。</p>
-
-  <div id="tabulator-table-10sec"></div>
-</section>
-<br/>
-</div>
-
-
 <!-- Sensor 30sec -->
 <div id="section_sensor_30sec" class="container-fluid">
 <section>
@@ -223,9 +203,9 @@
       <div class="col-sm-12">
         <div class="well" style="background:rgba(0,0,0,0.2);">
           <div class="row">
-            <div class="col-sm-4"><div class="chart" id="cid_sa_acc_x"></div></div>
-            <div class="col-sm-4"><div class="chart" id="cid_sa_acc_y"></div></div>
-            <div class="col-sm-4"><div class="chart" id="cid_sa_acc_z"></div></div>
+            <div class="col-sm-4"><div class="chart" id="sa_acc_x"></div></div>
+            <div class="col-sm-4"><div class="chart" id="sa_acc_y"></div></div>
+            <div class="col-sm-4"><div class="chart" id="sa_acc_z"></div></div>
           </div>
         </div>
       </div>
@@ -234,8 +214,8 @@
       <div class="col-sm-8">
         <div class="well" style="background:rgba(0,0,0,0.2);">
           <div class="row">
-            <div class="col-sm-6"><div class="chart" id="cid_sa_gyro_g1"></div></div>
-            <div class="col-sm-6"><div class="chart" id="cid_sa_gyro_g2"></div></div>
+            <div class="col-sm-6"><div class="chart" id="sa_gyro_g1"></div></div>
+            <div class="col-sm-6"><div class="chart" id="sa_gyro_g2"></div></div>
           </div>
         </div>
       </div>
@@ -244,9 +224,9 @@
       <div class="col-sm-12">
         <div class="well" style="background:rgba(0,0,0,0.2);">
           <div class="row">
-            <div class="col-sm-4"><div class="chart" id="cid_si_bme280_atmos"></div></div>
-            <div class="col-sm-4"><div class="chart" id="cid_si_bme280_humi"></div></div>
-            <div class="col-sm-4"><div class="chart" id="cid_si_bme280_temp"></div></div>
+            <div class="col-sm-4"><div class="chart" id="si_bme280_atmos"></div></div>
+            <div class="col-sm-4"><div class="chart" id="si_bme280_humi"></div></div>
+            <div class="col-sm-4"><div class="chart" id="si_bme280_temp"></div></div>
           </div>
         </div>
       </div>
@@ -255,22 +235,22 @@
       <div class="col-sm-3">
         <div class="well" style="background:rgba(0,0,0,0.2);">
           <div class="row">
-            <div class="col-sm-3"><div class="chart" id="cid_si_gp2y0e03"></div></div>
+            <div class="col-sm-3"><div class="chart" id="si_gp2y0e03"></div></div>
           </div>
         </div>
       </div>
       <div class="col-sm-6">
         <div class="well" style="background:rgba(0,0,0,0.2);">
           <div class="row">
-            <div class="col-sm-6"><div class="chart" id="cid_si_lps25h_atmos"></div></div>
-            <div class="col-sm-6"><div class="chart" id="cid_si_lps25h_temp"></div></div>
+            <div class="col-sm-6"><div class="chart" id="si_lps25h_atmos"></div></div>
+            <div class="col-sm-6"><div class="chart" id="si_lps25h_temp"></div></div>
           </div>
         </div>
       </div>
       <div class="col-sm-3">
         <div class="well" style="background:rgba(0,0,0,0.2);">
           <div class="row">
-            <div class="col-sm-3"><div class="chart" id="cid_si_tsl2561_lux"></div></div>
+            <div class="col-sm-3"><div class="chart" id="si_tsl2561_lux"></div></div>
           </div>
         </div>
       </div>
@@ -302,7 +282,7 @@
     <option value="si_lps25h_temp">温度(LPS25H)</option>
     <option value="si_tsl2561_lux">照度</option>
   </select>
-  <div class="chartDaily" id="cid_sensors_daily"></div>
+  <div class="chartDaily" id="sensors_daily"></div>
   <div>
     ・今日の 1 時間ごとの各センサ値を保存　　
     <button type="button" class="btn btn-default btn-sm" onclick="sendStore();">保存</button>

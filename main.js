@@ -12,9 +12,7 @@ let colors   = require('colors');
 let schedule = require('node-schedule');
 require('date-utils');
 
-//const ApiAws        = require('./js/ApiAws');
 const ApiCmn        = require('./js/ApiCmn');
-//const ApiDocomo     = require('./js/ApiDocomo');
 const ApiFileSystem = require('./js/ApiFileSystem');
 const DataSensor    = require('./js/DataSensor');
 
@@ -114,22 +112,11 @@ let io = socketio.listen(server);
 //-----------------------------------------------------------------------------
 let g_path_top       = '/home/pi/workspace/node_Sensor/';
 let g_path_storage   = '/home/pi/workspace/node_Sensor/data/';
-//let g_path_top     = '/home/ec2-user/workspace/node_Sensor/';
-//let g_path_storage = '/home/ec2-user/workspace/node_Sensor/';
-//let g_path_storage = '/media/pi/USBDATA/sensor/';
-//let g_aws_key        = './data/aws_rootkey_bt.json';
-//let g_aws_region     = 'ap-northeast-1';
-//let g_aws_s3_sensor  = 'uz.sensor.2020';
-
-//let g_apiAws        = new ApiAws(g_aws_key, g_aws_region);
 let g_apiCmn        = new ApiCmn();
-//let g_apiDocomo     = new ApiDocomo();
 let g_apiFileSystem = new ApiFileSystem();
 let g_sensors       = new Array();
 
-
 startSystem();
-
 
 /**
  * システムを開始する。
@@ -141,46 +128,23 @@ startSystem();
 function startSystem() {
   console.log("[main.js] startSystem()");
 
-  createSensorObjects();
-
-  let timerFlg  = setInterval(function(){getSensorData30s();}, 10000);
-
-  let job01 = runBoard(      '30  7      * * *', 'sudo ./board.out --relay --on' );
-  let job02 = runBoard(      '31  7      * * *', 'sudo ./board.out --relay --off');
-  let job03 = runBoard(      ' 0  8      * * *', 'sudo ./board.out --relay --on' );
-  let job04 = runBoard(      ' 1  8      * * *', 'sudo ./board.out --relay --off');
-  let job05 = runBoardSensor(' 0  0-23/1 * * *', 'sudo ./board.out --sensors'  );
-  let job06 = runBoardSensorStore(' 5  23     * * *'                                );
-};
-
-
-/**
- * 全センサのオブジェクトを生成して、オブジェクト配列 g_sensors[] へセットする。
- * @param {void}
- * @return {void}
- * @example
- * createSensorObjects();
-*/
-function createSensorObjects() {
-  console.log("[main.js] createSensorObjects()");
   g_sensors['sa_acc_x'] = new DataSensor('sa_acc_x');
   g_sensors['sa_acc_y'] = new DataSensor('sa_acc_y');
   g_sensors['sa_acc_z'] = new DataSensor('sa_acc_z');
-
   g_sensors['sa_gyro_g1'] = new DataSensor('sa_gyro_g1');
   g_sensors['sa_gyro_g2'] = new DataSensor('sa_gyro_g2');
-
   g_sensors['si_bme280_atmos'] = new DataSensor('si_bme280_atmos');
   g_sensors['si_bme280_humi'] = new DataSensor('si_bme280_humi');
   g_sensors['si_bme280_temp'] = new DataSensor('si_bme280_temp');
-
   g_sensors['si_gp2y0e03'] = new DataSensor('si_gp2y0e03');
-
   g_sensors['si_lps25h_atmos'] = new DataSensor('si_lps25h_atmos');
   g_sensors['si_lps25h_temp'] = new DataSensor('si_lps25h_temp');
-
   g_sensors['si_tsl2561_lux'] = new DataSensor('si_tsl2561_lux');
-}
+
+  let timerFlg  = setInterval(function(){getSensorData30s();}, 10000);
+  let job05 = runBoardSensor('      0  0-23/1 * * *', 'sudo ./board.out --sensors'  );
+  let job06 = runBoardSensorStore(' 5  23     * * *'                                );
+};
 
 
 /**
@@ -192,9 +156,8 @@ function createSensorObjects() {
 function getSensorData30s() {
   console.log("[main.js] getSensorData30s()");
 
-  let cmd = 'sudo ./board.out --sensors';
   let exec = require('child_process').exec;
-  let ret  = exec(cmd, function(err, stdout, stderr) {
+  let ret  = exec('sudo ./board.out --sensors', function(err, stdout, stderr) {
     console.log("[main.js] stdout = " + stdout);
     console.log("[main.js] stderr = " + stderr);
     if(err) {
@@ -216,88 +179,8 @@ function getSensorData30s() {
 
     // data を送る
     io.sockets.emit('S_to_C_SENSOR_30S', data);
-
-    // "10秒前" と" 今" の値に大きな差があるか？をチェックする
-    let diff = checkDiff();
-    if(diff == true) {
-      talkAlert();
-    }
   });
 }
-
-
-/**
- * 加速度センサとジャイロセンサの "10秒前" と" 今" の値に大きな差があるか？をチェックする。
- * @return {bool} ret - 大きな差があればれ true を返す
- * @example
- * checkDiff();
-*/
-function checkDiff() {
-  console.log("[main.js] checkDiff()");
-  let ret = false;
-
-  let diff_sa_acc_x   = g_sensors['sa_acc_x'  ].isLarge();
-  let diff_sa_acc_y   = g_sensors['sa_acc_y'  ].isLarge();
-  let diff_sa_acc_z   = g_sensors['sa_acc_z'  ].isLarge();
-  let diff_sa_gyro_g1 = g_sensors['sa_gyro_g1'].isLarge();
-  let diff_sa_gyro_g2 = g_sensors['sa_gyro_g2'].isLarge();
-
-  if(diff_sa_acc_x == true || diff_sa_acc_z == true || diff_sa_gyro_g1 == true || diff_sa_gyro_g2 == true) {
-    ret = true;
-  } else {
-    ret = false;
-  }
-
-  return ret;
-}
-
-
-/**
- * cmnt の内容を話す。
- * @return {void}
- * @example
- * talkAlert();
-*/
-function talkAlert() {
-  console.log("[main.js] talkAlert()");
-  let cmnt = '10秒以上の揺れを検出しました';
-
-//  g_apiDocomo.update('nozomi', 'hello');
-//  g_apiDocomo.talk(cmnt, function() {
-//    io.sockets.emit('S_to_C_TALK_CB', {value:true})
-//  });
-}
-
-
-/**
- * node-schedule の Job を登録する。
- * @param {string} when - Job を実行する時間
- * @param {string} cmd - 実行するコマンド
- * @return {object} job - node-schedule に登録した job
- * @example
- * runBoard( '30 7 * * *', 'sudo ./board.out --relay on');
-*/
-function runBoard(when, cmd) {
-  console.log("[main.js] runBoard()");
-  console.log("[main.js] when = " + when);
-  console.log("[main.js] cmd  = " + cmd);
-
-  let job = schedule.scheduleJob(when, function() {
-    console.log("[main.js] node-schedule で " + cmd + "が実行されました");
-
-    let exec = require('child_process').exec;
-    let ret  = exec(cmd, function(err, stdout, stderr) {
-        console.log("[main.js] stdout = " + stdout);
-        console.log("[main.js] stderr = " + stderr);
-        if(err) {
-          console.log("[main.js] " + err);
-        }
-      }
-    );
-  });
-
-  return job;
-};
 
 
 /**
@@ -358,10 +241,11 @@ function runBoardSensorStore(when) {
 
     // 全センサ・オブジェクトの 1day の値の JSON オブジェクト配列を g_path_storage ディレクトリに txt ファイルとして保存する
     storeSensorObjects();
-    uploadSensorObjects();
 
     // 全センサ・オブジェクトの 1day の値をクリアする
-    clearSensorObjects();
+    for(key in g_sensors) {
+      g_sensors[key].clearData1day();
+    }
   });
 
   return job;
@@ -400,33 +284,6 @@ function storeSensorObjects() {
   }
 
   g_apiFileSystem.write(g_path_storage +  filename, data);
-};
-
-
-/**
- * 全センサの 1day の値を AWS S3 へ upload する。
- * @example
- * uploadSensorObjects();
-*/
-function uploadSensorObjects() {
-  console.log("[main.js] uploadSensorObjects()");
-
-  let filename = g_apiCmn.yyyymmdd() + '_sensor.json';
-//  g_apiAws.upload(g_path_storage, filename, g_aws_s3_sensor);
-};
-
-
-/**
- * 全センサの 1day の値の JSON オブジェクト配列の値をクリアする
- * @example
- * clearSensorObjects();
-*/
-function clearSensorObjects() {
-  console.log("[main.js] clearSensorObjects()");
-
-  for(key in g_sensors) {
-    g_sensors[key].clearData1day();
-  }
 };
 
 
@@ -507,7 +364,6 @@ io.sockets.on('connection', function(socket) {
     let ret = {};
     let filename = data.date + '_sensor.json';
     let jsonObj = g_apiFileSystem.read(g_path_storage +  filename);
-//    g_apiAws.download(g_path_top + 'data/', filename, g_aws_s3_sensor);
 //    let jsonObj = g_apiFileSystem.read(g_path_top + 'data/' +  filename);
 
     if(jsonObj == null) {

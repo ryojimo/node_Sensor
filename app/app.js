@@ -4,8 +4,8 @@
  * @version      0.0.1
 */
 //const SV_IP   = 'sensor.rp.lfx.sony.co.jp';   // node.js server の IP アドレス
-const SV_IP   = '43.2.100.152';               // node.js server の IP アドレス
-//const SV_IP   = '192.168.91.135';                // node.js server の IP アドレス
+//const SV_IP   = '43.2.100.152';               // node.js server の IP アドレス
+const SV_IP   = '192.168.1.138';                // node.js server の IP アドレス
 const SV_PORT = 3000;                           // node.js server の port 番号
 
 let server = io.connect('http://' + SV_IP + ':' + SV_PORT); //ローカル
@@ -33,27 +33,8 @@ var obj_sensors_daily   = {name:'sensors_daily',   chart:null, data:null, type:'
 // ブラウザオブジェクトから受け取るイベント
 window.onload = function() {
   console.log("[app.js] window.onloaded");
-  initChartSensor30s();
-  initChartSensorDaily();
-  initTableSensorNow();
-};
 
-
-window.onunload = function() {
-  console.log("[app.js] window.onunloaded");
-};
-
-
-/**
- * 30 sec のセンサ値表示用のパラメータを初期化する。
- * @param {void}
- * @return {void}
- * @example
- * initChartSensor30s();
-*/
-function initChartSensor30s() {
-  console.log("[app.js] initChartSensor30s()");
-
+  // 30 sec のセンサ値表示用のパラメータを初期化する。
   makeChartSensor30s(obj_sa_acc_x       );
   makeChartSensor30s(obj_sa_acc_y       );
   makeChartSensor30s(obj_sa_acc_z       );
@@ -80,54 +61,15 @@ function initChartSensor30s() {
   obj_si_lps25h_atmos.chart.render();
   obj_si_lps25h_temp.chart.render();
   obj_si_tsl2561_lux.chart.render();
-  return;
-};
 
-
-/**
- * 1 day のセンサ値表示用のパラメータを初期化する。
- * @param {void}
- * @return {void}
- * @example
- * initChartSensorDaily();
-*/
-function initChartSensorDaily() {
-  console.log("[app.js] initChartSensorDaily()");
-
+  // 1 day のセンサ値表示用のパラメータを初期化する。
   makeChartSensorDaily(obj_sensors_daily);
   obj_sensors_daily.chart.render();
-  return;
 };
 
 
-/**
- * 現在のセンサ値表示用のテーブルを初期化する。
- * @param {void}
- * @return {void}
- * @example
- * initTableSensorNow();
-*/
-function initTableSensorNow() {
-  console.log("[app.js] initTableSensorNow()");
-
-  $('#tabulator-table-10sec').tabulator( {
-    layout: 'fitData',
-    tooltips: true,
-    addRowPos: 'top',
-    history: true,
-    pagination: 'local',
-    paginationSize: 15,
-    movableColumns: true,
-    initialSort: [
-      {column:'title', dir:'asc'},
-    ],
-    columns:[
-      {title:'センサ', field:'sensor', align:'left',  width:'150', sortable:'true', sorter:'string', formatter:'plaintext', editable:false,                                  },
-      {title:'値',     field:'value',  align:'right', width:'100', sortable:'true', sorter:'number', formatter:'plaintext', editable:false, cssClass:'tabulator-background', },
-      {title:'単位',   field:'unit',   align:'left',  width:'100', sortable:'true', sorter:'string', formatter:'plaintext', editable:false,                                  },
-    ],
-  });
-  return;
+window.onunload = function() {
+  console.log("[app.js] window.onunloaded");
 };
 
 
@@ -143,10 +85,7 @@ function makeChartSensor30s(obj) {
 
   let data = new Array({label:'30秒前', y:0}, {label:'20秒前', y:0}, {label:'10秒前', y:0}, {label:'今', y:0});
 
-  let domid = 'cid_' + obj.name;
-  console.log("[app.js] domid = " + domid);
-
-  let chart = new CanvasJS.Chart(domid, {
+  let chart = new CanvasJS.Chart(obj.name, {
     animationEnabled:  true,
     animationDuration: 2000,
     title: {
@@ -193,10 +132,7 @@ function makeChartSensorDaily(obj) {
                        {label:'20-00', y:0}, {label:'21-00', y:0}, {label:'22-00', y:0}, {label:'23-00', y:0}
                       );
 
-  let domid = 'cid_' + obj.name;
-  console.log("[app.js] domid = " + domid);
-
-  let chart = new CanvasJS.Chart(domid, {
+  let chart = new CanvasJS.Chart(obj.name, {
     animationEnabled:  true,
     animationDuration: 2000,
     title: {
@@ -254,9 +190,6 @@ server.on('S_to_C_SENSOR_30S', function(data) {
 
   // グラフ表示
   updateChartSensor30s(data);
-
-  // テーブル表示
-  updateTableSensorNow(data);
 });
 
 
@@ -270,13 +203,6 @@ server.on('S_to_C_SENSOR_DAILY', function(data) {
 
   // グラフ表示
   updateChartSensorDaily(data.value);
-});
-
-
-server.on('S_to_C_TALK_CB', function() {
-  console.log("[app.js] " + 'S_to_C_TALK_CB');
-//    window.alert('play  ****.wav が完了しました。\n\r');
-  recognition.start();
 });
 
 
@@ -338,32 +264,6 @@ function updateChartSensorDaily(obj) {
 }
 
 
-/**
- * 現在のセンサ値表示用のテーブルを更新する。
- * @param {object} obj - テーブルに表示するデータ
- * @return {void}
- * @example
- * updateTableSensorNow(obj);
-*/
-function updateTableSensorNow(obj) {
-  console.log("[app.js] updateTableSensorNow()");
-//  console.log("[app.js] obj = " + JSON.stringify(obj));
-
-  let data = [];
-
-  for(let i = 0; i < obj.length; i++) {
-    let name = 'obj_' + obj[i].sensor;
-    let unit = window[name].unit;
-
-    data[i] = {sensor: obj[i].sensor, unit: unit, value: obj[i].values['今']};
-  }
-
-//  console.log( "[app.js] data = " + JSON.stringify(data) );
-  $('#tabulator-table-10sec').tabulator('setData', data);
-  return;
-};
-
-
 //-----------------------------------------------------------------------------
 // ドキュメント・オブジェクトから受け取るイベント
 
@@ -422,43 +322,6 @@ function sendSetCmd(cmd) {
 
   console.log("[app.js] server.emit(" + 'C_to_S_SET' + ")");
   server.emit('C_to_S_SET', cmd);
-}
-
-
-/**
- * Set コマンドを送り、画面をリロードする。
- * @param {string} cmd - コマンドの文字列
- * @return {void}
- * @example
- * sendSetCmdReload('raspistill -rot 90 -o ./app/capture.jpg');
-*/
-function sendSetCmdReload(cmd) {
-  console.log("[app.js] sendSetCmdReload()");
-  console.log("[app.js] cmd = " + cmd);
-
-  console.log("[app.js] server.emit(" + 'C_to_S_SET' + ")");
-  server.emit('C_to_S_SET', cmd);
-
-  setTimeout(function(){
-    reloadImg();
-  }, 8000);
-}
-
-
-/**
- * Image をリロードする
- * @param {string} cmd - コマンドの文字列
- * @return {void}
- * @example
- * reloadImg();
-*/
-function reloadImg() {
-  console.log("[app.js] reloadImg()");
-  let id = document.getElementById("val_image").src;
-  console.log("[app.js] id = " + id);
-
-  location.reload();
-//  id = id + '?' + new Date().getTime();
 }
 
 
