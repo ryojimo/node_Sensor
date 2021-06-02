@@ -52,7 +52,7 @@ class DataSensor {
    * setData30s(28.4);
   */
   setData30s(value) {
-  //  console.log("[DataSensor.js] setData30s()");
+//    console.log("[DataSensor.js] setData30s()");
     this.data30s['30秒前'] = this.data30s['20秒前'];
     this.data30s['20秒前'] = this.data30s['10秒前'];
     this.data30s['10秒前'] = this.data30s['今'];
@@ -69,9 +69,9 @@ class DataSensor {
    * setData1day('13:00', 28.4);
   */
   setData1day(hour, value) {
-    console.log("[DataSensor.js] setData1day()");
-    console.log("[DataSensor.js] hour  = " + hour);
-    console.log("[DataSensor.js] value = " + value);
+//    console.log("[DataSensor.js] setData1day()");
+//    console.log("[DataSensor.js] hour  = " + hour);
+//    console.log("[DataSensor.js] value = " + value);
     this.data1day[hour] = value;
   }
 

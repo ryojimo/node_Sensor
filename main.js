@@ -141,9 +141,11 @@ function startSystem() {
   g_sensors['si_lps25h_temp'] = new DataSensor('si_lps25h_temp');
   g_sensors['si_tsl2561_lux'] = new DataSensor('si_tsl2561_lux');
 
-  let timerFlg  = setInterval(function(){getSensorData30s();}, 10000);
-  let job05 = runBoardSensor('      0  0-23/1 * * *', 'sudo ./board.out --sensors'  );
-  let job06 = runBoardSensorStore(' 5  23     * * *'                                );
+  // 10秒ごとにセンサ値を取得
+  let timerFlg = setInterval(function(){getSensorData();}, 10000);
+
+  // 毎日 23:05 にセンサ値をテキストファイルに保存
+  let job = schedule.scheduleJob('5 23 * * *', function(){storeSensorData();});
 };
 
 
@@ -151,10 +153,10 @@ function startSystem() {
  * 全センサの値を取得して 30s 間のデータを更新する。
  * @return {void}
  * @example
- * getSensorData30s();
+ * getSensorData();
 */
-function getSensorData30s() {
-  console.log("[main.js] getSensorData30s()");
+function getSensorData() {
+  console.log("[main.js] getSensorData()");
 
   let exec = require('child_process').exec;
   let ret  = exec('sudo ./board.out --sensors', function(err, stdout, stderr) {
@@ -166,9 +168,13 @@ function getSensorData30s() {
 
     let jsonObj = (new Function('return ' + stdout))();
 
-    // 各センサ・オブジェクトの data30s を更新する
+    let date = new Date();
+    let hour = ('0' + date.getHours()).slice(-2); // 現在の時間を 2 桁表記で取得
+    hour = hour + ':00';
+
     for(key in jsonObj) {
-      g_sensors[key].setData30s(jsonObj[key]);
+      g_sensors[key].setData1day(hour, jsonObj[key]); // 各センサ・オブジェクトの data1day を更新
+      g_sensors[key].setData30s(jsonObj[key]);        // 各センサ・オブジェクトの data30s を更新
     }
 
     // 全センサの 30s 間の値の JSON オブジェクト配列を作成する
@@ -184,86 +190,34 @@ function getSensorData30s() {
 
 
 /**
- * node-schedule の Job を登録する。
- * @param {string} when - Job を実行する時間
- * @param {string} cmd - 実行するコマンド
- * @return {object} job - node-schedule に登録した job
+ * センサ値を保存する。
+ * @return {void}
  * @example
- * runBoardSensor( ' 0 0-23/1 * * *', 'sudo ./board.out --sensors');
+ * storeSensorData();
 */
-function runBoardSensor(when, cmd) {
-  console.log("[main.js] runBoardSensor()");
-  console.log("[main.js] when = " + when);
-  console.log("[main.js] cmd  = " + cmd);
+function storeSensorData() {
+  console.log("[main.js] storeSensorData()");
+  writeSensorDataToFile();
 
-  let job = schedule.scheduleJob(when, function() {
-    console.log("[main.js] node-schedule で " + cmd + " が実行されました");
-
-    let exec = require('child_process').exec;
-    let ret  = exec(cmd, function(err, stdout, stderr) {
-        console.log("[main.js] stdout = " + stdout);
-        console.log("[main.js] stderr = " + stderr);
-        if(err) {
-          console.log("[main.js] " + err);
-        }
-
-        // stdout の文字列は以下のような感じ
-        // { "sa_acc_x":2019, "sa_acc_y":2854,"sa_acc_z":1934, "sa_gyro_g1":1783, "sa_gyro_g2":1771, "si_bme280_atmos":718.53, "si_bme280_humi":38.84, "si_bme280_temp":29.82, "si_gp2y0e03":63.00, "si_lps25h_atmos":1018.34, "si_lps25h_temp":30.42, "si_tsl2561_lux":57.00 }
-        let jsonObj = (new Function( 'return ' + stdout))();
-        let date = new Date();
-        let hour = ('0' + date.getHours()).slice(-2); // 現在の時間を 2 桁表記で取得
-        hour = hour + ':00';
-
-        for(key in jsonObj) {
-          g_sensors[key].setData1day(hour, jsonObj[key]);
-        }
-      }
-    );
-  });
-
-  return job;
-};
-
-
-/**
- * node-schedule の Job を登録する。
- * @param {string} when - Job を実行する時間
- * @return {object} job - node-schedule に登録した job
- * @example
- * runBoardSensorStore(' 5  23     * * *');
-*/
-function runBoardSensorStore(when) {
-  console.log("[main.js] runBoardSensorStore()");
-  console.log("[main.js] when = " + when);
-
-  let job = schedule.scheduleJob(when, function() {
-    console.log("[main.js] node-schedule で fs.writeFileSync() が実行されました");
-
-    // 全センサ・オブジェクトの 1day の値の JSON オブジェクト配列を g_path_storage ディレクトリに txt ファイルとして保存する
-    storeSensorObjects();
-
-    // 全センサ・オブジェクトの 1day の値をクリアする
-    for(key in g_sensors) {
-      g_sensors[key].clearData1day();
-    }
-  });
-
-  return job;
+  // 全センサ・オブジェクトの 1day の値をクリアする
+  for(key in g_sensors) {
+    g_sensors[key].clearData1day();
+  }
 };
 
 
 /**
  * 全センサの 1day の値の JSON オブジェクト配列を g_path_storage ディレクトリに txt ファイルで保存する。
  * @example
- * storeSensorObjects();
+ * writeSensorDataToFile();
 */
-function storeSensorObjects() {
-  console.log("[main.js] storeSensorObjects()");
+function writeSensorDataToFile() {
+  console.log("[main.js] writeSensorDataToFile()");
 
-  let filename = g_apiCmn.yyyymmdd() + '_sensor.json';
+  let filename = g_path_storage + g_apiCmn.yyyymmdd() + '_sensor.json';
 
   // 既にファイルが存在するかを確認する
-  let jsonObj = g_apiFileSystem.read(g_path_storage +  filename);
+  let jsonObj = g_apiFileSystem.read(filename);
 
   // ファイルが存在する場合は g_sensors を更新する
   if(jsonObj != null) {
@@ -283,7 +237,7 @@ function storeSensorObjects() {
     data.push({sensor: key, values: g_sensors[key].data1day});
   }
 
-  g_apiFileSystem.write(g_path_storage +  filename, data);
+  g_apiFileSystem.write(filename, data);
 };
 
 
@@ -398,7 +352,7 @@ io.sockets.on('connection', function(socket) {
   socket.on('C_to_S_STORE', function() {
     console.log("[main.js] " + 'C_to_S_STORE');
     // 全センサ・オブジェクトの 1day の値の JSON オブジェクト配列を g_path_storage ディレクトリに txt ファイルとして保存する
-    storeSensorObjects();
+    writeSensorDataToFile();
   });
 
 
