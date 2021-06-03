@@ -26,6 +26,7 @@ var obj_si_gp2y0e03     = {name:'si_gp2y0e03',     chart:null, data:null, type:'
 var obj_si_lps25h_atmos = {name:'si_lps25h_atmos', chart:null, data:null, type:'area', color:'#1976D2', minimum:500, title:'気圧(lps25h)',   unit:'[hPa]'};
 var obj_si_lps25h_temp  = {name:'si_lps25h_temp',  chart:null, data:null, type:'area', color:'#C2185B', minimum:0,   title:'温度(lps25h)',   unit:'[℃]'};
 var obj_si_tsl2561_lux  = {name:'si_tsl2561_lux',  chart:null, data:null, type:'area', color:'#AFB42B', minimum:0,   title:'照度(tsl2561)',  unit:'[LUX]'};
+var obj_co2             = {name:'co2',             chart:null, data:null, type:'area', color:'#AFB42B', minimum:0,   title:'CO2(mh-z19)',    unit:'[ppm]'};
 
 var obj_sensors_daily   = {name:'sensors_daily',   chart:null, data:null, type:'area', color:'#1E88E5', minimum:0,   title:'一日のデータ', unit:''};
 
@@ -47,6 +48,7 @@ window.onload = function() {
   makeChartSensor30s(obj_si_lps25h_atmos);
   makeChartSensor30s(obj_si_lps25h_temp );
   makeChartSensor30s(obj_si_tsl2561_lux );
+  makeChartSensor30s(obj_co2            );
 
   obj_sa_acc_x.chart.render();
   obj_sa_acc_x.chart.render();
@@ -61,6 +63,7 @@ window.onload = function() {
   obj_si_lps25h_atmos.chart.render();
   obj_si_lps25h_temp.chart.render();
   obj_si_tsl2561_lux.chart.render();
+  obj_co2.chart.render();
 
   // 1 day のセンサ値表示用のパラメータを初期化する。
   makeChartSensorDaily(obj_sensors_daily);
@@ -282,6 +285,15 @@ function sendGetCmd(cmd) {
 
   console.log("[app.js] server.emit(" + 'C_to_S_GET' + ")");
   server.emit('C_to_S_GET', cmd);
+}
+
+
+function sendGetCmdJson(cmd) {
+  console.log("[app.js] sendGetCmdJson()");
+  console.log("[app.js] cmd = " + cmd);
+
+  console.log("[app.js] server.emit(" + 'C_to_S_GET_JSON' + ")");
+  server.emit('C_to_S_GET_JSON', cmd);
 }
 
 

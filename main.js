@@ -140,9 +140,16 @@ function startSystem() {
   g_sensors['si_lps25h_atmos'] = new DataSensor('si_lps25h_atmos');
   g_sensors['si_lps25h_temp'] = new DataSensor('si_lps25h_temp');
   g_sensors['si_tsl2561_lux'] = new DataSensor('si_tsl2561_lux');
+  g_sensors['co2'] = new DataSensor('co2');
 
-  // 10秒ごとにセンサ値を取得
-  let timerFlg = setInterval(function(){getSensorData();}, 10000);
+  // 8 秒ごとに board.out を実行してセンサ値を取得する
+  let gb = setInterval(function(){getSensorBoard();}, 8000);
+
+  // 9 秒ごとに CO2 センサ値を取得する
+  let gc = setInterval(function(){getSensorCo2();}, 9000);
+
+  // 10 秒ごとにセンサ値を送信する
+  let s = setInterval(function(){sendSensorData();}, 10000);
 
   // 毎日 23:05 にセンサ値をテキストファイルに保存
   let job = schedule.scheduleJob('5 23 * * *', function(){storeSensorData();});
@@ -150,13 +157,13 @@ function startSystem() {
 
 
 /**
- * 全センサの値を取得して 30s 間のデータを更新する。
+ * board.out を実行してセンサ値を取得する。
  * @return {void}
  * @example
- * getSensorData();
+ * getSensorBoard();
 */
-function getSensorData() {
-  console.log("[main.js] getSensorData()");
+function getSensorBoard() {
+  console.log("[main.js] getSensorBoard()");
 
   let exec = require('child_process').exec;
   let ret  = exec('sudo ./board.out --sensors', function(err, stdout, stderr) {
@@ -176,16 +183,57 @@ function getSensorData() {
       g_sensors[key].setData1day(hour, jsonObj[key]); // 各センサ・オブジェクトの data1day を更新
       g_sensors[key].setData30s(jsonObj[key]);        // 各センサ・オブジェクトの data30s を更新
     }
+  });
+}
 
-    // 全センサの 30s 間の値の JSON オブジェクト配列を作成する
-    let data = new Array();
-    for(key in g_sensors) {
-      data.push({sensor: key, values: g_sensors[key].data30s});
+
+/**
+ * CO2 センサ値を取得する。
+ * @return {void}
+ * @example
+ * getSensorCo2();
+*/
+function getSensorCo2() {
+  console.log("[main.js] getSensorCo2()");
+
+  let exec = require('child_process').exec;
+  let ret  = exec('sudo python3 -m mh_z19', function(err, stdout, stderr) {
+    console.log("[main.js] stdout = " + stdout);
+    console.log("[main.js] stderr = " + stderr);
+    if(err) {
+      console.log("[main.js] " + err);
     }
 
-    // data を送る
-    io.sockets.emit('S_to_C_SENSOR_30S', data);
+    let jsonObj = (new Function('return ' + stdout))();
+
+    if(jsonObj != null) {
+      let date = new Date();
+      let hour = ('0' + date.getHours()).slice(-2); // 現在の時間を 2 桁表記で取得
+      hour = hour + ':00';
+
+      g_sensors['co2'].setData1day(hour, jsonObj['co2']); // CO2 センサ・オブジェクトの data1day を更新
+      g_sensors['co2'].setData30s(jsonObj['co2']);        // CO2 センサ・オブジェクトの data30s を更新
+    }
   });
+}
+
+
+/**
+ * 全センサの値を送信する。
+ * @return {void}
+ * @example
+ * sendSensorData();
+*/
+function sendSensorData() {
+  console.log("[main.js] sendSensorData()");
+  // 全センサの 30s 間の値の JSON オブジェクト配列を作成する
+  let data = new Array();
+  for(key in g_sensors) {
+    data.push({sensor: key, values: g_sensors[key].data30s});
+  }
+
+  // 送信する
+  io.sockets.emit('S_to_C_SENSOR_30S', data);
 }
 
 
@@ -276,36 +324,32 @@ io.sockets.on('connection', function(socket) {
         console.log("[main.js] " + err);
       }
 
-      // センサ値を取り出して value 配列にセットする
-      // センサ値は value[0] に格納されている
-      let value = stdout.split(/\s+/);    // 空白文字で分割する
-      console.log("[main.js] value[0] = " + value[0]);
+      io.sockets.emit('S_to_C_DATA', {value:Number(stdout)});
+    });
+  });
 
-      io.sockets.emit('S_to_C_DATA', {value:Number(value[0])});
 
-      // 対象のセンサ名を取り出して key にセットする
-      let key;
-      let cmd = data.split(/\s+/);              // 空白文字で分割する
-      let sensor_name     = cmd[2].substr(2);   // '--si_bme280' の先頭 2 文字 (= '--' 部分 ) を除いて 'si_bme280' を取り出す
-      let sensor_name_sub = cmd[3].substr(2);   // '--temp'      の先頭 2 文字 (= '--' 部分 ) を除いて 'temp'      を取り出す
-      console.log("[main.js] sensor_name     = " + sensor_name);
-      console.log("[main.js] sensor_name_sub = " + sensor_name_sub);
+  socket.on('C_to_S_GET_JSON', function(data) {
+    console.log("[main.js] " + 'C_to_S_GET_JSON');
+    console.log("[main.js] data = " + data);    // 例) data = sudo python3 -m mh_z19
 
-      // sensor_name_sub が 'data' の場合は無視
-      if(sensor_name_sub == 'data') {
-        key = sensor_name;
-      } else {
-        key = sensor_name + '_' + sensor_name_sub;
+    let exec = require('child_process').exec;
+    let ret  = exec(data, function(err, stdout, stderr) {
+      console.log("[main.js] stdout = " + stdout);
+      console.log("[main.js] stderr = " + stderr);
+      if(err) {
+        console.log("[main.js] " + err);
       }
-      console.log("[main.js] key = " + key);
 
-      // 時間を取得して hour にセットする
-      let date = new Date();
-      let hour = ('0' + date.getHours()).slice(-2); // 現在の時間を 2 桁表記で取得
-      hour = hour + ':00';
+      let obj = (new Function('return ' + stdout))(); // JSON 文字列を JSON オブジェクトへ変換
 
-      // 各センサ・オブジェクトの data1day[hour] を更新する
-      g_sensors[key].setData1day(hour, Number(value[0]));
+      let value = 0;
+      for(key in obj){
+        value = obj[key];
+      }
+      console.log("[main.js] value = " + value);
+
+      io.sockets.emit('S_to_C_DATA', {value:Number(value)});
     });
   });
 
