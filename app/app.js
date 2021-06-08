@@ -13,15 +13,20 @@ let server = io.connect('http://' + SV_IP + ':' + SV_PORT); //ローカル
 
 //-----------------------------------------------------------------------------
 //-------------------------------------
-var obj_sa_acc_x        = {name:'sa_acc_x',        chart:null, data:null, type:'area', color:'#E64A19', minimum:0,   title:'加速度(x)',      unit:'[?]'};
-var obj_sa_acc_y        = {name:'sa_acc_y',        chart:null, data:null, type:'area', color:'#E64A19', minimum:0,   title:'加速度(y)',      unit:'[?]'};
-var obj_sa_acc_z        = {name:'sa_acc_z',        chart:null, data:null, type:'area', color:'#E64A19', minimum:0,   title:'加速度(z)',      unit:'[?]'};
-var obj_sa_gyro_g1      = {name:'sa_gyro_g1',      chart:null, data:null, type:'area', color:'#FFA000', minimum:0,   title:'ジャイロ(g1)',   unit:'[?]'};
-var obj_sa_gyro_g2      = {name:'sa_gyro_g2',      chart:null, data:null, type:'area', color:'#FFA000', minimum:0,   title:'ジャイロ(g2)',   unit:'[?]'};
-
 var obj_si_bme280_atmos = {name:'si_bme280_atmos', chart:null, data:null, type:'area', color:'#1976D2', minimum:500, title:'気圧(bme280)',   unit:'[hPa]'};
 var obj_si_bme280_humi  = {name:'si_bme280_humi',  chart:null, data:null, type:'area', color:'#00796B', minimum:0,   title:'湿度(bme280)',   unit:'[%]'};
 var obj_si_bme280_temp  = {name:'si_bme280_temp',  chart:null, data:null, type:'area', color:'#C2185B', minimum:0,   title:'温度(bme280)',   unit:'[℃]'};
+
+var obj_si_bmx055_acc_x  = {name:'si_bmx055_acc_x',  chart:null, data:null, type:'area', color:'#E64A19', minimum:-1500, title:'加速度 X(bmx055)',   unit:'[mg]'};
+var obj_si_bmx055_acc_y  = {name:'si_bmx055_acc_y',  chart:null, data:null, type:'area', color:'#E64A19', minimum:-1500, title:'加速度 Y(bmx055)',   unit:'[mg]'};
+var obj_si_bmx055_acc_z  = {name:'si_bmx055_acc_z',  chart:null, data:null, type:'area', color:'#E64A19', minimum:-1500, title:'加速度 Z(bmx055)',   unit:'[mg]'};
+var obj_si_bmx055_gyro_x = {name:'si_bmx055_gyro_x', chart:null, data:null, type:'area', color:'#FFA000', minimum:-100,  title:'ジャイロ X(bmx055)', unit:'[?]'};
+var obj_si_bmx055_gyro_y = {name:'si_bmx055_gyro_y', chart:null, data:null, type:'area', color:'#FFA000', minimum:-100,  title:'ジャイロ Y(bmx055)', unit:'[?]'};
+var obj_si_bmx055_gyro_z = {name:'si_bmx055_gyro_z', chart:null, data:null, type:'area', color:'#FFA000', minimum:-100,  title:'ジャイロ Z(bmx055)', unit:'[?]'};
+var obj_si_bmx055_mag_x  = {name:'si_bmx055_mag_x',  chart:null, data:null, type:'area', color:'#E64A19', minimum:-100,  title:'磁気 X(bmx055)',   unit:'[?]'};
+var obj_si_bmx055_mag_y  = {name:'si_bmx055_mag_y',  chart:null, data:null, type:'area', color:'#E64A19', minimum:-100,  title:'磁気 Y(bmx055)',   unit:'[?]'};
+var obj_si_bmx055_mag_z  = {name:'si_bmx055_mag_z',  chart:null, data:null, type:'area', color:'#E64A19', minimum:-100,  title:'磁気 Z(bmx055)',   unit:'[?]'};
+
 var obj_si_gp2y0e03     = {name:'si_gp2y0e03',     chart:null, data:null, type:'area', color:'#455A64', minimum:0,   title:'距離(gp2y0e03)', unit:'[cm]'};
 var obj_si_lps25h_atmos = {name:'si_lps25h_atmos', chart:null, data:null, type:'area', color:'#1976D2', minimum:500, title:'気圧(lps25h)',   unit:'[hPa]'};
 var obj_si_lps25h_temp  = {name:'si_lps25h_temp',  chart:null, data:null, type:'area', color:'#C2185B', minimum:0,   title:'温度(lps25h)',   unit:'[℃]'};
@@ -36,29 +41,36 @@ window.onload = function() {
   console.log("[app.js] window.onloaded");
 
   // 30 sec のセンサ値表示用のパラメータを初期化する。
-  makeChartSensor30s(obj_sa_acc_x       );
-  makeChartSensor30s(obj_sa_acc_y       );
-  makeChartSensor30s(obj_sa_acc_z       );
-  makeChartSensor30s(obj_sa_gyro_g1     );
-  makeChartSensor30s(obj_sa_gyro_g2     );
   makeChartSensor30s(obj_si_bme280_atmos);
   makeChartSensor30s(obj_si_bme280_humi );
   makeChartSensor30s(obj_si_bme280_temp );
+  makeChartSensor30s(obj_si_bmx055_acc_x );
+  makeChartSensor30s(obj_si_bmx055_acc_y );
+  makeChartSensor30s(obj_si_bmx055_acc_z );
+  makeChartSensor30s(obj_si_bmx055_gyro_x );
+  makeChartSensor30s(obj_si_bmx055_gyro_y );
+  makeChartSensor30s(obj_si_bmx055_gyro_z );
+  makeChartSensor30s(obj_si_bmx055_mag_x );
+  makeChartSensor30s(obj_si_bmx055_mag_y );
+  makeChartSensor30s(obj_si_bmx055_mag_z );
   makeChartSensor30s(obj_si_gp2y0e03    );
   makeChartSensor30s(obj_si_lps25h_atmos);
   makeChartSensor30s(obj_si_lps25h_temp );
   makeChartSensor30s(obj_si_tsl2561_lux );
   makeChartSensor30s(obj_co2            );
 
-  obj_sa_acc_x.chart.render();
-  obj_sa_acc_x.chart.render();
-  obj_sa_acc_y.chart.render();
-  obj_sa_acc_z.chart.render();
-  obj_sa_gyro_g1.chart.render();
-  obj_sa_gyro_g2.chart.render();
   obj_si_bme280_atmos.chart.render();
   obj_si_bme280_humi.chart.render();
   obj_si_bme280_temp.chart.render();
+  obj_si_bmx055_acc_x.chart.render();
+  obj_si_bmx055_acc_y.chart.render();
+  obj_si_bmx055_acc_z.chart.render();
+  obj_si_bmx055_gyro_x.chart.render();
+  obj_si_bmx055_gyro_y.chart.render();
+  obj_si_bmx055_gyro_z.chart.render();
+  obj_si_bmx055_mag_x.chart.render();
+  obj_si_bmx055_mag_y.chart.render();
+  obj_si_bmx055_mag_z.chart.render();
   obj_si_gp2y0e03.chart.render();
   obj_si_lps25h_atmos.chart.render();
   obj_si_lps25h_temp.chart.render();
@@ -81,7 +93,7 @@ window.onunload = function() {
  * @param {object} obj - グラフ化する対象のオブジェクト
  * @return {void}
  * @example
- * makeChartSensor30s(obj_sa_acc_x);
+ * makeChartSensor30s(obj_si_bmx055_acc_x);
 */
 function makeChartSensor30s(obj) {
   console.log("[app.js] makeChartSensor30s()");

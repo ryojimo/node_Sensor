@@ -128,11 +128,15 @@ startSystem();
 function startSystem() {
   console.log("[main.js] startSystem()");
 
-  g_sensors['sa_acc_x'] = new DataSensor('sa_acc_x');
-  g_sensors['sa_acc_y'] = new DataSensor('sa_acc_y');
-  g_sensors['sa_acc_z'] = new DataSensor('sa_acc_z');
-  g_sensors['sa_gyro_g1'] = new DataSensor('sa_gyro_g1');
-  g_sensors['sa_gyro_g2'] = new DataSensor('sa_gyro_g2');
+  g_sensors['si_bmx055_acc_x'] = new DataSensor('si_bmx055_acc_x');
+  g_sensors['si_bmx055_acc_y'] = new DataSensor('si_bmx055_acc_y');
+  g_sensors['si_bmx055_acc_z'] = new DataSensor('si_bmx055_acc_z');
+  g_sensors['si_bmx055_gyro_x'] = new DataSensor('si_bmx055_gyro_x');
+  g_sensors['si_bmx055_gyro_y'] = new DataSensor('si_bmx055_gyro_y');
+  g_sensors['si_bmx055_gyro_z'] = new DataSensor('si_bmx055_gyro_z');
+  g_sensors['si_bmx055_mag_x'] = new DataSensor('si_bmx055_mag_x');
+  g_sensors['si_bmx055_mag_y'] = new DataSensor('si_bmx055_mag_y');
+  g_sensors['si_bmx055_mag_z'] = new DataSensor('si_bmx055_mag_z');
   g_sensors['si_bme280_atmos'] = new DataSensor('si_bme280_atmos');
   g_sensors['si_bme280_humi'] = new DataSensor('si_bme280_humi');
   g_sensors['si_bme280_temp'] = new DataSensor('si_bme280_temp');

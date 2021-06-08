@@ -154,35 +154,38 @@
 
   <div class="btn-toolbar">
     <div class="btn-group">
-      <button type="button" class="btn btn-default btn-sm" onclick="sendGetCmd('sudo ./board.out --sa_acc      --x');">加速度(x) [?]</button>
-      <button type="button" class="btn btn-default btn-sm" onclick="sendGetCmd('sudo ./board.out --sa_acc      --y');">加速度(y) [?]</button>
-      <button type="button" class="btn btn-default btn-sm" onclick="sendGetCmd('sudo ./board.out --sa_acc      --z');">加速度(z) [?]</button>
-    </div>
-  </div>
-  <div class="btn-toolbar">
-    <div class="btn-group">
-      <button type="button" class="btn btn-default btn-sm" onclick="sendGetCmd('sudo ./board.out --sa_gyro     --g1');">ジャイロ(g1) [?]</button>
-      <button type="button" class="btn btn-default btn-sm" onclick="sendGetCmd('sudo ./board.out --sa_gyro     --g2');">ジャイロ(g2) [?]</button>
-    </div>
-  </div>
-  <div class="btn-toolbar">
-    <div class="btn-group">
       <button type="button" class="btn btn-default btn-sm" onclick="sendGetCmd('sudo ./board.out --si_bme280   --atmos');">気圧(BME280) [hPa]</button>
       <button type="button" class="btn btn-default btn-sm" onclick="sendGetCmd('sudo ./board.out --si_bme280   --humi');">湿度(BME280) [%]</button>
       <button type="button" class="btn btn-default btn-sm" onclick="sendGetCmd('sudo ./board.out --si_bme280   --temp');">温度(BME280) [℃]</button>
+      <button type="button" class="btn btn-default btn-sm" onclick="sendGetCmd('sudo ./board.out --si_gp2y0e03 --data');">距離 [cm]</button>
+      <button type="button" class="btn btn-default btn-sm" onclick="sendGetCmd('sudo ./board.out --si_lps25h   --atmos');">気圧(LPS25H) [hPa]</button>
+      <button type="button" class="btn btn-default btn-sm" onclick="sendGetCmd('sudo ./board.out --si_lps25h   --temp');">温度(LPS25H) [℃]</button>
+      <button type="button" class="btn btn-default btn-sm" onclick="sendGetCmd('sudo ./board.out --si_tsl2561  --lux');">照度 [ルクス]</button>
+      <button type="button" class="btn btn-default btn-sm" onclick="sendGetCmdJson('sudo python3 -m mh_z19');">CO2 [ppm]</button>
     </div>
   </div>
-
-  <button type="button" class="btn btn-default btn-sm" onclick="sendGetCmd('sudo ./board.out --si_gp2y0e03 --data');">距離 [cm]</button>
 
   <div class="btn-toolbar">
     <div class="btn-group">
-      <button type="button" class="btn btn-default btn-sm" onclick="sendGetCmd('sudo ./board.out --si_lps25h   --atmos');">気圧(LPS25H) [hPa]</button>
-      <button type="button" class="btn btn-default btn-sm" onclick="sendGetCmd('sudo ./board.out --si_lps25h   --temp');">温度(LPS25H) [℃]</button>
+      <button type="button" class="btn btn-default btn-sm" onclick="sendGetCmd('sudo ./board.out --si_bmx055_acc --x');">加速度(BMX055): x [mg]</button>
+      <button type="button" class="btn btn-default btn-sm" onclick="sendGetCmd('sudo ./board.out --si_bmx055_acc --y');">加速度(BMX055): y [mg]</button>
+      <button type="button" class="btn btn-default btn-sm" onclick="sendGetCmd('sudo ./board.out --si_bmx055_acc --z');">加速度(BMX055): z [mg]</button>
     </div>
   </div>
-  <button type="button" class="btn btn-default btn-sm" onclick="sendGetCmd('sudo ./board.out --si_tsl2561  --lux');">照度 [ルクス]</button>
-  <button type="button" class="btn btn-default btn-sm" onclick="sendGetCmdJson('sudo python3 -m mh_z19');">CO2 [ppm]</button>
+  <div class="btn-toolbar">
+    <div class="btn-group">
+      <button type="button" class="btn btn-default btn-sm" onclick="sendGetCmd('sudo ./board.out --si_bmx055_gyro --x');">ジャイロ(BMX055): x [?]</button>
+      <button type="button" class="btn btn-default btn-sm" onclick="sendGetCmd('sudo ./board.out --si_bmx055_gyro --y');">ジャイロ(BMX055): y [?]</button>
+      <button type="button" class="btn btn-default btn-sm" onclick="sendGetCmd('sudo ./board.out --si_bmx055_gyro --z');">ジャイロ(BMX055): z [?]</button>
+    </div>
+  </div>
+  <div class="btn-toolbar">
+    <div class="btn-group">
+      <button type="button" class="btn btn-default btn-sm" onclick="sendGetCmd('sudo ./board.out --si_bmx055_mag --x');">磁気(BMX055): x [?]</button>
+      <button type="button" class="btn btn-default btn-sm" onclick="sendGetCmd('sudo ./board.out --si_bmx055_mag --y');">磁気(BMX055): y [?]</button>
+      <button type="button" class="btn btn-default btn-sm" onclick="sendGetCmd('sudo ./board.out --si_bmx055_mag --z');">磁気(BMX055): z [?]</button>
+    </div>
+  </div>
 
   <h3>現在値：<span id="val_sensor">--</span></h3>
 </section>
@@ -196,27 +199,6 @@
   <h1>Sensor 30sec</h1>
 
   <div class="container">
-    <div class="row">
-      <div class="col-sm-12">
-        <div class="well" style="background:rgba(0,0,0,0.2);">
-          <div class="row">
-            <div class="col-sm-4"><div class="chart" id="sa_acc_x"></div></div>
-            <div class="col-sm-4"><div class="chart" id="sa_acc_y"></div></div>
-            <div class="col-sm-4"><div class="chart" id="sa_acc_z"></div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-sm-8">
-        <div class="well" style="background:rgba(0,0,0,0.2);">
-          <div class="row">
-            <div class="col-sm-6"><div class="chart" id="sa_gyro_g1"></div></div>
-            <div class="col-sm-6"><div class="chart" id="sa_gyro_g2"></div></div>
-          </div>
-        </div>
-      </div>
-    </div>
     <div class="row">
       <div class="col-sm-12">
         <div class="well" style="background:rgba(0,0,0,0.2);">
@@ -261,6 +243,39 @@
         </div>
       </div>
     </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="well" style="background:rgba(0,0,0,0.2);">
+          <div class="row">
+            <div class="col-sm-4"><div class="chart" id="si_bmx055_acc_x"></div></div>
+            <div class="col-sm-4"><div class="chart" id="si_bmx055_acc_y"></div></div>
+            <div class="col-sm-4"><div class="chart" id="si_bmx055_acc_z"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="well" style="background:rgba(0,0,0,0.2);">
+          <div class="row">
+            <div class="col-sm-4"><div class="chart" id="si_bmx055_gyro_x"></div></div>
+            <div class="col-sm-4"><div class="chart" id="si_bmx055_gyro_y"></div></div>
+            <div class="col-sm-4"><div class="chart" id="si_bmx055_gyro_z"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="well" style="background:rgba(0,0,0,0.2);">
+          <div class="row">
+            <div class="col-sm-4"><div class="chart" id="si_bmx055_mag_x"></div></div>
+            <div class="col-sm-4"><div class="chart" id="si_bmx055_mag_y"></div></div>
+            <div class="col-sm-4"><div class="chart" id="si_bmx055_mag_z"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 <br/>
@@ -275,14 +290,18 @@
 
   <input style="color: #000;" type="date" name="日時指定" oninput="sendGetCmdSensorOneDay();" id="val_date_sensor">
   <select style="color: #000;" name="センサ" oninput="sendGetCmdSensorOneDay();" id="val_which">
-    <option value="sa_acc_x">加速度 X方向</option>
-    <option value="sa_acc_y">加速度 Y方向</option>
-    <option value="sa_acc_z">加速度 Z方向</option>
-    <option value="sa_gyro_g1">ジャイロ G1 方向</option>
-    <option value="sa_gyro_g2">ジャイロ G2 方向</option>
     <option value="si_bme280_atmos">気圧(BME280)</option>
     <option value="si_bme280_humi">湿度(BME280)</option>
     <option value="si_bme280_temp">温度(BME280)</option>
+    <option value="si_bmx055_acc_x">加速度(BMX055) X軸</option>
+    <option value="si_bmx055_acc_y">加速度(BMX055) Y軸</option>
+    <option value="si_bmx055_acc_z">加速度(BMX055) Z軸</option>
+    <option value="si_bmx055_gyro_x">ジャイロ(BMX055) X軸</option>
+    <option value="si_bmx055_gyro_y">ジャイロ(BMX055) Y軸</option>
+    <option value="si_bmx055_gyro_z">ジャイロ(BMX055) Z軸</option>
+    <option value="si_bmx055_mag_x">磁気(BMX055) X軸</option>
+    <option value="si_bmx055_mag_y">磁気(BMX055) Y軸</option>
+    <option value="si_bmx055_mag_z">磁気(BMX055) Z軸</option>
     <option value="si_gp2y0e03">距離</option>
     <option value="si_lps25h_atmos">気圧(LPS25H)</option>
     <option value="si_lps25h_temp">温度(LPS25H)</option>
