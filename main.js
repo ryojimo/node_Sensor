@@ -110,8 +110,8 @@ let io = socketio.listen(server);
 //-----------------------------------------------------------------------------
 // 起動の処理関数
 //-----------------------------------------------------------------------------
-let g_path_top       = '/home/pi/workspace/node_Sensor/';
-let g_path_storage   = '/home/pi/workspace/node_Sensor/data/';
+let g_path_top       = '/home/pi/workspace/SensorSystem/node_Sensor/';
+let g_path_storage   = '/home/pi/workspace/SensorSystem/node_Sensor/data/';
 let g_apiCmn        = new ApiCmn();
 let g_apiFileSystem = new ApiFileSystem();
 let g_sensors       = new Array();
