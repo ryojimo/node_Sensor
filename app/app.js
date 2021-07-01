@@ -114,7 +114,8 @@ function makeChartSensor30s(obj) {
       fontSize:  12,
     }],
     axisX: {labelAngle:-45, labelFontSize:14, labelFontColor:'#222'},
-    axisY: {minimum: obj.minimum, labelFontSize:14, labelFontColor:'#222'},
+    axisY: {labelFontSize:14, labelFontColor:'#222'},
+//    axisY: {minimum: obj.minimum, labelFontSize:14, labelFontColor:'#222'},
     data: [{
       type:       obj.type,           // グラフの種類 (area, bar, bubble, column, stackedColumn )
       color:      obj.color,
@@ -161,7 +162,8 @@ function makeChartSensorDaily(obj) {
       fontSize:  12,
     }],
     axisX: {labelAngle:-45, labelFontSize:14, labelFontColor:'#222'},
-    axisY: {minimum: obj.minimum, labelFontSize:14, labelFontColor:'#222'},
+    axisY: {labelFontSize:14, labelFontColor:'#222'},
+//    axisY: {minimum: obj.minimum, labelFontSize:14, labelFontColor:'#222'},
     data: [{
       type:       obj.type,           // グラフの種類 (area, bar, bubble, column, stackedColumn )
       color:      obj.color,
@@ -323,8 +325,8 @@ function sendGetCmdSensorOneDay() {
   console.log("[app.js] date   = " + date);
   console.log("[app.js] sensor = " + sensor);
 
-  if(date < '2021-02-25') {
-    alert('2021/02/25 以降を指定してください。');
+  if(date < '2021-06-21') {
+    alert('2021/06/21 以降を指定してください。');
   } else {
     let obj = {date:date, sensor:sensor};
     console.log("[app.js] server.emit(" + 'C_to_S_GET_SENSOR_DAILY' + ")");
